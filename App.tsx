@@ -10,9 +10,9 @@ const Stack = createNativeStackNavigator();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Signup">
-      <Stack.Screen name="Signup" component={SignUpScreen}/>
-      <Stack.Screen name="Login" component={LoginScreen}/>
+    <Stack.Navigator initialRouteName="SignUp">
+      <Stack.Screen name="SignUp" component={SignUpScreen} />
+      <Stack.Screen name="Login" component={LoginScreen} />
     </Stack.Navigator>
   );
 }
@@ -28,6 +28,6 @@ function App(): React.JSX.Element {
 
 export default App;
 export type RootStackParamList = {
-  Signup: undefined;
+  SignUp: undefined;
   Login: undefined;
 };

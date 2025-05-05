@@ -1,73 +1,164 @@
-import React, {useContext, useState} from 'react';
-import {View, Pressable, Text, TouchableOpacity} from 'react-native';
-import {ThemeContext} from '../../styles/ThemeContext';
+import React, {useState} from 'react';
+// import { useContext } from 'react';
+import {
+  View,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
+// import {ThemeContext} from '../../styles/ThemeContext';
 import {styles} from './sign-upScreen.type';
 import {TextInput} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Dimensions} from 'react-native';
+import {schema} from '../../utils/formValidation';
+import {z} from 'zod';
+import {useForm, Controller} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
 const SignUpScreen = () => {
-  type SignUpScreenNavigationProp = StackNavigationProp<
+  //   const theme = useContext(ThemeContext)!;
+  const {width, height} = Dimensions.get('window');
+  //   const {toggleTheme} = theme;
+  type SignUpScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
-    'Signup'
+    'SignUp'
   >;
 
   const navigation = useNavigation<SignUpScreenNavigationProp>();
-  const theme = useContext(ThemeContext)!;
-  const {width} = Dimensions.get('window');
-  const {toggleTheme} = theme;
   const [visiblePassword, setVisiblePassword] = useState(false);
   const toggleVisibility = () => setVisiblePassword(perv => !perv);
-  const handleLogin = () => {
+  type FormData = z.infer<typeof schema>;
+
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      name: '',
+      email: '',
+      password: '',
+      number: '',
+    },
+  });
+
+  const onSubmit = (data: FormData) => {
+    console.log('Submitted:', data);
     navigation.navigate('Login');
   };
+
   return (
-    <View style={styles.container}>
-      <View style={styles.field}>
-        <TextInput placeholder="Name" style={styles.input} />
-      </View>
-      <View style={styles.field}>
-        <TextInput placeholder="Email" style={styles.input} />
-      </View>
-      <View style={styles.field}>
-        <TextInput
-          placeholder="Password"
-          style={styles.input}
-          secureTextEntry={visiblePassword}
-        />
-        <TouchableOpacity
-          onPress={toggleVisibility}
-          style={{
-            position: 'absolute',
-            right: width / 3.75,
-            top: '50%',
-            transform: [{translateY: -15}], // center vertically
-            width: 30,
-            height: 30,
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <Icon
-            name={visiblePassword ? 'eye' : 'eye-slash'}
-            size={20}
-            color="#000"
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <View style={styles.container}>
+        <View style={styles.field}>
+          <Controller
+            control={control}
+            name="name"
+            render={({field: {value, onChange}}) => (
+              <TextInput
+                placeholder="Name"
+                placeholderTextColor="grey"
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+              />
+            )}
           />
-        </TouchableOpacity>
+          {errors.name && (
+            <Text style={{color: 'red'}}>{errors.name?.message}</Text>
+          )}
+        </View>
+        <View style={styles.field}>
+          <Controller
+            control={control}
+            name="email"
+            render={({field: {value, onChange}}) => (
+              <TextInput
+                placeholder="Email"
+                placeholderTextColor="grey"
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                keyboardType="email-address"
+                autoCapitalize="none"
+              />
+            )}
+          />
+          {errors.email && (
+            <Text style={{color: 'red'}}>{errors.email.message}</Text>
+          )}
+        </View>
+        <View style={styles.field}>
+          <Controller
+            control={control}
+            name="password"
+            render={({field: {value, onChange}}) => (
+              <TextInput
+                placeholder="Password"
+                placeholderTextColor="grey"
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                secureTextEntry={visiblePassword}
+              />
+            )}
+          />
+          <TouchableOpacity
+            onPress={toggleVisibility}
+            style={{
+              position: 'absolute',
+              right: width / 3.75,
+              top: height / 40,
+              transform: [{translateY: -15}],
+              width: 30,
+              height: 30,
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}>
+            {visiblePassword ? (
+              <Icon name="eye" solid size={20} color="#000" />
+            ) : (
+              <Icon name="eye-slash" solid size={20} color="#000" />
+            )}
+          </TouchableOpacity>
+          {errors.password && (
+            <Text style={{color: 'red', marginTop: 5}}>
+              {errors.password.message}
+            </Text>
+          )}
+        </View>
+        <View style={styles.field}>
+          <Controller
+            control={control}
+            name="number"
+            render={({field: {value, onChange}}) => (
+              <TextInput
+                placeholder="Number"
+                placeholderTextColor="grey"
+                style={styles.input}
+                value={value}
+                onChangeText={onChange}
+                keyboardType="numeric"
+              />
+            )}
+          />
+          {errors.number && (
+            <Text style={{color: 'red'}}>{errors.number.message}</Text>
+          )}
+        </View>
+        <View style={styles.field}>
+          <Pressable onPress={handleSubmit(onSubmit)}>
+            <Text style={styles.button}>Sign Up</Text>
+          </Pressable>
+        </View>
       </View>
-      <View style={styles.field}>
-        <TextInput
-          placeholder="Phone Number"
-          style={styles.input}
-          keyboardType="numeric"
-        />
-      </View>
-      <View style={styles.field}>
-        <Pressable onPress={handleLogin}>
-          <Text style={styles.button}>SignUp</Text>
-        </Pressable>
-      </View>
-    </View>
+    </TouchableWithoutFeedback>
   );
 };
 export default SignUpScreen;
