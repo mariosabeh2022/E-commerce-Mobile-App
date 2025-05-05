@@ -1,14 +1,22 @@
 // import React, {useContext} from 'react';
-import {View, Alert, Pressable, Text} from 'react-native';
+import {View, Pressable, Text} from 'react-native';
 // import {ThemeContext} from '../../styles/ThemeContext';
 import {styles} from './loginScreen.style';
 import {TextInput} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {RootStackParamList} from '../../../App';
+type SignUpScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Login'
+>;
 const LoginScreen = () => {
-//   const theme = useContext(ThemeContext)!;
+  const navigation = useNavigation<SignUpScreenNavigationProp>();
+  //   const theme = useContext(ThemeContext)!;
 
-//   const {toggleTheme} = theme;
+  //   const {toggleTheme} = theme;
   const handleLogin = () => {
-    Alert.alert('test');
+    navigation.navigate('Products');
   };
   return (
     <View style={styles.container}>
