@@ -1,25 +1,33 @@
 import React from 'react';
-import {
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
 
-import {
-  Colors,
-} from 'react-native/Libraries/NewAppScreen';
+import LoginScreen from './src/screens/login/loginScreen';
+import SignUpScreen from './src/screens/sign-up/sign-upScreen';
+import {ThemeProvider} from './src/styles/ThemeContext';
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+import {NavigationContainer} from '@react-navigation/native';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
+const Stack = createNativeStackNavigator();
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+function RootStack() {
   return (
-    <View style={backgroundStyle}>
-      <Text>Hello world</Text>
-    </View>
+    <Stack.Navigator initialRouteName="Signup">
+      <Stack.Screen name="Signup" component={SignUpScreen}/>
+      <Stack.Screen name="Login" component={LoginScreen}/>
+    </Stack.Navigator>
+  );
+}
+function App(): React.JSX.Element {
+  return (
+    <NavigationContainer>
+      <ThemeProvider>
+        <RootStack />
+      </ThemeProvider>
+    </NavigationContainer>
   );
 }
 
 export default App;
+export type RootStackParamList = {
+  Signup: undefined;
+  Login: undefined;
+};
