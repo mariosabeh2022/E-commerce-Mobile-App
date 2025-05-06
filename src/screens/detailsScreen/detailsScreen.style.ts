@@ -26,6 +26,7 @@ export const styles = StyleSheet.create({
   },
   price: {
     fontSize: 25,
+    textDecorationLine: 'underline',
   },
   title: {
     fontSize: 25,
@@ -40,11 +41,15 @@ export const styles = StyleSheet.create({
     borderBottomLeftRadius: width / 1.5,
     borderBottomRightRadius: width / 1.5,
   },
-  share: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    padding: 12,
-    borderRadius: 30,
+  buttonContainer: {
+    marginTop:'25%',
+    alignItems: 'center',
+    backgroundColor: 'green',
+    borderRadius: 8,
+    height: width / 8,
+    justifyContent:'center',
+  },
+  button: {
+    color: 'white',
   },
 });

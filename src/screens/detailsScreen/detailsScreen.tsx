@@ -1,10 +1,9 @@
 import React from 'react';
 import {styles} from './detailsScreen.style';
-import {Image, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text, View, Pressable} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../../App';
-import Icon from 'react-native-vector-icons/FontAwesome5';
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 
 type Props = {
@@ -27,13 +26,14 @@ const DetailsScreen = ({route}: Props) => {
         </View>
         <View style={styles.infos}>
           <Text style={styles.title}>{fetchedData?.title}</Text>
+          <Text style={styles.title}>About</Text>
           <Text style={styles.desc}>{fetchedData?.description}</Text>
           <Text style={styles.price}>Price: {fetchedData?.price}$</Text>
         </View>
+        <Pressable style={styles.buttonContainer}>
+          <Text style={styles.button}>Add To Cart</Text>
+        </Pressable>
       </View>
-      <TouchableOpacity style={styles.share}>
-        <Icon name="share" size={24} color="#000" />
-      </TouchableOpacity>
     </>
   );
 };

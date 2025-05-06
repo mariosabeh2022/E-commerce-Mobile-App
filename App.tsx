@@ -7,6 +7,9 @@ import DetailsScreen from './src/screens/detailsScreen/detailsScreen';
 import {ThemeProvider} from './src/styles/ThemeContext';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { TouchableOpacity } from 'react-native';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {style} from './src/styles/Icons';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
@@ -15,7 +18,17 @@ function RootStack() {
       <Stack.Screen name="SignUp" component={SignUpScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Products" component={ProductsScreen} />
-      <Stack.Screen name="Details" component={DetailsScreen} />
+      <Stack.Screen
+        name="Details"
+        component={DetailsScreen}
+        options={{
+          headerRight: () => (
+            <TouchableOpacity style={style.container}>
+              <Icon name="share" style={style.shareIcon}/>
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -34,5 +47,5 @@ export type RootStackParamList = {
   SignUp: undefined;
   Login: undefined;
   Products: undefined;
-  Details: { id: string };
+  Details: {id: string};
 };
