@@ -26,7 +26,7 @@ export const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   info: {
-    backgroundColor: 'lightblue',
+    backgroundColor: 'green',
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -34,8 +34,8 @@ export const styles = StyleSheet.create({
     alignContent: 'center',
   },
   item: {
+    color:'white',
     alignItems: 'center',
     padding: 8,
-    color: 'gray',
   },
 });

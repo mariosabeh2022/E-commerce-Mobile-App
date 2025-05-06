@@ -9,11 +9,11 @@ import {
   Keyboard,
 } from 'react-native';
 // import {ThemeContext} from '../../styles/ThemeContext';
-import {styles} from './sign-upScreen.type';
+import {styles} from './sign-upScreen.style';
 import {TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Dimensions} from 'react-native';
-import {schema} from '../../utils/formValidation';
+import {schema} from '../../utils/signUpFormValidation';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -50,7 +50,7 @@ const SignUpScreen = () => {
 
   const onSubmit = (data: FormData) => {
     console.log('Submitted:', data);
-    navigation.navigate('Login');
+    navigation.replace('Login');
   };
 
   return (

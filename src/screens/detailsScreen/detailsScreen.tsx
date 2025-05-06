@@ -1,6 +1,6 @@
 import React from 'react';
 import {styles} from './detailsScreen.style';
-import {Image, Text, View, Pressable} from 'react-native';
+import {Image, Text, View, TouchableOpacity} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../../App';
@@ -30,9 +30,9 @@ const DetailsScreen = ({route}: Props) => {
           <Text style={styles.desc}>{fetchedData?.description}</Text>
           <Text style={styles.price}>Price: {fetchedData?.price}$</Text>
         </View>
-        <Pressable style={styles.buttonContainer}>
+        <TouchableOpacity style={styles.buttonContainer}>
           <Text style={styles.button}>Add To Cart</Text>
-        </Pressable>
+        </TouchableOpacity>
       </View>
     </>
   );
