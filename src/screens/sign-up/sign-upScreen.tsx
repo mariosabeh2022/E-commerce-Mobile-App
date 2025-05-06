@@ -30,7 +30,7 @@ const SignUpScreen = () => {
   >;
 
   const navigation = useNavigation<SignUpScreenNavigationProp>();
-  const [visiblePassword, setVisiblePassword] = useState(false);
+  const [visiblePassword, setVisiblePassword] = useState(true);
   const toggleVisibility = () => setVisiblePassword(perv => !perv);
   type FormData = z.infer<typeof schema>;
 
@@ -105,6 +105,7 @@ const SignUpScreen = () => {
                 style={styles.input}
                 value={value}
                 onChangeText={onChange}
+                autoCapitalize="none"
                 secureTextEntry={visiblePassword}
               />
             )}

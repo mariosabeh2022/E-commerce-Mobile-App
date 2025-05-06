@@ -6,12 +6,12 @@ import {TextInput} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
-type SignUpScreenNavigationProp = NativeStackNavigationProp<
+type LoginScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   'Login'
 >;
 const LoginScreen = () => {
-  const navigation = useNavigation<SignUpScreenNavigationProp>();
+  const navigation = useNavigation<LoginScreenNavigationProp>();
   //   const theme = useContext(ThemeContext)!;
 
   //   const {toggleTheme} = theme;
