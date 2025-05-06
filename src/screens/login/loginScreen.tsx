@@ -13,10 +13,11 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
+import {useAuth} from '../../contexts/authContext';
 
 const LoginScreen = () => {
   const {width, height} = Dimensions.get('window');
-  const [submittable,setSubmittable]=useState(true);
+  const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
   //   const theme = useContext(ThemeContext)!;
 
@@ -31,29 +32,26 @@ const LoginScreen = () => {
     'SignUp'
   >;
 
-  const {
-    control,
-    handleSubmit,
-    setValue
-  } = useForm<FormData>({
+  const {control, handleSubmit, setValue} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       email: '',
       password: '',
     },
   });
-
+  const {login} = useAuth();
   const handleLogin = (data: FormData) => {
-    if (data.email === 'eurisko@gmail.com' && data.password === 'academy2025')
+    if (data.email === 'eurisko@gmail.com' && data.password === 'academy2025') {
+      login(data.email);
       navigation.replace('Verification');
-    else {
-      setValue('email','');
-      setValue('password','');
+    } else {
+      setValue('email', '');
+      setValue('password', '');
       setSubmittable(false);
     }
   };
   return (
-    <TouchableWithoutFeedback onPress={()=>Keyboard.dismiss()}>
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <View style={styles.field}>
           <Controller

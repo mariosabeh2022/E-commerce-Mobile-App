@@ -8,9 +8,10 @@ import VerificationScreen from './src/screens/verification/verification';
 import {ThemeProvider} from './src/styles/ThemeContext';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import { TouchableOpacity } from 'react-native';
+import {TouchableOpacity} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {style} from './src/styles/Icons';
+import {AuthProvider} from './src/contexts/authContext';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
@@ -26,7 +27,7 @@ function RootStack() {
         options={{
           headerRight: () => (
             <TouchableOpacity style={style.container}>
-              <Icon name="share" style={style.shareIcon}/>
+              <Icon name="share" style={style.shareIcon} />
             </TouchableOpacity>
           ),
         }}
@@ -36,11 +37,13 @@ function RootStack() {
 }
 function App(): React.JSX.Element {
   return (
-    <NavigationContainer>
-      <ThemeProvider>
-        <RootStack />
-      </ThemeProvider>
-    </NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
+        <ThemeProvider>
+          <RootStack />
+        </ThemeProvider>
+      </NavigationContainer>
+    </AuthProvider>
   );
 }
 
@@ -50,5 +53,5 @@ export type RootStackParamList = {
   Login: undefined;
   Products: undefined;
   Details: {id: string};
-  Verification: undefined
+  Verification: undefined;
 };
