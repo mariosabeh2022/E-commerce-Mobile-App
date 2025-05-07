@@ -1,15 +1,11 @@
 import React, {useState} from 'react';
 import {
   View,
-  Pressable,
   Text,
-  TouchableOpacity,
+  Pressable,
   Keyboard,
-  TextInput,
   TouchableWithoutFeedback,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import {Dimensions} from 'react-native';
 import {schema} from '../../utils/loginFormValidation';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
@@ -19,9 +15,17 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
 import {useAuth} from '../../contexts/authContext';
 import {styles} from '../../styles/formStyles';
+import CustomTitle from '../../components/atoms/customTitle/customTitle';
+import CustomButton from '../../components/atoms/customButton/customButton';
+import CustomView from '../../components/molecules/customView/customView';
+import CustomLink from '../../components/atoms/customLink/customLink';
+import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
+import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
+import CustomInput from '../../components/atoms/customInput/customInput';
+import CustomContainer from '../../components/organismes/customContainer/customContainer';
 
+import Eye from '../../components/atoms/eye/eye';
 const LoginScreen = () => {
-  const {width, height} = Dimensions.get('window');
   const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [visiblePassword, setVisiblePassword] = useState(true);
@@ -44,7 +48,10 @@ const LoginScreen = () => {
   const {login} = useAuth();
 
   const handleLogin = (data: FormData) => {
-    if (data.email.toLocaleLowerCase() === 'eurisko@gmail.com' && data.password === 'academy2025') {
+    if (
+      data.email.toLocaleLowerCase() === 'eurisko@gmail.com' &&
+      data.password === 'academy2025'
+    ) {
       login(data.email);
       navigation.replace('Verification');
     } else {
@@ -55,79 +62,64 @@ const LoginScreen = () => {
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Good To See You Again</Text>
-        <View style={styles.form}>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="email"
-              render={({field: {value, onChange}}) => (
-                <TextInput
-                  placeholder="Email"
-                  placeholderTextColor="grey"
-                  style={styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
+      <CustomContainer>
+        <>
+          <CustomTitle text="Good To See You Again" />
+          <View style={styles.form}>
+            <CustomView>
+              <Controller
+                control={control}
+                name="email"
+                render={({field: {value, onChange}}) => (
+                  <CustomInput
+                    placeholder="Email"
+                    placeholderColor="grey"
+                    value={value}
+                    onChangeText={onChange}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                )}
+              />
+            </CustomView>
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({field: {value, onChange}}) => (
+                    <CustomInput
+                      placeholder="Password"
+                      placeholderColor="grey"
+                      value={value}
+                      onChangeText={onChange}
+                      keyboardType="default"
+                      secureEntry={visiblePassword}
+                    />
+                  )}
                 />
-              )}
-            />
+                <CustomTouchable onPress={toggleVisibility}>
+                  <Eye type={visiblePassword ? 'eye' : 'eye-slash'} />
+                </CustomTouchable>
+                {!submittable && (
+                  <CustomErrorMessage message="Email Or Password Incorrect" />
+                )}
+              </>
+            </CustomView>
+            <CustomView>
+              <Pressable onPress={handleSubmit(handleLogin)}>
+                <CustomButton text="Login" />
+              </Pressable>
+            </CustomView>
           </View>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="password"
-              render={({field: {value, onChange}}) => (
-                <TextInput
-                  placeholder="Password"
-                  placeholderTextColor="grey"
-                  style={styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  autoCapitalize="none"
-                  secureTextEntry={visiblePassword}
-                />
-              )}
-            />
-            <TouchableOpacity
-              onPress={toggleVisibility}
-              style={{
-                position: 'absolute',
-                right: width / 3.75,
-                top: height / 40,
-                transform: [{translateY: -15}],
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {visiblePassword ? (
-                <Icon name="eye" solid size={20} color="#000" />
-              ) : (
-                <Icon name="eye-slash" solid size={20} color="#000" />
-              )}
-            </TouchableOpacity>
-            {!submittable && (
-              <Text style={{color: 'red', marginTop: 5}}>
-                Email Or Password Incorrect
-              </Text>
-            )}
-          </View>
-          <View style={styles.field}>
-            <Pressable onPress={handleSubmit(handleLogin)}>
-              <Text style={styles.button}>Login</Text>
+          <View style={styles.linkContainer}>
+            <Text>Don't have an account? </Text>
+            <Pressable onPress={() => navigation.replace('SignUp')}>
+              <CustomLink text="Login" />
             </Pressable>
           </View>
-        </View>
-        <View style={styles.linkContainer}>
-          <Text>Don't have an account? </Text>
-          <Pressable onPress={() => navigation.replace('SignUp')}>
-            <Text style={styles.link}>Sign Up</Text>
-          </Pressable>
-        </View>
-      </View>
+        </>
+      </CustomContainer>
     </TouchableWithoutFeedback>
   );
 };

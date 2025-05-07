@@ -4,15 +4,11 @@ import {
   View,
   Pressable,
   Text,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
 // import {ThemeContext} from '../../styles/ThemeContext';
 import {styles} from '../../styles/formStyles';
-import {TextInput} from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome5';
-import {Dimensions} from 'react-native';
 import {schema} from '../../utils/signUpFormValidation';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
@@ -20,9 +16,17 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
+import CustomInput from '../../components/atoms/customInput/customInput';
+import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
+import CustomTitle from '../../components/atoms/customTitle/customTitle';
+import CustomView from '../../components/molecules/customView/customView';
+import CustomLink from '../../components/atoms/customLink/customLink';
+import CustomButton from '../../components/atoms/customButton/customButton';
+import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
+import Eye from '../../components/atoms/eye/eye';
+import CustomContainer from '../../components/organismes/customContainer/customContainer';
 const SignUpScreen = () => {
   //   const theme = useContext(ThemeContext)!;
-  const {width, height} = Dimensions.get('window');
   //   const {toggleTheme} = theme;
   type SignUpScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -55,119 +59,109 @@ const SignUpScreen = () => {
 
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.title}>Welcome Dear Customer</Text>
-        <View style={styles.form}>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="name"
-              render={({field: {value, onChange}}) => (
-                <TextInput
-                  placeholder="Name"
-                  placeholderTextColor="grey"
-                  style={styles.input}
-                  value={value}
-                  onChangeText={onChange}
+      <CustomContainer>
+        <>
+          <CustomTitle text="Welcome Dear Customer" />
+          <View style={styles.form}>
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="name"
+                  render={({field: {value, onChange}}) => (
+                    <CustomInput
+                      placeholder="Name"
+                      placeholderColor="grey"
+                      value={value}
+                      onChangeText={onChange}
+                    />
+                  )}
                 />
-              )}
-            />
-            {errors.name && (
-              <Text style={{color: 'red'}}>{errors.name?.message}</Text>
-            )}
-          </View>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="email"
-              render={({field: {value, onChange}}) => (
-                <TextInput
-                  placeholder="Email"
-                  placeholderTextColor="grey"
-                  style={styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
+                {errors.name && (
+                  <CustomErrorMessage message={errors.name?.message} />
+                )}
+              </>
+            </CustomView>
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({field: {value, onChange}}) => (
+                    <CustomInput
+                      placeholder="Email"
+                      placeholderColor="grey"
+                      value={value}
+                      onChangeText={onChange}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                  )}
                 />
-              )}
-            />
-            {errors.email && (
-              <Text style={{color: 'red'}}>{errors.email.message}</Text>
-            )}
-          </View>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="password"
-              render={({field: {value, onChange}}) => (
-                <TextInput
-                  placeholder="Password"
-                  placeholderTextColor="grey"
-                  style={styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  autoCapitalize="none"
-                  secureTextEntry={visiblePassword}
+                {errors.email && (
+                  <CustomErrorMessage message={errors.email?.message} />
+                )}
+              </>
+            </CustomView>
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="password"
+                  render={({field: {value, onChange}}) => (
+                    <CustomInput
+                      placeholder="Password"
+                      placeholderColor="grey"
+                      value={value}
+                      onChangeText={onChange}
+                      keyboardType="default"
+                      secureEntry={visiblePassword}
+                    />
+                  )}
                 />
-              )}
-            />
-            <TouchableOpacity
-              onPress={toggleVisibility}
-              style={{
-                position: 'absolute',
-                right: width / 3.75,
-                top: height / 40,
-                transform: [{translateY: -15}],
-                width: 30,
-                height: 30,
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}>
-              {visiblePassword ? (
-                <Icon name="eye" solid size={20} color="#000" />
-              ) : (
-                <Icon name="eye-slash" solid size={20} color="#000" />
-              )}
-            </TouchableOpacity>
-            {errors.password && (
-              <Text style={{color: 'red', marginTop: 5}}>
-                {errors.password.message}
-              </Text>
-            )}
-          </View>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="number"
-              render={({field: {value, onChange}}) => (
-                <TextInput
-                  placeholder="Number"
-                  placeholderTextColor="grey"
-                  style={styles.input}
-                  value={value}
-                  onChangeText={onChange}
-                  keyboardType="numeric"
+                <CustomTouchable onPress={toggleVisibility}>
+                  <Eye type={visiblePassword ? 'eye' : 'eye-slash'} />
+                </CustomTouchable>
+                {errors.password && (
+                  <CustomErrorMessage message={errors.password?.message} />
+                )}
+              </>
+            </CustomView>
+
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="number"
+                  render={({field: {value, onChange}}) => (
+                    <CustomInput
+                      placeholder="Number: xx-xxxxxx"
+                      placeholderColor="grey"
+                      value={value}
+                      onChangeText={onChange}
+                      keyboardType="numeric"
+                    />
+                  )}
                 />
-              )}
-            />
-            {errors.number && (
-              <Text style={{color: 'red'}}>{errors.number.message}</Text>
-            )}
+                {errors.number && (
+                  <CustomErrorMessage message={errors.number?.message} />
+                )}
+              </>
+            </CustomView>
+            <CustomView>
+              <Pressable onPress={handleSubmit(onSubmit)}>
+                <CustomButton text="SignUp" />
+              </Pressable>
+            </CustomView>
           </View>
-          <View style={styles.field}>
-            <Pressable onPress={handleSubmit(onSubmit)}>
-              <Text style={styles.button}>Sign Up</Text>
+          <View style={styles.linkContainer}>
+            <Text>Already have an account? </Text>
+            <Pressable onPress={() => navigation.replace('Login')}>
+              <CustomLink text="Login" />
             </Pressable>
           </View>
-        </View>
-        <View style={styles.linkContainer}>
-          <Text>Already have an account? </Text>
-          <Pressable onPress={() => navigation.replace('Login')}>
-            <Text style={styles.link}>Login</Text>
-          </Pressable>
-        </View>
-      </View>
+        </>
+      </CustomContainer>
     </TouchableWithoutFeedback>
   );
 };

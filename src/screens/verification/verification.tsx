@@ -17,7 +17,10 @@ import {schema} from '../../utils/verificationValidation';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
-
+import CustomView from '../../components/molecules/customView/customView';
+import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
+import CustomButton from '../../components/atoms/customButton/customButton';
+import CustomContainer from '../../components/organismes/customContainer/customContainer';
 const VerificationScreen = () => {
   //   const theme = useContext(ThemeContext)!;
   //   const {toggleTheme} = theme;
@@ -46,28 +49,32 @@ const VerificationScreen = () => {
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={styles.container}>
-        <Text style={styles.message}>We Have Sent The Code To Your Mail</Text>
-        <View style={styles.form}>
-          <View style={styles.field}>
-            <Controller
-              control={control}
-              name="verificationCode"
-              render={({field: {value, onChange}}) => (
-                <FourDigitInput value={value} onChange={onChange} />
-              )}
-            />
+      <CustomContainer>
+        <>
+          <Text style={styles.message}>We Have Sent The Code To Your Mail</Text>
+          <View style={styles.form}>
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="verificationCode"
+                  render={({field: {value, onChange}}) => (
+                    <FourDigitInput value={value} onChange={onChange} />
+                  )}
+                />
+                {!submittable && (
+                  <CustomErrorMessage message="Incorrect Verification Code" />
+                )}
+              </>
+            </CustomView>
+            <CustomView>
+              <Pressable onPress={handleSubmit(handleVerify)}>
+                <CustomButton text="Verify" />
+              </Pressable>
+            </CustomView>
           </View>
-          {!submittable && (
-            <Text style={styles.errorMsg}>Incorrect Verification Code</Text>
-          )}
-          <View style={styles.field}>
-            <Pressable onPress={handleSubmit(handleVerify)}>
-              <Text style={styles.button}>Verify</Text>
-            </Pressable>
-          </View>
-        </View>
-      </View>
+        </>
+      </CustomContainer>
     </TouchableWithoutFeedback>
   );
 };

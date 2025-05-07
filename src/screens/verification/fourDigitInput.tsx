@@ -8,13 +8,19 @@ import {
 import {TextInput} from 'react-native';
 const CELL_COUNT = 4;
 
-const FourDigitInput = ({value,onChange}:{value:string,onChange:(val:string)=>void}) => {
+const FourDigitInput = ({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (val: string) => void;
+}) => {
   //Blurs input field when the digits are filled
   const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
   //Alternates focues on cells when needed
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
-    setValue:onChange,
+    setValue: onChange,
   });
 
   return (
@@ -31,7 +37,7 @@ const FourDigitInput = ({value,onChange}:{value:string,onChange:(val:string)=>vo
         <TextInput
           key={index}
           style={[styles.cell, isFocused && styles.focusCell]}
-          value={symbol}
+          value={symbol || (isFocused ? '|' : ' ')}
           onLayout={getCellOnLayoutHandler(index)}
         />
       )}
@@ -47,7 +53,7 @@ const styles = StyleSheet.create({
   },
   cell: {
     width: 40,
-    margin:3,
+    margin: 3,
     height: 50,
     lineHeight: 20,
     fontSize: 25,

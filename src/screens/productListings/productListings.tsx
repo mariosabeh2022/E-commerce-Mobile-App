@@ -33,7 +33,7 @@ const ProductListingsScreen = () => {
   return (
     <View style={styles.flatlistContainer}>
       <View style={styles.header}>
-      <Text style={styles.title}>Available Items</Text>
+        <Text style={styles.title}>Available Items</Text>
       </View>
       <FlatList
         data={data}
