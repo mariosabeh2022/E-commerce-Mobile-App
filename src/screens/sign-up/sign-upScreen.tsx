@@ -9,7 +9,7 @@ import {
   Keyboard,
 } from 'react-native';
 // import {ThemeContext} from '../../styles/ThemeContext';
-import {styles} from './sign-upScreen.style';
+import {styles} from '../../styles/formStyles';
 import {TextInput} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Dimensions} from 'react-native';
@@ -57,107 +57,109 @@ const SignUpScreen = () => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <Text style={styles.title}>Welcome Dear Customer</Text>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="name"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Name"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-              />
+        <View style={styles.form}>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="name"
+              render={({field: {value, onChange}}) => (
+                <TextInput
+                  placeholder="Name"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                />
+              )}
+            />
+            {errors.name && (
+              <Text style={{color: 'red'}}>{errors.name?.message}</Text>
             )}
-          />
-          {errors.name && (
-            <Text style={{color: 'red'}}>{errors.name?.message}</Text>
-          )}
-        </View>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="email"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Email"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+          </View>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="email"
+              render={({field: {value, onChange}}) => (
+                <TextInput
+                  placeholder="Email"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              )}
+            />
+            {errors.email && (
+              <Text style={{color: 'red'}}>{errors.email.message}</Text>
             )}
-          />
-          {errors.email && (
-            <Text style={{color: 'red'}}>{errors.email.message}</Text>
-          )}
-        </View>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="password"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Password"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                autoCapitalize="none"
-                secureTextEntry={visiblePassword}
-              />
+          </View>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="password"
+              render={({field: {value, onChange}}) => (
+                <TextInput
+                  placeholder="Password"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  autoCapitalize="none"
+                  secureTextEntry={visiblePassword}
+                />
+              )}
+            />
+            <TouchableOpacity
+              onPress={toggleVisibility}
+              style={{
+                position: 'absolute',
+                right: width / 3.75,
+                top: height / 40,
+                transform: [{translateY: -15}],
+                width: 30,
+                height: 30,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {visiblePassword ? (
+                <Icon name="eye" solid size={20} color="#000" />
+              ) : (
+                <Icon name="eye-slash" solid size={20} color="#000" />
+              )}
+            </TouchableOpacity>
+            {errors.password && (
+              <Text style={{color: 'red', marginTop: 5}}>
+                {errors.password.message}
+              </Text>
             )}
-          />
-          <TouchableOpacity
-            onPress={toggleVisibility}
-            style={{
-              position: 'absolute',
-              right: width / 3.75,
-              top: height / 40,
-              transform: [{translateY: -15}],
-              width: 30,
-              height: 30,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            {visiblePassword ? (
-              <Icon name="eye" solid size={20} color="#000" />
-            ) : (
-              <Icon name="eye-slash" solid size={20} color="#000" />
+          </View>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="number"
+              render={({field: {value, onChange}}) => (
+                <TextInput
+                  placeholder="Number"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  keyboardType="numeric"
+                />
+              )}
+            />
+            {errors.number && (
+              <Text style={{color: 'red'}}>{errors.number.message}</Text>
             )}
-          </TouchableOpacity>
-          {errors.password && (
-            <Text style={{color: 'red', marginTop: 5}}>
-              {errors.password.message}
-            </Text>
-          )}
-        </View>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="number"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Number"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                keyboardType="numeric"
-              />
-            )}
-          />
-          {errors.number && (
-            <Text style={{color: 'red'}}>{errors.number.message}</Text>
-          )}
-        </View>
-        <View style={styles.field}>
-          <Pressable onPress={handleSubmit(onSubmit)}>
-            <Text style={styles.button}>Sign Up</Text>
-          </Pressable>
+          </View>
+          <View style={styles.field}>
+            <Pressable onPress={handleSubmit(onSubmit)}>
+              <Text style={styles.button}>Sign Up</Text>
+            </Pressable>
+          </View>
         </View>
         <View style={styles.linkContainer}>
           <Text>Already have an account? </Text>

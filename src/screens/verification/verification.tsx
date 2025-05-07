@@ -4,12 +4,12 @@ import {
   View,
   Pressable,
   Text,
-  TextInput,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
+import FourDigitInput from './fourDigitInput';
 // import {ThemeContext} from '../../styles/ThemeContext';
-import {styles} from './verification.style';
+import {styles} from '../../styles/formStyles';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -47,28 +47,26 @@ const VerificationScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="verificationCode"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Verification Code"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                keyboardType="number-pad"
-              />
-            )}
-          />
+        <Text style={styles.message}>We Have Sent The Code To Your Mail</Text>
+        <View style={styles.form}>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="verificationCode"
+              render={({field: {value, onChange}}) => (
+                <FourDigitInput value={value} onChange={onChange} />
+              )}
+            />
+          </View>
+          {!submittable && (
+            <Text style={styles.errorMsg}>Incorrect Verification Code</Text>
+          )}
+          <View style={styles.field}>
+            <Pressable onPress={handleSubmit(handleVerify)}>
+              <Text style={styles.button}>Verify</Text>
+            </Pressable>
+          </View>
         </View>
-        {!submittable && (
-          <Text style={{color: 'red'}}>Incorrect Verification Code</Text>
-        )}
-        <Pressable onPress={handleSubmit(handleVerify)}>
-          <Text style={styles.button}>Verify</Text>
-        </Pressable>
       </View>
     </TouchableWithoutFeedback>
   );

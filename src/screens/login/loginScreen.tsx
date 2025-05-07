@@ -18,7 +18,7 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
 import {useAuth} from '../../contexts/authContext';
-import {styles} from './loginScreen.style';
+import {styles} from '../../styles/formStyles';
 
 const LoginScreen = () => {
   const {width, height} = Dimensions.get('window');
@@ -44,7 +44,7 @@ const LoginScreen = () => {
   const {login} = useAuth();
 
   const handleLogin = (data: FormData) => {
-    if (data.email === 'eurisko@gmail.com' && data.password === 'academy2025') {
+    if (data.email.toLocaleLowerCase() === 'eurisko@gmail.com' && data.password === 'academy2025') {
       login(data.email);
       navigation.replace('Verification');
     } else {
@@ -57,68 +57,70 @@ const LoginScreen = () => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
         <Text style={styles.title}>Good To See You Again</Text>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="email"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Email"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
+        <View style={styles.form}>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="email"
+              render={({field: {value, onChange}}) => (
+                <TextInput
+                  placeholder="Email"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              )}
+            />
+          </View>
+          <View style={styles.field}>
+            <Controller
+              control={control}
+              name="password"
+              render={({field: {value, onChange}}) => (
+                <TextInput
+                  placeholder="Password"
+                  placeholderTextColor="grey"
+                  style={styles.input}
+                  value={value}
+                  onChangeText={onChange}
+                  autoCapitalize="none"
+                  secureTextEntry={visiblePassword}
+                />
+              )}
+            />
+            <TouchableOpacity
+              onPress={toggleVisibility}
+              style={{
+                position: 'absolute',
+                right: width / 3.75,
+                top: height / 40,
+                transform: [{translateY: -15}],
+                width: 30,
+                height: 30,
+                justifyContent: 'center',
+                alignItems: 'center',
+              }}>
+              {visiblePassword ? (
+                <Icon name="eye" solid size={20} color="#000" />
+              ) : (
+                <Icon name="eye-slash" solid size={20} color="#000" />
+              )}
+            </TouchableOpacity>
+            {!submittable && (
+              <Text style={{color: 'red', marginTop: 5}}>
+                Email Or Password Incorrect
+              </Text>
             )}
-          />
+          </View>
+          <View style={styles.field}>
+            <Pressable onPress={handleSubmit(handleLogin)}>
+              <Text style={styles.button}>Login</Text>
+            </Pressable>
+          </View>
         </View>
-        <View style={styles.field}>
-          <Controller
-            control={control}
-            name="password"
-            render={({field: {value, onChange}}) => (
-              <TextInput
-                placeholder="Password"
-                placeholderTextColor="grey"
-                style={styles.input}
-                value={value}
-                onChangeText={onChange}
-                autoCapitalize="none"
-                secureTextEntry={visiblePassword}
-              />
-            )}
-          />
-          <TouchableOpacity
-            onPress={toggleVisibility}
-            style={{
-              position: 'absolute',
-              right: width / 3.75,
-              top: height / 40,
-              transform: [{translateY: -15}],
-              width: 30,
-              height: 30,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            {visiblePassword ? (
-              <Icon name="eye" solid size={20} color="#000" />
-            ) : (
-              <Icon name="eye-slash" solid size={20} color="#000" />
-            )}
-          </TouchableOpacity>
-          {!submittable && (
-            <Text style={{color: 'red', marginTop: 5}}>
-              Email Or Password Incorrect
-            </Text>
-          )}
-        </View>
-
-        <Pressable onPress={handleSubmit(handleLogin)}>
-          <Text style={styles.button}>Login</Text>
-        </Pressable>
-
         <View style={styles.linkContainer}>
           <Text>Don't have an account? </Text>
           <Pressable onPress={() => navigation.replace('SignUp')}>
