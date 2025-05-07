@@ -16,9 +16,13 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   title: {
-    fontSize: 25,
+    fontSize: 40,
+    fontWeight: 'bold',
+    color: 'green',
     paddingBottom: 4,
-    textDecorationLine: 'underline',
+    borderBottomWidth: 4,
+    borderColor: 'green',
+    borderStyle: 'dotted',
   },
   image: {
     width: 135,
@@ -31,11 +35,23 @@ export const styles = StyleSheet.create({
     borderRadius: 20,
   },
   item: {
-    color: 'white',
+    color: 'green',
+    fontSize: 15,
+    fontWeight: 'bold',
   },
   price: {
-    fontSize: 25,
+    fontSize: 15,
+    fontWeight: 'semibold',
     color: 'white',
     paddingTop: 8,
+  },
+  flatlistContainer: {
+    margin: 3,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  renderItemContainer: {
+    margin: 3,
   },
 });

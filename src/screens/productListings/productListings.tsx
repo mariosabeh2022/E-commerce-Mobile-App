@@ -12,7 +12,7 @@ const ProductListingsScreen = () => {
   >;
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
-    <View style={{margin: 3}}>
+    <View style={styles.renderItemContainer}>
       <TouchableOpacity
         onPress={() =>
           navigation.navigate('Details', {id: item._id.toString()})
@@ -34,13 +34,8 @@ const ProductListingsScreen = () => {
   );
 
   return (
-    <View
-      style={{
-        margin: 3,
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-      }}>
+    <View style={styles.flatlistContainer}>
+      <Text style={styles.title}>Available Items</Text>
       <FlatList
         data={data}
         keyExtractor={item => item._id.toString()}
