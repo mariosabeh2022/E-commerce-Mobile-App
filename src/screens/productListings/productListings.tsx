@@ -18,9 +18,6 @@ const ProductListingsScreen = () => {
           navigation.navigate('Details', {id: item._id.toString()})
         }>
         <View style={styles.container}>
-          {/* <View>
-            <Text style={styles.title}>{'Item ' + Number(item._id)}:</Text>
-          </View> */}
           <View style={styles.innerContainer}>
             <Image source={{uri: item.images[0].url}} style={styles.image} />
             <View style={styles.info}>
@@ -35,7 +32,9 @@ const ProductListingsScreen = () => {
 
   return (
     <View style={styles.flatlistContainer}>
+      <View style={styles.header}>
       <Text style={styles.title}>Available Items</Text>
+      </View>
       <FlatList
         data={data}
         keyExtractor={item => item._id.toString()}

@@ -1,5 +1,8 @@
 import {StyleSheet} from 'react-native';
 export const styles = StyleSheet.create({
+  header:{
+    height:'10%',
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
