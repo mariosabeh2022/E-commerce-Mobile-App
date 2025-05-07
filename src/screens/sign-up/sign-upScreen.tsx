@@ -31,7 +31,7 @@ const SignUpScreen = () => {
 
   const navigation = useNavigation<SignUpScreenNavigationProp>();
   const [visiblePassword, setVisiblePassword] = useState(true);
-  const toggleVisibility = () => setVisiblePassword(perv => !perv);
+  const toggleVisibility = () => setVisiblePassword(prev => !prev);
   type FormData = z.infer<typeof schema>;
 
   const {
@@ -56,6 +56,7 @@ const SignUpScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
+        <Text style={styles.title}>Welcome Dear Customer</Text>
         <View style={styles.field}>
           <Controller
             control={control}
@@ -156,6 +157,12 @@ const SignUpScreen = () => {
         <View style={styles.field}>
           <Pressable onPress={handleSubmit(onSubmit)}>
             <Text style={styles.button}>Sign Up</Text>
+          </Pressable>
+        </View>
+        <View style={styles.linkContainer}>
+          <Text>Already have an account? </Text>
+          <Pressable onPress={() => navigation.replace('Login')}>
+            <Text style={styles.link}>Login</Text>
           </Pressable>
         </View>
       </View>

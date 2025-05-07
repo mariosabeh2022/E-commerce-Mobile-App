@@ -1,9 +1,13 @@
 import React, {useState} from 'react';
-// import { useContext } from 'react';
-import {View, Pressable, Text, TouchableOpacity, Keyboard} from 'react-native';
-// import {ThemeContext} from '../../styles/ThemeContext';
-import {styles} from './loginScreen.style';
-import {TextInput, TouchableWithoutFeedback} from 'react-native';
+import {
+  View,
+  Pressable,
+  Text,
+  TouchableOpacity,
+  Keyboard,
+  TextInput,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {Dimensions} from 'react-native';
 import {schema} from '../../utils/loginFormValidation';
@@ -14,22 +18,19 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
 import {useAuth} from '../../contexts/authContext';
+import {styles} from './loginScreen.style';
 
 const LoginScreen = () => {
   const {width, height} = Dimensions.get('window');
   const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  //   const theme = useContext(ThemeContext)!;
-
-  //   const {toggleTheme} = theme;
-
   const [visiblePassword, setVisiblePassword] = useState(true);
-  const toggleVisibility = () => setVisiblePassword(perv => !perv);
+  const toggleVisibility = () => setVisiblePassword(prev => !prev);
 
   type FormData = z.infer<typeof schema>;
   type LoginScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
-    'SignUp'
+    'Login'
   >;
 
   const {control, handleSubmit, setValue} = useForm<FormData>({
@@ -39,7 +40,9 @@ const LoginScreen = () => {
       password: '',
     },
   });
+
   const {login} = useAuth();
+
   const handleLogin = (data: FormData) => {
     if (data.email === 'eurisko@gmail.com' && data.password === 'academy2025') {
       login(data.email);
@@ -53,6 +56,7 @@ const LoginScreen = () => {
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <View style={styles.container}>
+        <Text style={styles.title}>Good To See You Again</Text>
         <View style={styles.field}>
           <Controller
             control={control}
@@ -110,11 +114,20 @@ const LoginScreen = () => {
             </Text>
           )}
         </View>
+
         <Pressable onPress={handleSubmit(handleLogin)}>
           <Text style={styles.button}>Login</Text>
         </Pressable>
+
+        <View style={styles.linkContainer}>
+          <Text>Don't have an account? </Text>
+          <Pressable onPress={() => navigation.replace('SignUp')}>
+            <Text style={styles.link}>Sign Up</Text>
+          </Pressable>
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
 };
+
 export default LoginScreen;

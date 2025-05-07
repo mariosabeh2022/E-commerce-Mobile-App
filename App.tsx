@@ -16,7 +16,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Products">
+    <Stack.Navigator initialRouteName="SignUp">
       <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerTitleAlign:'center'}}/>
       <Stack.Screen name="Login" component={LoginScreen} options={{headerTitleAlign:'center'}}/>
       <Stack.Screen name="Verification" component={VerificationScreen} options={{headerTitleAlign:'center'}}/>
