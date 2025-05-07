@@ -44,7 +44,7 @@ export const styles = StyleSheet.create({
   buttonContainer: {
     marginTop:'25%',
     alignItems: 'center',
-    backgroundColor: 'green',
+    backgroundColor: '#3251d0',
     borderRadius: 8,
     height: width / 8,
     justifyContent:'center',

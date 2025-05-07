@@ -1,4 +1,3 @@
-// styles/ThemeContext.js
 import React, { createContext, useState, ReactNode } from 'react';
 type Theme = {
     isDarkTheme: boolean;

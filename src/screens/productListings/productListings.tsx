@@ -1,37 +1,31 @@
 import React from 'react';
-import {
-  View,
-  Text,
-  FlatList,
-  Image,
-  TouchableOpacity,
-} from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
 import {data} from '../../assets/Products.json';
 import {styles} from './productListings.style';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
 const ProductListingsScreen = () => {
-type ProductScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Products'
->;
+  type ProductScreenNavigationProp = NativeStackNavigationProp<
+    RootStackParamList,
+    'Products'
+  >;
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
     <View style={{margin: 3}}>
-      <TouchableOpacity onPress={() => navigation.navigate('Details', { id: item._id.toString() })}>
+      <TouchableOpacity
+        onPress={() =>
+          navigation.navigate('Details', {id: item._id.toString()})
+        }>
         <View style={styles.container}>
-          <View>
+          {/* <View>
             <Text style={styles.title}>{'Item ' + Number(item._id)}:</Text>
-          </View>
+          </View> */}
           <View style={styles.innerContainer}>
-            <Image
-              source={{uri: item.images[0].url}}
-              style={styles.image}
-            />
+            <Image source={{uri: item.images[0].url}} style={styles.image} />
             <View style={styles.info}>
-              <Text style={styles.item}>Name: {item.title}</Text>
-              <Text style={styles.item}>Price: {item.price}$</Text>
+              <Text style={styles.item}>{item.title}</Text>
+              <Text style={styles.price}>{item.price}$</Text>
             </View>
           </View>
         </View>
@@ -40,7 +34,13 @@ type ProductScreenNavigationProp = NativeStackNavigationProp<
   );
 
   return (
-    <View style={{margin: 5, borderWidth: 3}}>
+    <View
+      style={{
+        margin: 3,
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+      }}>
       <FlatList
         data={data}
         keyExtractor={item => item._id.toString()}
