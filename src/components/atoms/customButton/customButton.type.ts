@@ -1,3 +1,3 @@
-export type CustomButtomProps={
-    text:string
+export interface CustomButtomProps {
+  text: string;
 }

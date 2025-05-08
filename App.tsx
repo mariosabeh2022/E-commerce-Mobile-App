@@ -5,6 +5,7 @@ import SignUpScreen from './src/screens/sign-up/sign-upScreen';
 import ProductsScreen from './src/screens/productListings/productListings';
 import DetailsScreen from './src/screens/detailsScreen/detailsScreen';
 import VerificationScreen from './src/screens/verification/verification';
+import HomeScreen from './src/screens/home/homeScreen';
 import {
   DarkTheme,
   DefaultTheme,
@@ -18,7 +19,12 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Products">
+    <Stack.Navigator initialRouteName="Home">
+      <Stack.Screen
+        name="Home"
+        component={HomeScreen}
+        options={{headerTitleAlign: 'center'}}
+      />
       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
@@ -68,6 +74,7 @@ function App(): React.JSX.Element {
 
 export default App;
 export type RootStackParamList = {
+  Home: undefined;
   SignUp: undefined;
   Login: undefined;
   Products: undefined;

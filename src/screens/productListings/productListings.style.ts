@@ -16,21 +16,21 @@ const baseFooterComponent: ViewStyle & TextStyle = {
 export const styles = StyleSheet.create({
   headerComponent: {
     ...baseHeaderComponent,
-    color: 'green',
-    borderColor: 'green',
+    color: '#00ff40',
+    borderColor: '#00ff40',
   },
   darkHeaderComponent: {
     ...baseHeaderComponent,
-    color: 'darkgreen',
-    borderColor: 'darkgreen',
+    color: '#318544',
+    borderColor: '#318544',
   },
   footerComponent: {
     ...baseFooterComponent,
-    color: 'green',
+    color: '#00ff40',
   },
   darkFooterComponent: {
     ...baseFooterComponent,
-    color: 'darkgreen',
+    color: '#318544',
   },
   flatlistContainer: {
     alignItems: 'center',

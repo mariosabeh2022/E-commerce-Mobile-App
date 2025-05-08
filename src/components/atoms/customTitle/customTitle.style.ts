@@ -6,10 +6,10 @@ const baseTitle: TextStyle = {
 export const styles = StyleSheet.create({
   title: {
     ...baseTitle,
-    color: 'green',
+    color: '#00ff40',
   },
   darkTitle: {
     ...baseTitle,
-    color: 'darkgreen',
+    color: '#318544',
   },
 });

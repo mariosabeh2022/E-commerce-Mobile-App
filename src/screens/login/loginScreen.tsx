@@ -49,7 +49,7 @@ const LoginScreen = () => {
 
   const handleLogin = (data: FormData) => {
     if (
-      data.email.toLocaleLowerCase() === 'eurisko@gmail.com' &&
+      data.email.trim().toLocaleLowerCase() === 'eurisko@gmail.com' &&
       data.password === 'academy2025'
     ) {
       login(data.email);
@@ -113,7 +113,7 @@ const LoginScreen = () => {
           <View style={styles.linkContainer}>
             <Text>Don't have an account? </Text>
             <Pressable onPress={() => navigation.replace('SignUp')}>
-              <CustomLink text="Login" />
+              <CustomLink text="SignUp" />
             </Pressable>
           </View>
         </>

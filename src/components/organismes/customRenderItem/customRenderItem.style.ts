@@ -40,11 +40,11 @@ export const styles = StyleSheet.create({
   },
   item: {
     ...baseItem,
-    color: 'green',
+    color: '#00ff40',
   },
   darkItem: {
     ...baseItem,
-    color: 'darkgreen',
+    color: '#318544',
   },
   price: {
     ...basePrice,

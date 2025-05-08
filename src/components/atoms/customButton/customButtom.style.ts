@@ -1,17 +1,26 @@
-import {StyleSheet, ViewStyle} from 'react-native';
-const baseButton: ViewStyle = {
-  padding: '5%',
-  borderRadius: 50,
+import {StyleSheet, ViewStyle, Dimensions} from 'react-native';
+
+const {width} = Dimensions.get('window');
+
+const baseButtonContainer: ViewStyle = {
+  width: width / 2.1,
+  height: width / 8.5,
+  alignItems: 'center',
+  borderRadius: 40,
+  justifyContent: 'center',
 };
 export const styles = StyleSheet.create({
-  button: {
-    ...baseButton,
+  buttonContainer: {
+    ...baseButtonContainer,
     color: 'white',
-    backgroundColor: 'green',
   },
-  darkButton: {
-    ...baseButton,
+  darkButtonContainer: {
+    ...baseButtonContainer,
     color: 'darkgray',
-    backgroundColor: 'darkgreen',
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });
