@@ -11,15 +11,14 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {useColorScheme} from 'react-native';
-import CustomIcon from './src/components/atoms/customIcon/customIcon';
+import {Text, TouchableOpacity, useColorScheme} from 'react-native';
 import {AuthProvider} from './src/contexts/authContext';
-import CustomTouchable from './src/components/molecules/customTouchable/customTouchable';
+import CustomShare from './src/components/atoms/customShare/customShare';
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="SignUp">
+    <Stack.Navigator initialRouteName="Products">
       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
@@ -45,9 +44,11 @@ function RootStack() {
         component={DetailsScreen}
         options={{
           headerRight: () => (
-            <CustomTouchable onPress={() => {}}>
-              <CustomIcon type="share" />
-            </CustomTouchable>
+            <TouchableOpacity>
+              <Text>
+                <CustomShare type="share" />,
+              </Text>
+            </TouchableOpacity>
           ),
         }}
       />

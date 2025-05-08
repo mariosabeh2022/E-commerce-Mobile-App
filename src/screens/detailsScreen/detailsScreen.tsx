@@ -1,6 +1,12 @@
 import React from 'react';
 import {styles} from './detailsScreen.style';
-import {Image, Text, View, TouchableOpacity} from 'react-native';
+import {
+  Image,
+  Text,
+  View,
+  TouchableOpacity,
+  useColorScheme,
+} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
 import {RootStackParamList} from '../../../App';
@@ -14,10 +20,10 @@ const DetailsScreen = ({route}: Props) => {
   const fetchedData = data.find(
     item => item._id.toString() === route.params.id,
   );
-
+  const theme = useColorScheme();
   return (
     <>
-      <View style={styles.container}>
+      <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
         <View style={styles.innerContainer}>
           <Image
             source={{uri: fetchedData?.images[0].url}}
@@ -25,13 +31,26 @@ const DetailsScreen = ({route}: Props) => {
           />
         </View>
         <View style={styles.infos}>
-          <Text style={styles.title}>{fetchedData?.title}</Text>
-          <Text style={styles.title}>About</Text>
+          <Text style={theme === 'dark' ? styles.darkTitle : styles.title}>
+            {fetchedData?.title}
+          </Text>
+          <Text style={theme === 'dark' ? styles.darkTitle : styles.title}>
+            About
+          </Text>
           <Text style={styles.desc}>{fetchedData?.description}</Text>
-          <Text style={styles.price}>Price: {fetchedData?.price}$</Text>
+          <Text style={theme === 'dark' ? styles.darkPrice : styles.price}>
+            Price: {fetchedData?.price}$
+          </Text>
         </View>
-        <TouchableOpacity style={styles.buttonContainer}>
-          <Text style={styles.button}>Add To Cart</Text>
+        <TouchableOpacity
+          style={
+            theme === 'dark'
+              ? styles.darkButtonContainer
+              : styles.buttonContainer
+          }>
+          <Text style={theme === 'dark' ? styles.darkButton : styles.button}>
+            Add To Cart
+          </Text>
         </TouchableOpacity>
       </View>
     </>

@@ -1,13 +1,37 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {Dimensions} from 'react-native';
 const {width} = Dimensions.get('window');
+const baseContainer: ViewStyle = {
+  flex: 1,
+  flexDirection: 'column',
+  marginBottom: 5,
+  padding: 10,
+  borderStyle: 'solid',
+};
+const baseButtonContainer: ViewStyle = {
+  marginTop: '25%',
+  alignItems: 'center',
+  borderRadius: 8,
+  height: width / 8,
+  justifyContent: 'center',
+};
+const baseTitle: TextStyle = {
+  fontSize: 25,
+  paddingBottom: 4,
+  textDecorationLine: 'underline',
+};
+const basePrice: TextStyle = {
+  fontSize: 25,
+  textDecorationLine: 'underline',
+};
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    marginBottom: 5,
-    padding: 10,
-    borderStyle: 'solid',
+    ...baseContainer,
+    backgroundColor: 'white',
+  },
+  darkContainer: {
+    ...baseContainer,
+    backgroundColor: 'gray',
   },
   innerContainer: {
     position: 'absolute',
@@ -25,13 +49,20 @@ export const styles = StyleSheet.create({
     margin: 5,
   },
   price: {
-    fontSize: 25,
-    textDecorationLine: 'underline',
+    ...basePrice,
+    color: 'black',
+  },
+  darkPrice: {
+    ...basePrice,
+    color: 'darkgray',
   },
   title: {
-    fontSize: 25,
-    paddingBottom: 4,
-    textDecorationLine: 'underline',
+    ...baseTitle,
+    color: 'black',
+  },
+  darkTitle: {
+    ...baseTitle,
+    color: 'darkgray',
   },
   image: {
     width: '100%',
@@ -42,14 +73,21 @@ export const styles = StyleSheet.create({
     borderBottomRightRadius: width / 1.5,
   },
   buttonContainer: {
-    marginTop:'25%',
+    marginTop: '25%',
     alignItems: 'center',
     backgroundColor: 'green',
     borderRadius: 8,
     height: width / 8,
-    justifyContent:'center',
+    justifyContent: 'center',
+  },
+  darkButtonContainer: {
+    ...baseButtonContainer,
+    backgroundColor: 'green',
   },
   button: {
     color: 'white',
+  },
+  darkButton: {
+    color: 'darkgray',
   },
 });
