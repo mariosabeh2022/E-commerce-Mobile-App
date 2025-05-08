@@ -1,4 +1,9 @@
 import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
+const baseSkeletonComponent: ViewStyle = {
+  height: 60,
+  marginVertical: 8,
+  borderRadius: 8,
+};
 const baseHeaderComponent: ViewStyle & TextStyle = {
   fontSize: 40,
   fontWeight: 'bold',
@@ -14,6 +19,14 @@ const baseFooterComponent: ViewStyle & TextStyle = {
   textAlign: 'center',
 };
 export const styles = StyleSheet.create({
+  skeletonItem: {
+    ...baseSkeletonComponent,
+    backgroundColor: '#ccc',
+  },
+  darkSkeletonItem: {
+    ...baseSkeletonComponent,
+    backgroundColor: '#ccc',
+  },
   headerComponent: {
     ...baseHeaderComponent,
     color: '#00ff40',

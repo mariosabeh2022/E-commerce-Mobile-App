@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,12 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
+type ProductScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Products'
+>;
 const ProductListingsScreen = () => {
-  type ProductScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'Products'
-  >;
+  const [isLoading, setIsLoading] = useState(true);
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
     <View>
@@ -30,17 +31,31 @@ const ProductListingsScreen = () => {
     </View>
   );
   const theme = useColorScheme();
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => clearTimeout(timeout);
+  }, []);
+  const renderSkeletonItem = () => (
+    <View
+      style={theme === 'dark' ? styles.darkSkeletonItem : styles.skeletonItem}
+    />
+  );
   return (
     <CustomContainer>
       <FlatList
         data={data}
         keyExtractor={item => item._id.toString()}
-        renderItem={renderItem}
+        renderItem={isLoading ? renderSkeletonItem : renderItem}
         ListEmptyComponent={<Text>No products found.</Text>}
         ListHeaderComponent={
           <Text
             style={
-              theme === 'dark' ? styles.darkHeaderComponent : styles.headerComponent
+              theme === 'dark'
+                ? styles.darkHeaderComponent
+                : styles.headerComponent
             }>
             Available Items
           </Text>
@@ -48,7 +63,9 @@ const ProductListingsScreen = () => {
         ListFooterComponent={
           <Text
             style={
-              theme === 'dark' ? styles.darkFooterComponent : styles.footerComponent
+              theme === 'dark'
+                ? styles.darkFooterComponent
+                : styles.footerComponent
             }>
             ---------------
           </Text>

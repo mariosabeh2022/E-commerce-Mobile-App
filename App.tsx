@@ -52,7 +52,7 @@ function RootStack() {
           headerRight: () => (
             <TouchableOpacity>
               <Text>
-                <CustomShare type="share" />,
+                <CustomShare type="share" />
               </Text>
             </TouchableOpacity>
           ),

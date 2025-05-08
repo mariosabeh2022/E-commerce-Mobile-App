@@ -6,6 +6,8 @@ import {
   Text,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
+  useColorScheme,
 } from 'react-native';
 import FourDigitInput from './fourDigitInput';
 // import {ThemeContext} from '../../styles/ThemeContext';
@@ -21,15 +23,17 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
+type verificationScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Verification'
+>;
 const VerificationScreen = () => {
   //   const theme = useContext(ThemeContext)!;
   //   const {toggleTheme} = theme;
+  const theme = useColorScheme();
+  const [isLoading, setIsLoading] = useState(false);
   type FormData = z.infer<typeof schema>;
 
-  type verificationScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'Verification'
-  >;
   const navigation = useNavigation<verificationScreenNavigationProp>();
   const {control, handleSubmit, setValue} = useForm<FormData>({
     resolver: zodResolver(schema),
@@ -41,11 +45,16 @@ const VerificationScreen = () => {
   const [submittable, setSubmittable] = useState(true);
 
   const handleVerify = (data: FormData) => {
-    if (data.verificationCode === '1234') navigation.replace('Products');
-    else {
-      setValue('verificationCode', '');
-      setSubmittable(false);
-    }
+    setIsLoading(true);
+    const timeout = setTimeout(() => {
+      if (data.verificationCode === '1234') navigation.replace('Products');
+      else {
+        setValue('verificationCode', '');
+        setSubmittable(false);
+      }
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timeout);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -68,9 +77,16 @@ const VerificationScreen = () => {
               </>
             </CustomView>
             <CustomView>
-              <Pressable onPress={handleSubmit(handleVerify)}>
-                <CustomButton text="Verify" />
-              </Pressable>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                />
+              ) : (
+                <Pressable onPress={handleSubmit(handleVerify)}>
+                  <CustomButton text="Verify" />
+                </Pressable>
+              )}
             </CustomView>
           </View>
         </>

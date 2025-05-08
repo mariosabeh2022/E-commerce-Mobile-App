@@ -12,7 +12,7 @@ const baseButtonContainer: ViewStyle = {
 const baseContainer: ViewStyle = {
   flex: 1,
   alignItems: 'center',
-  paddingTop: '65%',
+  paddingTop: '10%',
 };
 export const styles = StyleSheet.create({
   container: {

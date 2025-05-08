@@ -5,6 +5,8 @@ import {
   Text,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
+  useColorScheme,
 } from 'react-native';
 import {styles} from '../../styles/formStyles';
 import {schema} from '../../utils/signUpFormValidation';
@@ -23,12 +25,13 @@ import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
+type SignUpScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'SignUp'
+>;
 const SignUpScreen = () => {
-  type SignUpScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'SignUp'
-  >;
-
+  const theme = useColorScheme();
+  const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<SignUpScreenNavigationProp>();
   const [visiblePassword, setVisiblePassword] = useState(true);
   const toggleVisibility = () => setVisiblePassword(prev => !prev);
@@ -49,8 +52,13 @@ const SignUpScreen = () => {
   });
 
   const onSubmit = (data: FormData) => {
-    console.log('Submitted:', data);
-    navigation.replace('Login');
+    setIsLoading(true);
+    const timeout = setTimeout(() => {
+      console.log('Submitted:', data);
+      navigation.replace('Login');
+      setIsLoading(false);
+    }, 800);
+    return () => clearTimeout(timeout);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -140,9 +148,16 @@ const SignUpScreen = () => {
               </>
             </CustomView>
             <CustomView>
-              <Pressable onPress={handleSubmit(onSubmit)}>
-                <CustomButton text="SignUp" />
-              </Pressable>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                />
+              ) : (
+                <Pressable onPress={handleSubmit(onSubmit)}>
+                  <CustomButton text="SignUp" />
+                </Pressable>
+              )}
             </CustomView>
           </View>
           <View style={styles.linkContainer}>

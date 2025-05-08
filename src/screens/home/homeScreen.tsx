@@ -13,46 +13,50 @@ import {RootStackParamList} from '../../../App';
 import {styles} from './homeScreen.style';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import LinearGradient from 'react-native-linear-gradient';
-
+// import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
+type LoginScreenNavigationProp = NativeStackNavigationProp<
+  RootStackParamList,
+  'Login',
+  'SignUp'
+>;
 const HomenScreen = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
-  type LoginScreenNavigationProp = NativeStackNavigationProp<
-    RootStackParamList,
-    'Login',
-    'SignUp'
-  >;
   const theme = useColorScheme();
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
-        <>
-          <CustomTitle text="Welcome ! " />
-          <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+        {/* <View style={{flex: 1}}>
+          <WavyHeader />
+        </View> */}
+        <View
+          style={theme === 'dark' ? styles.darkContainer : styles.container}>
+          <>
+            <CustomTitle text="Welcome ! " />
+            <TouchableOpacity onPress={() => navigation.replace('SignUp')}>
+              <LinearGradient
+                colors={['#00ff40', '#318555', '#223a66']}
+                start={{x: 0, y: 0}}
+                end={{x: 1, y: 0}}
+                style={
+                  theme === 'dark'
+                    ? styles.darkButtonContainer
+                    : styles.buttonContainer
+                }>
+                <Text style={styles.gradientText}>Create Account</Text>
+              </LinearGradient>
+            </TouchableOpacity>
             <LinearGradient
               colors={['#00ff40', '#318555', '#223a66']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
-              style={
-                theme === 'dark'
-                  ? styles.darkButtonContainer
-                  : styles.buttonContainer
-              }>
-              <Text style={styles.gradientText}>Create Account</Text>
+              style={styles.gradientBorder}>
+              <TouchableOpacity
+                onPress={() => navigation.replace('Login')}
+                style={styles.innerButton}>
+                <Text style={styles.gradientText}>Login</Text>
+              </TouchableOpacity>
             </LinearGradient>
-          </TouchableOpacity>
-          <LinearGradient
-            colors={['#00ff40', '#318555', '#223a66']}
-            start={{x: 0, y: 0}}
-            end={{x: 1, y: 0}}
-            style={styles.gradientBorder}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('Login')}
-              style={styles.innerButton}>
-              <Text style={styles.gradientText}>Login</Text>
-            </TouchableOpacity>
-          </LinearGradient>
-        </>
-      </View>
+          </>
+        </View>
     </TouchableWithoutFeedback>
   );
 };

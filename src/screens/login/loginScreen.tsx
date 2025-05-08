@@ -5,6 +5,8 @@ import {
   Pressable,
   Keyboard,
   TouchableWithoutFeedback,
+  useColorScheme,
+  ActivityIndicator,
 } from 'react-native';
 import {schema} from '../../utils/loginFormValidation';
 import {z} from 'zod';
@@ -26,6 +28,8 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 const LoginScreen = () => {
+  const theme = useColorScheme();
+  const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [visiblePassword, setVisiblePassword] = useState(true);
@@ -48,17 +52,21 @@ const LoginScreen = () => {
   const {login} = useAuth();
 
   const handleLogin = (data: FormData) => {
-    if (
-      data.email.trim().toLocaleLowerCase() === 'eurisko@gmail.com' &&
-      data.password === 'academy2025'
-    ) {
-      login(data.email);
-      navigation.replace('Verification');
-    } else {
-      setValue('email', '');
-      setValue('password', '');
-      setSubmittable(false);
-    }
+    setIsLoading(true);
+    const timeout = setTimeout(() => {
+      if (
+        data.email.trim().toLocaleLowerCase() === 'eurisko@gmail.com' &&
+        data.password === 'academy2025'
+      ) {
+        login(data.email);
+        navigation.replace('Verification');
+      } else {
+        setValue('email', '');
+        setValue('password', '');
+        setSubmittable(false);
+      }
+    }, 800);
+    return () => clearTimeout(timeout);
   };
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
@@ -105,9 +113,16 @@ const LoginScreen = () => {
               </>
             </CustomView>
             <CustomView>
-              <Pressable onPress={handleSubmit(handleLogin)}>
-                <CustomButton text="Login" />
-              </Pressable>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                />
+              ) : (
+                <Pressable onPress={handleSubmit(handleLogin)}>
+                  <CustomButton text="Login" />
+                </Pressable>
+              )}
             </CustomView>
           </View>
           <View style={styles.linkContainer}>

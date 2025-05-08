@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useRef, useEffect} from 'react';
 import {styles} from './detailsScreen.style';
 import {
-  Image,
+  Animated,
   Text,
   View,
   TouchableOpacity,
@@ -21,13 +21,26 @@ const DetailsScreen = ({route}: Props) => {
     item => item._id.toString() === route.params.id,
   );
   const theme = useColorScheme();
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const fadeIn = () => {
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 2500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  useEffect(() => {
+    fadeIn();
+  }, []);
   return (
     <>
       <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
         <View style={styles.innerContainer}>
-          <Image
+          <Animated.Image
             source={{uri: fetchedData?.images[0].url}}
-            style={styles.image}
+            style={[styles.image, { opacity: fadeAnim }]}
           />
         </View>
         <View style={styles.infos}>
