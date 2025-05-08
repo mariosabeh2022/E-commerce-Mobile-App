@@ -1,60 +1,38 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
+const baseHeaderComponent: ViewStyle & TextStyle = {
+  fontSize: 40,
+  fontWeight: 'bold',
+  paddingBottom: 4,
+  borderBottomWidth: 4,
+  borderStyle: 'dotted',
+  textAlign: 'center',
+};
+const baseFooterComponent: ViewStyle & TextStyle = {
+  fontSize: 40,
+  fontWeight: 'bold',
+  paddingBottom: 4,
+  textAlign: 'center',
+};
 export const styles = StyleSheet.create({
-  header:{
-    height:'10%',
-  },
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    marginBottom: 5,
-    borderWidth: 1,
-    backgroundColor: 'gray',
-    borderColor: 'gray',
-    borderRadius: 20,
-    padding: 10,
-    borderStyle: 'solid',
-  },
-  innerContainer: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  title: {
-    fontSize: 40,
-    fontWeight: 'bold',
+  headerComponent: {
+    ...baseHeaderComponent,
     color: 'green',
-    paddingBottom: 4,
-    borderBottomWidth: 4,
     borderColor: 'green',
-    borderStyle: 'dotted',
   },
-  image: {
-    width: 135,
-    height: 135,
-    marginRight: 10,
-    resizeMode: 'contain',
+  darkHeaderComponent: {
+    ...baseHeaderComponent,
+    color: 'darkgreen',
+    borderColor: 'darkgreen',
   },
-  info: {
-    padding: 9,
-    borderRadius: 20,
-  },
-  item: {
+  footerComponent: {
+    ...baseFooterComponent,
     color: 'green',
-    fontSize: 15,
-    fontWeight: 'bold',
   },
-  price: {
-    fontSize: 15,
-    fontWeight: 'semibold',
-    color: 'white',
-    paddingTop: 8,
+  darkFooterComponent: {
+    ...baseFooterComponent,
+    color: 'darkgreen',
   },
   flatlistContainer: {
-    margin: 3,
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  renderItemContainer: {
-    margin: 3,
   },
 });

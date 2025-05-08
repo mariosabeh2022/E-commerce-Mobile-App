@@ -19,7 +19,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="SignUp">
+    <Stack.Navigator initialRouteName="Products">
       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
@@ -59,7 +59,7 @@ function App(): React.JSX.Element {
   return (
     <AuthProvider>
       <NavigationContainer theme={theme === 'dark' ? DarkTheme : DefaultTheme}>
-          <RootStack />
+        <RootStack />
       </NavigationContainer>
     </AuthProvider>
   );

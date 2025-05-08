@@ -1,10 +1,18 @@
 import React from 'react';
-import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  useColorScheme,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {data} from '../../assets/Products.json';
 import {styles} from './productListings.style';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {RootStackParamList} from '../../../App';
+import CustomContainer from '../../components/organismes/customContainer/customContainer';
+import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
 const ProductListingsScreen = () => {
   type ProductScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
@@ -12,36 +20,41 @@ const ProductListingsScreen = () => {
   >;
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
-    <View style={styles.renderItemContainer}>
+    <View>
       <TouchableOpacity
         onPress={() =>
           navigation.navigate('Details', {id: item._id.toString()})
         }>
-        <View style={styles.container}>
-          <View style={styles.innerContainer}>
-            <Image source={{uri: item.images[0].url}} style={styles.image} />
-            <View style={styles.info}>
-              <Text style={styles.item}>{item.title}</Text>
-              <Text style={styles.price}>{item.price}$</Text>
-            </View>
-          </View>
-        </View>
+        <CustomRenderItem item={item} />
       </TouchableOpacity>
     </View>
   );
-
+  const theme = useColorScheme();
   return (
-    <View style={styles.flatlistContainer}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Available Items</Text>
-      </View>
+    <CustomContainer>
       <FlatList
         data={data}
         keyExtractor={item => item._id.toString()}
         renderItem={renderItem}
         ListEmptyComponent={<Text>No products found.</Text>}
+        ListHeaderComponent={
+          <Text
+            style={
+              theme === 'dark' ? styles.darkHeaderComponent : styles.headerComponent
+            }>
+            Available Items
+          </Text>
+        }
+        ListFooterComponent={
+          <Text
+            style={
+              theme === 'dark' ? styles.darkFooterComponent : styles.footerComponent
+            }>
+            ---------------
+          </Text>
+        }
       />
-    </View>
+    </CustomContainer>
   );
 };
 export default ProductListingsScreen;
