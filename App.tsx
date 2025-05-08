@@ -19,7 +19,7 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function RootStack() {
   return (
-    <Stack.Navigator initialRouteName="Products">
+    <Stack.Navigator initialRouteName="SignUp">
       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
