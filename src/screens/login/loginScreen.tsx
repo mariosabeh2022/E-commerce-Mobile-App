@@ -64,6 +64,7 @@ const LoginScreen = () => {
         setValue('email', '');
         setValue('password', '');
         setSubmittable(false);
+        setIsLoading(false);
       }
     }, 800);
     return () => clearTimeout(timeout);
