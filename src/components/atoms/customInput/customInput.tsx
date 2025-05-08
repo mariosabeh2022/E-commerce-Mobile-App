@@ -1,20 +1,23 @@
-import {TextInput} from 'react-native';
+import {TextInput, useColorScheme} from 'react-native';
 import {styles} from './customInput.style';
-import {customInputProps} from './custonInput.type';
+import {customInputProps} from './customInput.type';
+import {placeholderColors} from './customInput.style';
 const CustomInput = ({
   placeholder,
-  placeholderColor,
   autoCapitalize = 'none',
   secureEntry = false,
   value,
   onChangeText,
   keyboardType,
 }: customInputProps) => {
+  const theme = useColorScheme();
   return (
     <TextInput
       placeholder={placeholder}
-      placeholderTextColor={placeholderColor}
-      style={styles.input}
+      placeholderTextColor={
+        theme === 'dark' ? placeholderColors.dark : placeholderColors.light
+      }
+      style={theme === 'dark' ? styles.darkInput : styles.input}
       autoCapitalize={autoCapitalize}
       secureTextEntry={secureEntry}
       value={value}

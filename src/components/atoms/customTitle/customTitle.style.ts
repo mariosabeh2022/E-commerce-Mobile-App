@@ -1,9 +1,15 @@
-import {StyleSheet} from 'react-native';
-
+import {StyleSheet, TextStyle} from 'react-native';
+const baseTitle: TextStyle = {
+  paddingTop: '10%',
+  fontSize: 30,
+};
 export const styles = StyleSheet.create({
   title: {
-    paddingTop: '10%',
-    fontSize: 30,
+    ...baseTitle,
     color: 'green',
+  },
+  darkTitle: {
+    ...baseTitle,
+    color: 'darkgreen',
   },
 });

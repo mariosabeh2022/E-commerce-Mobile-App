@@ -1,9 +1,15 @@
-import {StyleSheet} from 'react-native';
-
+import {StyleSheet, ViewStyle} from 'react-native';
+const baseContainer: ViewStyle = {
+  flex: 1,
+  alignItems: 'center',
+};
 export const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: 'lightgray',
+    ...baseContainer,
+    backgroundColor: 'white',
+  },
+  darkContainer: {
+    ...baseContainer,
+    backgroundColor: 'gray',
   },
 });

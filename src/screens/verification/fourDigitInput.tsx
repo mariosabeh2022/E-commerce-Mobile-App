@@ -1,11 +1,11 @@
 import React from 'react';
-import {StyleSheet} from 'react-native';
+import {styles} from './fourDigitInput.style';
 import {
   CodeField,
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {TextInput} from 'react-native';
+import {TextInput, useColorScheme} from 'react-native';
 const CELL_COUNT = 4;
 
 const FourDigitInput = ({
@@ -22,7 +22,7 @@ const FourDigitInput = ({
     value,
     setValue: onChange,
   });
-
+  const theme = useColorScheme();
   return (
     <CodeField
       ref={ref}
@@ -36,7 +36,10 @@ const FourDigitInput = ({
       renderCell={({index, symbol, isFocused}) => (
         <TextInput
           key={index}
-          style={[styles.cell, isFocused && styles.focusCell]}
+          style={[
+            theme === 'dark' ? styles.darkCell : styles.cell,
+            isFocused && styles.focusCell,
+          ]}
           value={symbol || (isFocused ? '|' : ' ')}
           onLayout={getCellOnLayoutHandler(index)}
         />
@@ -44,27 +47,5 @@ const FourDigitInput = ({
     />
   );
 };
-
-const styles = StyleSheet.create({
-  codeFieldRoot: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  cell: {
-    width: 40,
-    margin: 3,
-    height: 50,
-    lineHeight: 20,
-    fontSize: 25,
-    borderWidth: 2,
-    borderColor: 'gray',
-    textAlign: 'center',
-    borderRadius: 8,
-  },
-  focusCell: {
-    borderColor: 'black',
-  },
-});
 
 export default FourDigitInput;

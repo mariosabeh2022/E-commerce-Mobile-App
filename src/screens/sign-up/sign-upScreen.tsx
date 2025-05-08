@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-// import { useContext } from 'react';
 import {
   View,
   Pressable,
@@ -7,7 +6,6 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-// import {ThemeContext} from '../../styles/ThemeContext';
 import {styles} from '../../styles/formStyles';
 import {schema} from '../../utils/signUpFormValidation';
 import {z} from 'zod';
@@ -23,11 +21,9 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomLink from '../../components/atoms/customLink/customLink';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
-import Eye from '../../components/atoms/eye/eye';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 const SignUpScreen = () => {
-  //   const theme = useContext(ThemeContext)!;
-  //   const {toggleTheme} = theme;
   type SignUpScreenNavigationProp = NativeStackNavigationProp<
     RootStackParamList,
     'SignUp'
@@ -56,7 +52,6 @@ const SignUpScreen = () => {
     console.log('Submitted:', data);
     navigation.replace('Login');
   };
-
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <CustomContainer>
@@ -71,7 +66,6 @@ const SignUpScreen = () => {
                   render={({field: {value, onChange}}) => (
                     <CustomInput
                       placeholder="Name"
-                      placeholderColor="grey"
                       value={value}
                       onChangeText={onChange}
                     />
@@ -90,7 +84,6 @@ const SignUpScreen = () => {
                   render={({field: {value, onChange}}) => (
                     <CustomInput
                       placeholder="Email"
-                      placeholderColor="grey"
                       value={value}
                       onChangeText={onChange}
                       keyboardType="email-address"
@@ -111,7 +104,6 @@ const SignUpScreen = () => {
                   render={({field: {value, onChange}}) => (
                     <CustomInput
                       placeholder="Password"
-                      placeholderColor="grey"
                       value={value}
                       onChangeText={onChange}
                       keyboardType="default"
@@ -120,7 +112,7 @@ const SignUpScreen = () => {
                   )}
                 />
                 <CustomTouchable onPress={toggleVisibility}>
-                  <Eye type={visiblePassword ? 'eye' : 'eye-slash'} />
+                  <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
                 </CustomTouchable>
                 {errors.password && (
                   <CustomErrorMessage message={errors.password?.message} />
@@ -136,7 +128,6 @@ const SignUpScreen = () => {
                   render={({field: {value, onChange}}) => (
                     <CustomInput
                       placeholder="Number: xx-xxxxxx"
-                      placeholderColor="grey"
                       value={value}
                       onChangeText={onChange}
                       keyboardType="numeric"

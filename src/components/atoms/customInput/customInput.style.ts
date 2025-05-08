@@ -1,12 +1,26 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+const baseInput: ViewStyle&TextStyle = {
+  width: '50%',
+  borderWidth: 1,
+  borderRadius: 50,
+  padding: 10,
+};
 
 export const styles = StyleSheet.create({
   input: {
-    width: '50%',
-    color: 'black',
-    borderColor: 'black',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
+    ...baseInput,
+    backgroundColor: 'lightgray',
+    borderColor: 'lightgray',
+    color:'gray',
+  },
+  darkInput: {
+    ...baseInput,
+    backgroundColor: 'darkgray',
+    borderColor: 'darkgray',
+    color:'black',
   },
 });
+export const placeholderColors = {
+  light: 'gray',
+  dark: 'black',
+};

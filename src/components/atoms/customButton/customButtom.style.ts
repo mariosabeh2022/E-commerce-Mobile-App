@@ -1,11 +1,17 @@
-import {StyleSheet} from 'react-native';
-
+import {StyleSheet, ViewStyle} from 'react-native';
+const baseButton: ViewStyle = {
+  padding: '5%',
+  borderRadius: 50,
+};
 export const styles = StyleSheet.create({
   button: {
+    ...baseButton,
     color: 'white',
-    width: '25%',
     backgroundColor: 'green',
-    padding: '5%',
-    borderRadius: 10,
+  },
+  darkButton: {
+    ...baseButton,
+    color: 'darkgray',
+    backgroundColor: 'darkgreen',
   },
 });

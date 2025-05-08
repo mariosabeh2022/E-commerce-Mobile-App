@@ -24,7 +24,7 @@ import CustomTouchable from '../../components/molecules/customTouchable/customTo
 import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 
-import Eye from '../../components/atoms/eye/eye';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
 const LoginScreen = () => {
   const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -73,7 +73,6 @@ const LoginScreen = () => {
                 render={({field: {value, onChange}}) => (
                   <CustomInput
                     placeholder="Email"
-                    placeholderColor="grey"
                     value={value}
                     onChangeText={onChange}
                     keyboardType="email-address"
@@ -90,7 +89,6 @@ const LoginScreen = () => {
                   render={({field: {value, onChange}}) => (
                     <CustomInput
                       placeholder="Password"
-                      placeholderColor="grey"
                       value={value}
                       onChangeText={onChange}
                       keyboardType="default"
@@ -99,7 +97,7 @@ const LoginScreen = () => {
                   )}
                 />
                 <CustomTouchable onPress={toggleVisibility}>
-                  <Eye type={visiblePassword ? 'eye' : 'eye-slash'} />
+                  <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
                 </CustomTouchable>
                 {!submittable && (
                   <CustomErrorMessage message="Email Or Password Incorrect" />
