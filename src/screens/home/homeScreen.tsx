@@ -2,10 +2,10 @@ import React from 'react';
 import {
   Text,
   Keyboard,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   useColorScheme,
   View,
+  Pressable,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -31,7 +31,7 @@ const HomenScreen = () => {
           style={theme === 'dark' ? styles.darkContainer : styles.container}>
           <>
             <CustomTitle text="Welcome ! " />
-            <TouchableOpacity onPress={() => navigation.replace('SignUp')}>
+            <Pressable onPress={() => navigation.replace('SignUp')}>
               <LinearGradient
                 colors={['#00ff40', '#318555', '#223a66']}
                 start={{x: 0, y: 0}}
@@ -43,17 +43,17 @@ const HomenScreen = () => {
                 }>
                 <Text style={styles.gradientText}>Create Account</Text>
               </LinearGradient>
-            </TouchableOpacity>
+            </Pressable>
             <LinearGradient
               colors={['#00ff40', '#318555', '#223a66']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
               style={styles.gradientBorder}>
-              <TouchableOpacity
+              <Pressable
                 onPress={() => navigation.replace('Login')}
                 style={styles.innerButton}>
                 <Text style={styles.gradientText}>Login</Text>
-              </TouchableOpacity>
+              </Pressable>
             </LinearGradient>
           </>
         </View>

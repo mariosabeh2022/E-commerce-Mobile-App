@@ -12,7 +12,7 @@ import {
   NavigationContainer,
 } from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Text, TouchableOpacity, useColorScheme} from 'react-native';
+import {Pressable, Text, useColorScheme} from 'react-native';
 import {AuthProvider} from './src/contexts/authContext';
 import CustomShare from './src/components/atoms/customShare/customShare';
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -50,11 +50,11 @@ function RootStack() {
         component={DetailsScreen}
         options={{
           headerRight: () => (
-            <TouchableOpacity>
+            <Pressable>
               <Text>
                 <CustomShare type="share" />
               </Text>
-            </TouchableOpacity>
+            </Pressable>
           ),
         }}
       />

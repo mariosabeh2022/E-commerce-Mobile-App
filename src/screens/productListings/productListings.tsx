@@ -3,7 +3,7 @@ import {
   View,
   Text,
   FlatList,
-  TouchableOpacity,
+  Pressable,
   useColorScheme,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
@@ -22,12 +22,12 @@ const ProductListingsScreen = () => {
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
     <View>
-      <TouchableOpacity
+      <Pressable
         onPress={() =>
           navigation.navigate('Details', {id: item._id.toString()})
         }>
         <CustomRenderItem item={item} />
-      </TouchableOpacity>
+      </Pressable>
     </View>
   );
   const theme = useColorScheme();

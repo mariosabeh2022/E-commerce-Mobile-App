@@ -2,9 +2,9 @@ import React, {useRef, useEffect} from 'react';
 import {styles} from './detailsScreen.style';
 import {
   Animated,
+  Pressable,
   Text,
   View,
-  TouchableOpacity,
   useColorScheme,
 } from 'react-native';
 import {data} from '../../assets/Products.json';
@@ -33,7 +33,7 @@ const DetailsScreen = ({route}: Props) => {
 
   useEffect(() => {
     fadeIn();
-  }, []);
+  });
   return (
     <>
       <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
@@ -55,7 +55,7 @@ const DetailsScreen = ({route}: Props) => {
             Price: {fetchedData?.price}$
           </Text>
         </View>
-        <TouchableOpacity
+        <Pressable
           style={
             theme === 'dark'
               ? styles.darkButtonContainer
@@ -64,7 +64,7 @@ const DetailsScreen = ({route}: Props) => {
           <Text style={theme === 'dark' ? styles.darkButton : styles.button}>
             Add To Cart
           </Text>
-        </TouchableOpacity>
+        </Pressable>
       </View>
     </>
   );
