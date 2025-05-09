@@ -20,7 +20,7 @@ export const styles = StyleSheet.create({
   },
   buttonText: {
     color: '#fff',
-    fontWeight: 'bold',
+    fontFamily: 'Sansation-BoldItalic',
     fontSize: 16,
   },
 });

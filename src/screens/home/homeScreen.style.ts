@@ -45,7 +45,7 @@ export const styles = StyleSheet.create({
     borderRadius: 40,
   },
   gradientText: {
-    fontWeight: 'bold',
+    fontFamily: 'Sansation-BoldItalic',
     fontSize: 16,
     color: '#223a66',
   },

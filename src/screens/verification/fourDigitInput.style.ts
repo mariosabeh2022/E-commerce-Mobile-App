@@ -5,6 +5,7 @@ const baseInput: TextStyle = {
   height: 50,
   lineHeight: 20,
   fontSize: 25,
+  fontFamily: 'Sansation-BoldItalic',
   borderWidth: 2,
   borderRadius: 8,
   textAlign: 'center',

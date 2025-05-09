@@ -1,5 +1,6 @@
 import {StyleSheet, TextStyle} from 'react-native';
 const baseMessage: TextStyle = {
+  fontFamily: 'Sansation-BoldItalic',
   paddingTop: '10%',
   fontSize: 20,
 };

@@ -6,7 +6,7 @@ const baseSkeletonComponent: ViewStyle = {
 };
 const baseHeaderComponent: ViewStyle & TextStyle = {
   fontSize: 40,
-  fontWeight: 'bold',
+  fontFamily: 'Sansation-BoldItalic',
   paddingBottom: 4,
   borderBottomWidth: 4,
   borderStyle: 'dotted',
@@ -14,18 +14,17 @@ const baseHeaderComponent: ViewStyle & TextStyle = {
 };
 const baseFooterComponent: ViewStyle & TextStyle = {
   fontSize: 40,
-  fontWeight: 'bold',
   paddingBottom: 4,
   textAlign: 'center',
 };
 export const styles = StyleSheet.create({
   skeletonItem: {
     ...baseSkeletonComponent,
-    backgroundColor: '#ccc',
+    backgroundColor: 'gray',
   },
   darkSkeletonItem: {
     ...baseSkeletonComponent,
-    backgroundColor: '#ccc',
+    backgroundColor: 'lightgray',
   },
   headerComponent: {
     ...baseHeaderComponent,

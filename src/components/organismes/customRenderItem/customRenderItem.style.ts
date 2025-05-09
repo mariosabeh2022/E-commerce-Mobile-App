@@ -7,12 +7,12 @@ const baseContainer: ViewStyle = {
 const basePrice: ViewStyle & TextStyle = {
   fontSize: 15,
   paddingTop: 8,
-  fontWeight: 'semibold',
+  fontFamily: 'Sansation-BoldItalic',
 };
 const baseItem: ViewStyle & TextStyle = {
   fontSize: 15,
   paddingTop: 5,
-  fontWeight: 'bold',
+  fontFamily: 'Sansation-BoldItalic',
 };
 export const styles = StyleSheet.create({
   container: {
