@@ -55,7 +55,7 @@ const VerificationScreen = () => {
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <CustomContainer>
         <>
-          <Text style={styles.message}>We Have Sent The Code To Your Mail</Text>
+          <Text style={theme==='dark'?styles.darkMessage:styles.message}>We Have Sent The Code To Your Mail</Text>
           <View style={styles.form}>
             <KeyboardAvoidingView>
               <CustomView>

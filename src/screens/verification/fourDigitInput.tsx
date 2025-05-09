@@ -15,9 +15,7 @@ const FourDigitInput = ({
   value: string;
   onChange: (val: string) => void;
 }) => {
-  //Blurs input field when the digits are filled
   const ref = useBlurOnFulfill({value, cellCount: CELL_COUNT});
-  //Alternates focues on cells when needed
   const [props, getCellOnLayoutHandler] = useClearByFocusCell({
     value,
     setValue: onChange,

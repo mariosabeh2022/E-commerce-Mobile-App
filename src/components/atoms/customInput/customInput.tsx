@@ -17,7 +17,10 @@ const CustomInput = ({
       placeholderTextColor={
         theme === 'dark' ? placeholderColors.dark : placeholderColors.light
       }
-      style={theme === 'dark' ? styles.darkInput : styles.input}
+      style={[
+        theme === 'dark' ? styles.darkInput : styles.input,
+        keyboardType === 'default' && {paddingRight: 45},
+      ]}
       autoCapitalize={autoCapitalize}
       secureTextEntry={secureEntry}
       value={value}

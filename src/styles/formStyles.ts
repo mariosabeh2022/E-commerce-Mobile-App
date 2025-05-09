@@ -1,8 +1,15 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, TextStyle} from 'react-native';
+const baseMessage: TextStyle = {
+  paddingTop: '10%',
+  fontSize: 20,
+};
 export const styles = StyleSheet.create({
   message: {
-    paddingTop: '10%',
-    fontSize: 20,
+    ...baseMessage,
+    color: 'green',
+  },
+  darkMessage: {
+    ...baseMessage,
     color: 'green',
   },
   form: {
