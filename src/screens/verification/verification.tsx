@@ -10,29 +10,26 @@ import {
   KeyboardAvoidingView,
 } from 'react-native';
 import FourDigitInput from './fourDigitInput';
-// import {ThemeContext} from '../../styles/ThemeContext';
 import {styles} from '../../styles/formStyles';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {schema} from '../../utils/verificationValidation';
-import {useNavigation} from '@react-navigation/native';
-import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../App';
+
+import {useAuth} from '../../contexts/authContext';
 import CustomView from '../../components/molecules/customView/customView';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
-type verificationScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Verification'
->;
+
 const VerificationScreen = () => {
   const theme = useColorScheme();
   const [isLoading, setIsLoading] = useState(false);
+  const [submittable, setSubmittable] = useState(true);
+  const {verify} = useAuth();
+
   type FormData = z.infer<typeof schema>;
 
-  const navigation = useNavigation<verificationScreenNavigationProp>();
   const {control, handleSubmit, setValue} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -40,13 +37,12 @@ const VerificationScreen = () => {
     },
   });
 
-  const [submittable, setSubmittable] = useState(true);
-
   const handleVerify = (data: FormData) => {
     setIsLoading(true);
     const timeout = setTimeout(() => {
-      if (data.verificationCode === '1234') navigation.replace('Products');
-      else {
+      if (data.verificationCode === '1234') {
+        verify();
+      } else {
         setValue('verificationCode', '');
         setSubmittable(false);
       }
@@ -54,6 +50,7 @@ const VerificationScreen = () => {
     }, 800);
     return () => clearTimeout(timeout);
   };
+
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <CustomContainer>
@@ -94,4 +91,5 @@ const VerificationScreen = () => {
     </TouchableWithoutFeedback>
   );
 };
+
 export default VerificationScreen;

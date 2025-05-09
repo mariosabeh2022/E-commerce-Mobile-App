@@ -10,11 +10,11 @@ import {useNavigation} from '@react-navigation/native';
 import {data} from '../../assets/Products.json';
 import {styles} from './productListings.style';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../App';
+import { AuthenticatedStackParamList } from '../../navigation/navigator/navigationTypes';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
 type ProductScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
+  AuthenticatedStackParamList,
   'Products'
 >;
 const ProductListingsScreen = () => {

@@ -1,16 +1,10 @@
 import React, {useRef, useEffect} from 'react';
 import {styles} from './detailsScreen.style';
-import {
-  Animated,
-  Pressable,
-  Text,
-  View,
-  useColorScheme,
-} from 'react-native';
+import {Animated, Text, View, useColorScheme, Pressable} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
-import {RootStackParamList} from '../../../App';
-type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
+import {AuthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+type DetailsScreenRouteProp = RouteProp<AuthenticatedStackParamList, 'Details'>;
 
 type Props = {
   route: DetailsScreenRouteProp;
@@ -40,7 +34,7 @@ const DetailsScreen = ({route}: Props) => {
         <View style={styles.innerContainer}>
           <Animated.Image
             source={{uri: fetchedData?.images[0].url}}
-            style={[styles.image, { opacity: fadeAnim }]}
+            style={[styles.image, {opacity: fadeAnim}]}
           />
         </View>
         <View style={styles.infos}>

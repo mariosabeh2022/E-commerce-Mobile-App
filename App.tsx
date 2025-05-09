@@ -1,83 +1,13 @@
 import React from 'react';
-
-import LoginScreen from './src/screens/login/loginScreen';
-import SignUpScreen from './src/screens/sign-up/sign-upScreen';
-import ProductsScreen from './src/screens/productListings/productListings';
-import DetailsScreen from './src/screens/detailsScreen/detailsScreen';
-import VerificationScreen from './src/screens/verification/verification';
-import HomeScreen from './src/screens/home/homeScreen';
-import {
-  DarkTheme,
-  DefaultTheme,
-  NavigationContainer,
-} from '@react-navigation/native';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import {Pressable, Text, useColorScheme} from 'react-native';
 import {AuthProvider} from './src/contexts/authContext';
-import CustomShare from './src/components/atoms/customShare/customShare';
-const Stack = createNativeStackNavigator<RootStackParamList>();
+import RootNavigator from './src/navigation/navigator/rootNavigator';
 
-function RootStack() {
-  return (
-    <Stack.Navigator initialRouteName="Home">
-      <Stack.Screen
-        name="Home"
-        component={HomeScreen}
-        options={{headerTitleAlign: 'center'}}
-      />
-      <Stack.Screen
-        name="SignUp"
-        component={SignUpScreen}
-        options={{headerTitleAlign: 'center'}}
-      />
-      <Stack.Screen
-        name="Login"
-        component={LoginScreen}
-        options={{headerTitleAlign: 'center'}}
-      />
-      <Stack.Screen
-        name="Verification"
-        component={VerificationScreen}
-        options={{headerTitleAlign: 'center'}}
-      />
-      <Stack.Screen
-        name="Products"
-        component={ProductsScreen}
-        options={{headerTitleAlign: 'center'}}
-      />
-      <Stack.Screen
-        name="Details"
-        component={DetailsScreen}
-        options={{
-          headerRight: () => (
-            <Pressable>
-              <Text>
-                <CustomShare type="share" />
-              </Text>
-            </Pressable>
-          ),
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
 function App(): React.JSX.Element {
-  const theme = useColorScheme();
   return (
     <AuthProvider>
-      <NavigationContainer theme={theme === 'dark' ? DarkTheme : DefaultTheme}>
-        <RootStack />
-      </NavigationContainer>
+      <RootNavigator />
     </AuthProvider>
   );
 }
 
 export default App;
-export type RootStackParamList = {
-  Home: undefined;
-  SignUp: undefined;
-  Login: undefined;
-  Products: undefined;
-  Details: {id: string};
-  Verification: undefined;
-};

@@ -16,7 +16,6 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../App';
 import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
@@ -26,8 +25,10 @@ import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
+import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
+  UnauthenticatedStackParamList,
   'SignUp'
 >;
 const SignUpScreen = () => {
@@ -56,7 +57,7 @@ const SignUpScreen = () => {
     setIsLoading(true);
     const timeout = setTimeout(() => {
       console.log('Submitted:', data);
-      navigation.replace('Login');
+      navigation.navigate('Login');
       setIsLoading(false);
     }, 800);
     return () => clearTimeout(timeout);
@@ -165,7 +166,7 @@ const SignUpScreen = () => {
           </View>
           <View style={styles.linkContainer}>
             <Text>Already have an account? </Text>
-            <Pressable onPress={() => navigation.replace('Login')}>
+            <Pressable onPress={() => navigation.navigate('Login')}>
               <CustomLink text="Login" />
             </Pressable>
           </View>

@@ -9,54 +9,52 @@ import {
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {RootStackParamList} from '../../../App';
 import {styles} from './homeScreen.style';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import LinearGradient from 'react-native-linear-gradient';
-// import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-type LoginScreenNavigationProp = NativeStackNavigationProp<
-  RootStackParamList,
-  'Login',
-  'SignUp'
+import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+
+type HomeScreenNavigationProp = NativeStackNavigationProp<
+  UnauthenticatedStackParamList,
+  'Home'
 >;
 const HomenScreen = () => {
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const theme = useColorScheme();
   return (
     <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-        {/* <View style={{flex: 1}}>
+      {/* <View>
           <WavyHeader />
         </View> */}
-        <View
-          style={theme === 'dark' ? styles.darkContainer : styles.container}>
-          <>
-            <CustomTitle text="Welcome ! " />
-            <Pressable onPress={() => navigation.replace('SignUp')}>
-              <LinearGradient
-                colors={['#00ff40', '#318555', '#223a66']}
-                start={{x: 0, y: 0}}
-                end={{x: 1, y: 0}}
-                style={
-                  theme === 'dark'
-                    ? styles.darkButtonContainer
-                    : styles.buttonContainer
-                }>
-                <Text style={styles.gradientText}>Create Account</Text>
-              </LinearGradient>
-            </Pressable>
+      <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
+        <View>
+          <CustomTitle text="Welcome ! " />
+          <Pressable onPress={() => navigation.navigate('SignUp')}>
             <LinearGradient
               colors={['#00ff40', '#318555', '#223a66']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
-              style={styles.gradientBorder}>
-              <Pressable
-                onPress={() => navigation.replace('Login')}
-                style={styles.innerButton}>
-                <Text style={styles.gradientText}>Login</Text>
-              </Pressable>
+              style={
+                theme === 'dark'
+                  ? styles.darkButtonContainer
+                  : styles.buttonContainer
+              }>
+              <Text style={styles.gradientText}>Create Account</Text>
             </LinearGradient>
-          </>
+          </Pressable>
+          <LinearGradient
+            colors={['#00ff40', '#318555', '#223a66']}
+            start={{x: 0, y: 0}}
+            end={{x: 1, y: 0}}
+            style={styles.gradientBorder}>
+            <Pressable
+              onPress={() => navigation.navigate('Login')}
+              style={styles.innerButton}>
+              <Text style={styles.gradientText}>Login</Text>
+            </Pressable>
+          </LinearGradient>
         </View>
+      </View>
     </TouchableWithoutFeedback>
   );
 };
