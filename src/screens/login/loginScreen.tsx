@@ -7,6 +7,7 @@ import {
   TouchableWithoutFeedback,
   useColorScheme,
   ActivityIndicator,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {schema} from '../../utils/loginFormValidation';
 import {z} from 'zod';
@@ -75,56 +76,58 @@ const LoginScreen = () => {
         <>
           <CustomTitle text="Good To See You Again" />
           <View style={styles.form}>
-            <CustomView>
-              <Controller
-                control={control}
-                name="email"
-                render={({field: {value, onChange}}) => (
-                  <CustomInput
-                    placeholder="Email"
-                    value={value}
-                    onChangeText={onChange}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                )}
-              />
-            </CustomView>
-            <CustomView>
-              <>
+            <KeyboardAvoidingView>
+              <CustomView>
                 <Controller
                   control={control}
-                  name="password"
+                  name="email"
                   render={({field: {value, onChange}}) => (
                     <CustomInput
-                      placeholder="Password"
+                      placeholder="Email"
                       value={value}
                       onChangeText={onChange}
-                      keyboardType="default"
-                      secureEntry={visiblePassword}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
                     />
                   )}
                 />
-                <CustomTouchable onPress={toggleVisibility}>
-                  <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
-                </CustomTouchable>
-                {!submittable && (
-                  <CustomErrorMessage message="Email Or Password Incorrect" />
+              </CustomView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="password"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Password"
+                        value={value}
+                        onChangeText={onChange}
+                        keyboardType="default"
+                        secureEntry={visiblePassword}
+                      />
+                    )}
+                  />
+                  <CustomTouchable onPress={toggleVisibility}>
+                    <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
+                  </CustomTouchable>
+                  {!submittable && (
+                    <CustomErrorMessage message="Email Or Password Incorrect" />
+                  )}
+                </>
+              </CustomView>
+              <CustomView>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={theme === 'dark' ? '#318544' : '#00ff40'}
+                  />
+                ) : (
+                  <Pressable onPress={handleSubmit(handleLogin)}>
+                    <CustomButton text="Login" />
+                  </Pressable>
                 )}
-              </>
-            </CustomView>
-            <CustomView>
-              {isLoading ? (
-                <ActivityIndicator
-                  size="large"
-                  color={theme === 'dark' ? '#318544' : '#00ff40'}
-                />
-              ) : (
-                <Pressable onPress={handleSubmit(handleLogin)}>
-                  <CustomButton text="Login" />
-                </Pressable>
-              )}
-            </CustomView>
+              </CustomView>
+            </KeyboardAvoidingView>
           </View>
           <View style={styles.linkContainer}>
             <Text>Don't have an account? </Text>

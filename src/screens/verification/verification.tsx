@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-// import { useContext } from 'react';
 import {
   View,
   Pressable,
@@ -8,6 +7,7 @@ import {
   Keyboard,
   ActivityIndicator,
   useColorScheme,
+  KeyboardAvoidingView,
 } from 'react-native';
 import FourDigitInput from './fourDigitInput';
 // import {ThemeContext} from '../../styles/ThemeContext';
@@ -28,8 +28,6 @@ type verificationScreenNavigationProp = NativeStackNavigationProp<
   'Verification'
 >;
 const VerificationScreen = () => {
-  //   const theme = useContext(ThemeContext)!;
-  //   const {toggleTheme} = theme;
   const theme = useColorScheme();
   const [isLoading, setIsLoading] = useState(false);
   type FormData = z.infer<typeof schema>;
@@ -62,32 +60,34 @@ const VerificationScreen = () => {
         <>
           <Text style={styles.message}>We Have Sent The Code To Your Mail</Text>
           <View style={styles.form}>
-            <CustomView>
-              <>
-                <Controller
-                  control={control}
-                  name="verificationCode"
-                  render={({field: {value, onChange}}) => (
-                    <FourDigitInput value={value} onChange={onChange} />
+            <KeyboardAvoidingView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="verificationCode"
+                    render={({field: {value, onChange}}) => (
+                      <FourDigitInput value={value} onChange={onChange} />
+                    )}
+                  />
+                  {!submittable && (
+                    <CustomErrorMessage message="Incorrect Verification Code" />
                   )}
-                />
-                {!submittable && (
-                  <CustomErrorMessage message="Incorrect Verification Code" />
+                </>
+              </CustomView>
+              <CustomView>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={theme === 'dark' ? '#318544' : '#00ff40'}
+                  />
+                ) : (
+                  <Pressable onPress={handleSubmit(handleVerify)}>
+                    <CustomButton text="Verify" />
+                  </Pressable>
                 )}
-              </>
-            </CustomView>
-            <CustomView>
-              {isLoading ? (
-                <ActivityIndicator
-                  size="large"
-                  color={theme === 'dark' ? '#318544' : '#00ff40'}
-                />
-              ) : (
-                <Pressable onPress={handleSubmit(handleVerify)}>
-                  <CustomButton text="Verify" />
-                </Pressable>
-              )}
-            </CustomView>
+              </CustomView>
+            </KeyboardAvoidingView>
           </View>
         </>
       </CustomContainer>
