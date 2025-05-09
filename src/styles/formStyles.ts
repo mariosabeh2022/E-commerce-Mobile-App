@@ -6,7 +6,7 @@ const baseMessage: TextStyle = {
 export const styles = StyleSheet.create({
   message: {
     ...baseMessage,
-    color: 'green',
+    color: 'lightgreen',
   },
   darkMessage: {
     ...baseMessage,
