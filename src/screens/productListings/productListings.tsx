@@ -8,7 +8,6 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
-import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedStackParamList,
   'Products'
@@ -37,48 +36,15 @@ const ProductListingsScreen = () => {
   const cutomSkeletonItem = () => {
     return (
       <View style={skeletonStyles.container}>
-        <SkeletonPlaceholder>
-          <SkeletonPlaceholder.Item
-            flexDirection="row"
-            style={{flex: 1}}
-          >
-            <SkeletonPlaceholder.Item
-              width={135}
-              height={135}
-              borderRadius={10}
-              marginRight={10}
-            />
-            <SkeletonPlaceholder.Item
-              justifyContent="center"
-              style={{flex: 1}}
-            >
-              <SkeletonPlaceholder.Item
-                width="80%"
-                height={16}
-                borderRadius={4}
-                marginBottom={8}
-              />
-              <SkeletonPlaceholder.Item
-                width="50%"
-                height={16}
-                borderRadius={4}
-                marginBottom={8}
-              />
-              <SkeletonPlaceholder.Item
-                width="80%"
-                height={16}
-                borderRadius={4}
-                marginBottom={8}
-              />
-              <SkeletonPlaceholder.Item
-                width="50%"
-                height={16}
-                borderRadius={4}
-                marginBottom={8}
-              />
-            </SkeletonPlaceholder.Item>
-          </SkeletonPlaceholder.Item>
-        </SkeletonPlaceholder>
+        <View style={skeletonStyles.innerContainer}>
+          <View style={skeletonStyles.image} />
+          <View style={skeletonStyles.infoContainer}>
+            <View style={skeletonStyles.item} />
+            <View style={skeletonStyles.price} />
+            <View style={skeletonStyles.item} />
+            <View style={skeletonStyles.price} />
+          </View>
+        </View>
       </View>
     );
   };
