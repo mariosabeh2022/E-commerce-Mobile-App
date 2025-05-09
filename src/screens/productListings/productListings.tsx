@@ -35,14 +35,27 @@ const ProductListingsScreen = () => {
   });
   const cutomSkeletonItem = () => {
     return (
-      <View style={skeletonStyles.container}>
+      <View
+        style={
+          theme === 'dark'
+            ? skeletonStyles.darkContainer
+            : skeletonStyles.container
+        }>
         <View style={skeletonStyles.innerContainer}>
           <View style={skeletonStyles.image} />
           <View style={skeletonStyles.infoContainer}>
-            <View style={skeletonStyles.item} />
-            <View style={skeletonStyles.price} />
-            <View style={skeletonStyles.item} />
-            <View style={skeletonStyles.price} />
+            <View style={skeletonStyles.item}>
+              <View style={skeletonStyles.textLine}></View>
+            </View>
+            <View style={skeletonStyles.price}>
+              <View style={skeletonStyles.textLineShort}></View>
+            </View>
+            <View style={skeletonStyles.item}>
+              <View style={skeletonStyles.textLine}></View>
+            </View>
+            <View style={skeletonStyles.price}>
+              <View style={skeletonStyles.textLineShort}></View>
+            </View>
           </View>
         </View>
       </View>

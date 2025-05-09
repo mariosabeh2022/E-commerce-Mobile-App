@@ -1,4 +1,4 @@
-import { StyleSheet, TextStyle, ViewStyle } from 'react-native';
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 
 const baseContainer: ViewStyle = {
   borderRadius: 20,
@@ -15,8 +15,13 @@ const baseText: ViewStyle & TextStyle = {
 export const skeletonStyles = StyleSheet.create({
   container: {
     ...baseContainer,
-    backgroundColor: 'gray', // For dark mode, you might need to adjust this
+    backgroundColor: 'gray',
     borderColor: 'gray',
+  },
+  darkContainer: {
+    ...baseContainer,
+    backgroundColor: 'darkgray',
+    borderColor: 'darkgray',
   },
   innerContainer: {
     flex: 1,
@@ -25,27 +30,28 @@ export const skeletonStyles = StyleSheet.create({
   infoContainer: {
     padding: 10,
     justifyContent: 'center',
+    flex: 1,
   },
   image: {
     width: 135,
     height: 135,
     marginRight: 10,
-    backgroundColor: 'lightgray', // Replace with darker shade for dark mode
+    backgroundColor: 'lightgray',
     borderRadius: 10,
   },
   item: {
     ...baseText,
     height: 20,
-    backgroundColor: 'lightgray', // Adjust for dark mode if necessary
+    backgroundColor: 'lightgray',
     marginBottom: 5,
-    width: '70%',
+    width: '90%',
   },
   price: {
     ...baseText,
     height: 20,
     backgroundColor: 'lightgray',
     marginBottom: 5,
-    width: '50%',
+    width: '70%',
     paddingTop: 8,
   },
   textLine: {
@@ -53,35 +59,13 @@ export const skeletonStyles = StyleSheet.create({
     backgroundColor: 'lightgray',
     borderRadius: 4,
     marginBottom: 8,
-    width: '80%',
+    width: '100%',
   },
   textLineShort: {
     height: 16,
     borderRadius: 4,
     backgroundColor: 'lightgray',
     marginBottom: 8,
-    width: '50%',
-  },
-  darkContainer: {
-    ...baseContainer,
-    backgroundColor: '#333', // Dark background for dark mode
-    borderColor: '#333',
-  },
-  darkImage: {
-    backgroundColor: '#444', // Darker shade for the image placeholder
-  },
-  darkItem: {
-    ...baseText,
-    backgroundColor: '#444', // Darker background for items in dark mode
-  },
-  darkPrice: {
-    ...baseText,
-    backgroundColor: '#444', // Darker background for price in dark mode
-  },
-  darkTextLine: {
-    backgroundColor: '#444', // Darker background for text lines
-  },
-  darkTextLineShort: {
-    backgroundColor: '#444', // Darker background for short text lines
+    width: '100%',
   },
 });
