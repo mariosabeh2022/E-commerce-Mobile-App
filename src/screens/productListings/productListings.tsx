@@ -71,7 +71,7 @@ const ProductListingsScreen = () => {
         <CustomView>
           <>
             <CustomInput
-              placeholder="Password"
+              placeholder="Filter Item"
               value={''}
               onChangeText={() => {}}
               keyboardType="default"
