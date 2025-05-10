@@ -8,7 +8,7 @@ const baseHeaderComponent: ViewStyle & TextStyle = {
   fontSize: 40,
   fontFamily: 'Sansation-BoldItalic',
   paddingBottom: 4,
-  marginBottom:10,
+  marginBottom: 10,
   borderBottomWidth: 4,
   borderStyle: 'dotted',
   textAlign: 'center',
@@ -26,6 +26,17 @@ export const styles = StyleSheet.create({
   darkSkeletonItem: {
     ...baseSkeletonComponent,
     backgroundColor: 'lightgray',
+  },
+  filterContainer: {
+    flex:1,
+    flexDirection:'row',
+    margin:10,
+    alignItems:'center',
+    justifyContent:'center',
+    width: '100%',
+  },
+  searchIcon:{
+
   },
   headerComponent: {
     ...baseHeaderComponent,

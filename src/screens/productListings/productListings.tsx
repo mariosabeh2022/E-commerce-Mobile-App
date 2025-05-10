@@ -8,6 +8,10 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
+import CustomInput from '../../components/atoms/customInput/customInput';
+import CustomView from '../../components/molecules/customView/customView';
+import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
+import CustomIcon from '../../components/atoms/customShare/customShare';
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedStackParamList,
   'Products'
@@ -63,32 +67,47 @@ const ProductListingsScreen = () => {
   };
   return (
     <CustomContainer>
-      <FlatList
-        data={data}
-        keyExtractor={item => item._id.toString()}
-        renderItem={isLoading ? cutomSkeletonItem : renderItem}
-        ListEmptyComponent={<Text>No products found.</Text>}
-        ListHeaderComponent={
-          <Text
-            style={
-              theme === 'dark'
-                ? styles.darkHeaderComponent
-                : styles.headerComponent
-            }>
-            Available Items
-          </Text>
-        }
-        ListFooterComponent={
-          <Text
-            style={
-              theme === 'dark'
-                ? styles.darkFooterComponent
-                : styles.footerComponent
-            }>
-            ---------------
-          </Text>
-        }
-      />
+      <>
+        <CustomView>
+          <>
+            <CustomInput
+              placeholder="Password"
+              value={''}
+              onChangeText={() => {}}
+              keyboardType="default"
+            />
+            <CustomTouchable onPress={() => {}}>
+              <CustomIcon type="search" />
+            </CustomTouchable>
+          </>
+        </CustomView>
+        <FlatList
+          data={data}
+          keyExtractor={item => item._id.toString()}
+          renderItem={isLoading ? cutomSkeletonItem : renderItem}
+          ListEmptyComponent={<Text>No products found.</Text>}
+          ListHeaderComponent={
+            <Text
+              style={
+                theme === 'dark'
+                  ? styles.darkHeaderComponent
+                  : styles.headerComponent
+              }>
+              Available Items
+            </Text>
+          }
+          ListFooterComponent={
+            <Text
+              style={
+                theme === 'dark'
+                  ? styles.darkFooterComponent
+                  : styles.footerComponent
+              }>
+              ---------------
+            </Text>
+          }
+        />
+      </>
     </CustomContainer>
   );
 };
