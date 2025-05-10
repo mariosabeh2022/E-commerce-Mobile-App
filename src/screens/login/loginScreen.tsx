@@ -3,8 +3,6 @@ import {
   View,
   Text,
   Pressable,
-  Keyboard,
-  TouchableWithoutFeedback,
   useColorScheme,
   ActivityIndicator,
   KeyboardAvoidingView,
@@ -74,73 +72,71 @@ const LoginScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <CustomContainer>
-        <>
-          <CustomTitle text="Good To See You Again" />
-          <View style={styles.form}>
-            <KeyboardAvoidingView>
-              <CustomView>
+    <CustomContainer>
+      <>
+        <CustomTitle text="Good To See You Again" />
+        <View style={styles.form}>
+          <KeyboardAvoidingView>
+            <CustomView>
+              <Controller
+                control={control}
+                name="email"
+                render={({field: {value, onChange}}) => (
+                  <CustomInput
+                    placeholder="Email"
+                    value={value}
+                    onChangeText={onChange}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                )}
+              />
+            </CustomView>
+            <CustomView>
+              <>
                 <Controller
                   control={control}
-                  name="email"
+                  name="password"
                   render={({field: {value, onChange}}) => (
                     <CustomInput
-                      placeholder="Email"
+                      placeholder="Password"
                       value={value}
                       onChangeText={onChange}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
+                      keyboardType="default"
+                      secureEntry={visiblePassword}
                     />
                   )}
                 />
-              </CustomView>
-              <CustomView>
-                <>
-                  <Controller
-                    control={control}
-                    name="password"
-                    render={({field: {value, onChange}}) => (
-                      <CustomInput
-                        placeholder="Password"
-                        value={value}
-                        onChangeText={onChange}
-                        keyboardType="default"
-                        secureEntry={visiblePassword}
-                      />
-                    )}
-                  />
-                  <CustomTouchable onPress={toggleVisibility}>
-                    <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
-                  </CustomTouchable>
-                  {!submittable && (
-                    <CustomErrorMessage message="Email Or Password Incorrect" />
-                  )}
-                </>
-              </CustomView>
-              <CustomView>
-                {isLoading ? (
-                  <ActivityIndicator
-                    size="large"
-                    color={theme === 'dark' ? '#318544' : '#00ff40'}
-                  />
-                ) : (
-                  <Pressable onPress={handleSubmit(handleLogin)}>
-                    <CustomButton text="Login" />
-                  </Pressable>
+                <CustomTouchable onPress={toggleVisibility}>
+                  <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
+                </CustomTouchable>
+                {!submittable && (
+                  <CustomErrorMessage message="Email Or Password Incorrect" />
                 )}
-              </CustomView>
-            </KeyboardAvoidingView>
-          </View>
-          <View style={styles.linkContainer}>
-            <Text>Don't have an account? </Text>
-            <Pressable onPress={() => navigation.navigate('SignUp')}>
-              <CustomLink text="SignUp" />
-            </Pressable>
-          </View>
-        </>
-      </CustomContainer>
-    </TouchableWithoutFeedback>
+              </>
+            </CustomView>
+            <CustomView>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                />
+              ) : (
+                <Pressable onPress={handleSubmit(handleLogin)}>
+                  <CustomButton text="Login" />
+                </Pressable>
+              )}
+            </CustomView>
+          </KeyboardAvoidingView>
+        </View>
+        <View style={styles.linkContainer}>
+          <Text>Don't have an account? </Text>
+          <Pressable onPress={() => navigation.navigate('SignUp')}>
+            <CustomLink text="SignUp" />
+          </Pressable>
+        </View>
+      </>
+    </CustomContainer>
   );
 };
 

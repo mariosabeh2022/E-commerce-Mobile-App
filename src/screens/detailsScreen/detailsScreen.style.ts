@@ -17,9 +17,14 @@ const baseButtonContainer: ViewStyle = {
 };
 const baseTitle: TextStyle = {
   fontSize: 25,
-  fontFamily: 'Sansation-BoldItalic',
+  fontFamily: 'Sansation-Bold',
   paddingBottom: 4,
   textDecorationLine: 'underline',
+};
+const baseSpec: TextStyle = {
+  fontSize: 25,
+  fontFamily: 'Sansation-Bold',
+  paddingBottom: 4,
 };
 const basePrice: TextStyle = {
   fontSize: 25,
@@ -48,7 +53,7 @@ export const styles = StyleSheet.create({
     marginTop: width / 1.5,
   },
   desc: {
-    fontFamily: 'Sansation-BoldItalic',
+    fontFamily: 'Sansation-Bold',
     margin: 5,
   },
   price: {
@@ -65,6 +70,14 @@ export const styles = StyleSheet.create({
   },
   darkTitle: {
     ...baseTitle,
+    color: 'darkgray',
+  },
+  spec: {
+    ...baseSpec,
+    color: 'black',
+  },
+  darkSpec: {
+    ...baseSpec,
     color: 'darkgray',
   },
   image: {

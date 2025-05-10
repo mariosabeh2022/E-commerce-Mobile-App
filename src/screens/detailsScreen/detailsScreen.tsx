@@ -41,8 +41,8 @@ const DetailsScreen = ({route}: Props) => {
           <Text style={theme === 'dark' ? styles.darkTitle : styles.title}>
             {fetchedData?.title}
           </Text>
-          <Text style={theme === 'dark' ? styles.darkTitle : styles.title}>
-            About
+          <Text style={theme === 'dark' ? styles.darkSpec : styles.spec}>
+            Specifications
           </Text>
           <Text style={styles.desc}>{fetchedData?.description}</Text>
           <Text style={theme === 'dark' ? styles.darkPrice : styles.price}>

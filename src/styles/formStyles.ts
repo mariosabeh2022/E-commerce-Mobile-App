@@ -5,13 +5,16 @@ const baseMessage: TextStyle = {
   fontSize: 20,
 };
 export const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+  },
   message: {
     ...baseMessage,
-    color: 'lightgreen',
+    color: '#00ff40',
   },
   darkMessage: {
     ...baseMessage,
-    color: 'green',
+    color: '#318544',
   },
   form: {
     borderWidth: 1.5,

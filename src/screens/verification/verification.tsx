@@ -3,8 +3,6 @@ import {
   View,
   Pressable,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   ActivityIndicator,
   useColorScheme,
   KeyboardAvoidingView,
@@ -21,7 +19,6 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
-
 const VerificationScreen = () => {
   const theme = useColorScheme();
   const [isLoading, setIsLoading] = useState(false);
@@ -52,45 +49,43 @@ const VerificationScreen = () => {
   };
 
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      <CustomContainer>
-        <>
-          <Text style={theme === 'dark' ? styles.darkMessage : styles.message}>
-            We Have Sent The Code To Your Mail
-          </Text>
-          <View style={styles.form}>
-            <KeyboardAvoidingView>
-              <CustomView>
-                <>
-                  <Controller
-                    control={control}
-                    name="verificationCode"
-                    render={({field: {value, onChange}}) => (
-                      <FourDigitInput value={value} onChange={onChange} />
-                    )}
-                  />
-                  {!submittable && (
-                    <CustomErrorMessage message="Incorrect Verification Code" />
+    <CustomContainer>
+      <>
+        <Text style={theme === 'dark' ? styles.darkMessage : styles.message}>
+          We Have Sent The Code To Your Mail
+        </Text>
+        <View style={styles.form}>
+          <KeyboardAvoidingView>
+            <CustomView>
+              <>
+                <Controller
+                  control={control}
+                  name="verificationCode"
+                  render={({field: {value, onChange}}) => (
+                    <FourDigitInput value={value} onChange={onChange} />
                   )}
-                </>
-              </CustomView>
-              <CustomView>
-                {isLoading ? (
-                  <ActivityIndicator
-                    size="large"
-                    color={theme === 'dark' ? '#318544' : '#00ff40'}
-                  />
-                ) : (
-                  <Pressable onPress={handleSubmit(handleVerify)}>
-                    <CustomButton text="Verify" />
-                  </Pressable>
+                />
+                {!submittable && (
+                  <CustomErrorMessage message="Incorrect Verification Code" />
                 )}
-              </CustomView>
-            </KeyboardAvoidingView>
-          </View>
-        </>
-      </CustomContainer>
-    </TouchableWithoutFeedback>
+              </>
+            </CustomView>
+            <CustomView>
+              {isLoading ? (
+                <ActivityIndicator
+                  size="large"
+                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                />
+              ) : (
+                <Pressable onPress={handleSubmit(handleVerify)}>
+                  <CustomButton text="Verify" />
+                </Pressable>
+              )}
+            </CustomView>
+          </KeyboardAvoidingView>
+        </View>
+      </>
+    </CustomContainer>
   );
 };
 

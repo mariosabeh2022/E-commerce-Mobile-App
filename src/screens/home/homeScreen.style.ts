@@ -12,9 +12,14 @@ const baseButtonContainer: ViewStyle = {
 const baseContainer: ViewStyle = {
   flex: 1,
   alignItems: 'center',
-  paddingTop: '10%',
 };
 export const styles = StyleSheet.create({
+  outerContainer: {
+    flex: 1,
+  },
+  headerContainer: {
+    alignItems: 'stretch',
+  },
   container: {
     ...baseContainer,
     backgroundColor: 'white',

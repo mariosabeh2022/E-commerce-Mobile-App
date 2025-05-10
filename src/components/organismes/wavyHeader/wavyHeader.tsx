@@ -1,32 +1,65 @@
 import React from 'react';
-import {View, StyleSheet, Dimensions} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 
-const {width} = Dimensions.get('window');
-
-const WavyHeader: React.FC = () => {
+const WavyHeader = () => {
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <Svg height="160" width={width} viewBox="0 0 1440 320">
-          <Path
-            fill="#318544"
-            d="M0,160L48,154.7C96,149,192,139,288,138.7C384,139,480,149,576,138.7C672,128,768,96,864,80C960,64,1056,64,1152,90.7C1248,117,1344,171,1392,197.3L1440,224L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"
-          />
-        </Svg>
-      </View>
+    <View style={styles.headerContainer}>
+      <Text style={styles.headerText}>Shopfinity</Text>
+      <Svg
+        height="160"
+        width="100%"
+        viewBox="0 0 1440 400"
+        style={styles.topWave}>
+        <Path
+          fill="#00FF40"
+          d="M0,150 C150,100 300,200 450,150 C600,100 750,200 900,150 C1050,100 1200,200 1350,150 C1400,130 1440,100 1440,100 L1440,0 L0,0 Z"
+        />
+      </Svg>
+      <Svg
+        height="160"
+        width="100%"
+        viewBox="0 0 1440 400"
+        style={styles.bottomWave}>
+        <Path
+          fill="#00FF40"
+          d="M0,250 C150,300 300,200 450,250 C600,300 750,200 900,250 C1050,300 1200,200 1350,250 C1400,270 1440,300 1440,300 L1440,400 L0,400 Z"
+        />
+      </Svg>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#00ff40',
+  headerContainer: {
+    width: '100%',
+    height: '25%',
+    position: 'relative',
+    overflow: 'hidden',
+    backgroundColor: '#318555',
   },
-  header: {
-    backgroundColor: '#00ff40',
-    height: 200,
-    justifyContent: 'flex-end',
+  headerText: {
+    position: 'absolute',
+    top: '35%',
+    fontSize: 40,
+    fontFamily: 'Sansation-BoldItalic',
+    color: '#223a66',
+    alignSelf: 'center',
+    zIndex: 1,
+  },
+  topWave: {
+    position: 'absolute',
+    top: 60,
+    left: 0,
+    width: '100%',
+    height: 'auto',
+  },
+  bottomWave: {
+    position: 'absolute',
+    bottom: 60,
+    left: 0,
+    width: '100%',
+    height: 'auto',
   },
 });
 

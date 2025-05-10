@@ -8,6 +8,7 @@ const baseHeaderComponent: ViewStyle & TextStyle = {
   fontSize: 40,
   fontFamily: 'Sansation-BoldItalic',
   paddingBottom: 4,
+  marginBottom:10,
   borderBottomWidth: 4,
   borderStyle: 'dotted',
   textAlign: 'center',

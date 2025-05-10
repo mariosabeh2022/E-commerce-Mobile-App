@@ -3,8 +3,6 @@ import {
   View,
   Pressable,
   Text,
-  TouchableWithoutFeedback,
-  Keyboard,
   ActivityIndicator,
   useColorScheme,
   KeyboardAvoidingView,
@@ -63,7 +61,6 @@ const SignUpScreen = () => {
     return () => clearTimeout(timeout);
   };
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
       <CustomContainer>
         <>
           <CustomTitle text="Welcome Dear Customer" />
@@ -172,7 +169,6 @@ const SignUpScreen = () => {
           </View>
         </>
       </CustomContainer>
-    </TouchableWithoutFeedback>
   );
 };
 export default SignUpScreen;

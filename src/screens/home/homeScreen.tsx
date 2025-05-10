@@ -1,18 +1,12 @@
 import React from 'react';
-import {
-  Text,
-  Keyboard,
-  TouchableWithoutFeedback,
-  useColorScheme,
-  View,
-  Pressable,
-} from 'react-native';
+import {Text, useColorScheme, View, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {styles} from './homeScreen.style';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import LinearGradient from 'react-native-linear-gradient';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
 
 type HomeScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
@@ -22,10 +16,8 @@ const HomenScreen = () => {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const theme = useColorScheme();
   return (
-    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
-      {/* <View>
-          <WavyHeader />
-        </View> */}
+    <View style={styles.outerContainer}>
+      <WavyHeader />
       <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
         <View>
           <CustomTitle text="Welcome ! " />
@@ -55,7 +47,7 @@ const HomenScreen = () => {
           </LinearGradient>
         </View>
       </View>
-    </TouchableWithoutFeedback>
+    </View>
   );
 };
 

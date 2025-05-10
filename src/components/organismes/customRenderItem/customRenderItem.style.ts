@@ -7,7 +7,7 @@ const baseContainer: ViewStyle = {
 const basePrice: ViewStyle & TextStyle = {
   fontSize: 15,
   paddingTop: 8,
-  fontFamily: 'Sansation-BoldItalic',
+  fontFamily: 'Sansation-Bold',
 };
 const baseItem: ViewStyle & TextStyle = {
   fontSize: 15,
