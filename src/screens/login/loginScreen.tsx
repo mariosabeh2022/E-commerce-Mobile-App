@@ -5,6 +5,8 @@ import {
   Pressable,
   ActivityIndicator,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import {schema} from '../../utils/loginFormValidation';
 import {z} from 'zod';
@@ -33,7 +35,7 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<
 
 const LoginScreen = () => {
   const {theme} = useTheme();
-    const isAppDark = theme === 'dark';
+  const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -77,58 +79,60 @@ const LoginScreen = () => {
       <>
         <CustomTitle text="Good To See You Again" />
         <View style={styles.form}>
-          <KeyboardAvoidingView>
-            <CustomView>
-              <Controller
-                control={control}
-                name="email"
-                render={({field: {value, onChange}}) => (
-                  <CustomInput
-                    placeholder="Email"
-                    value={value}
-                    onChangeText={onChange}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                  />
-                )}
-              />
-            </CustomView>
-            <CustomView>
-              <>
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <KeyboardAvoidingView>
+              <CustomView>
                 <Controller
                   control={control}
-                  name="password"
+                  name="email"
                   render={({field: {value, onChange}}) => (
                     <CustomInput
-                      placeholder="Password"
+                      placeholder="Email"
                       value={value}
                       onChangeText={onChange}
-                      keyboardType="default"
-                      secureEntry={visiblePassword}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
                     />
                   )}
                 />
-                <CustomTouchable onPress={toggleVisibility}>
-                  <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
-                </CustomTouchable>
-                {!submittable && (
-                  <CustomErrorMessage message="Email Or Password Incorrect" />
+              </CustomView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="password"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Password"
+                        value={value}
+                        onChangeText={onChange}
+                        keyboardType="default"
+                        secureEntry={visiblePassword}
+                      />
+                    )}
+                  />
+                  <CustomTouchable onPress={toggleVisibility}>
+                    <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
+                  </CustomTouchable>
+                  {!submittable && (
+                    <CustomErrorMessage message="Email Or Password Incorrect" />
+                  )}
+                </>
+              </CustomView>
+              <CustomView>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={isAppDark ? '#318544' : '#00ff40'}
+                  />
+                ) : (
+                  <Pressable onPress={handleSubmit(handleLogin)}>
+                    <CustomButton text="Login" />
+                  </Pressable>
                 )}
-              </>
-            </CustomView>
-            <CustomView>
-              {isLoading ? (
-                <ActivityIndicator
-                  size="large"
-                  color={isAppDark ? '#318544' : '#00ff40'}
-                />
-              ) : (
-                <Pressable onPress={handleSubmit(handleLogin)}>
-                  <CustomButton text="Login" />
-                </Pressable>
-              )}
-            </CustomView>
-          </KeyboardAvoidingView>
+              </CustomView>
+            </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
         </View>
         <View style={styles.linkContainer}>
           <Text style={styles.customFont}>Don't have an account? </Text>

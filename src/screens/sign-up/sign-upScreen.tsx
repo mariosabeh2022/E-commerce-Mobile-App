@@ -5,6 +5,8 @@ import {
   Text,
   ActivityIndicator,
   KeyboardAvoidingView,
+  Keyboard,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import {styles} from '../../styles/formStyles';
 import {schema} from '../../utils/signUpFormValidation';
@@ -66,101 +68,103 @@ const SignUpScreen = () => {
       <>
         <CustomTitle text="Welcome Dear Customer" />
         <View style={styles.form}>
-          <KeyboardAvoidingView>
-            <CustomView>
-              <>
-                <Controller
-                  control={control}
-                  name="name"
-                  render={({field: {value, onChange}}) => (
-                    <CustomInput
-                      placeholder="Name"
-                      value={value}
-                      onChangeText={onChange}
-                    />
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <KeyboardAvoidingView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="name"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Name"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
+                  />
+                  {errors.name && (
+                    <CustomErrorMessage message={errors.name?.message} />
                   )}
-                />
-                {errors.name && (
-                  <CustomErrorMessage message={errors.name?.message} />
-                )}
-              </>
-            </CustomView>
-            <CustomView>
-              <>
-                <Controller
-                  control={control}
-                  name="email"
-                  render={({field: {value, onChange}}) => (
-                    <CustomInput
-                      placeholder="Email"
-                      value={value}
-                      onChangeText={onChange}
-                      keyboardType="email-address"
-                      autoCapitalize="none"
-                    />
+                </>
+              </CustomView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="email"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Email"
+                        value={value}
+                        onChangeText={onChange}
+                        keyboardType="email-address"
+                        autoCapitalize="none"
+                      />
+                    )}
+                  />
+                  {errors.email && (
+                    <CustomErrorMessage message={errors.email?.message} />
                   )}
-                />
-                {errors.email && (
-                  <CustomErrorMessage message={errors.email?.message} />
-                )}
-              </>
-            </CustomView>
-            <CustomView>
-              <>
-                <Controller
-                  control={control}
-                  name="password"
-                  render={({field: {value, onChange}}) => (
-                    <CustomInput
-                      placeholder="Password"
-                      value={value}
-                      onChangeText={onChange}
-                      keyboardType="default"
-                      secureEntry={visiblePassword}
-                    />
+                </>
+              </CustomView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="password"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Password"
+                        value={value}
+                        onChangeText={onChange}
+                        keyboardType="default"
+                        secureEntry={visiblePassword}
+                      />
+                    )}
+                  />
+                  <CustomTouchable onPress={toggleVisibility}>
+                    <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
+                  </CustomTouchable>
+                  {errors.password && (
+                    <CustomErrorMessage message={errors.password?.message} />
                   )}
-                />
-                <CustomTouchable onPress={toggleVisibility}>
-                  <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
-                </CustomTouchable>
-                {errors.password && (
-                  <CustomErrorMessage message={errors.password?.message} />
-                )}
-              </>
-            </CustomView>
+                </>
+              </CustomView>
 
-            <CustomView>
-              <>
-                <Controller
-                  control={control}
-                  name="number"
-                  render={({field: {value, onChange}}) => (
-                    <CustomInput
-                      placeholder="Number: xx-xxxxxx"
-                      value={value}
-                      onChangeText={onChange}
-                      keyboardType="numeric"
-                    />
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="number"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Number: xx-xxxxxx"
+                        value={value}
+                        onChangeText={onChange}
+                        keyboardType="numeric"
+                      />
+                    )}
+                  />
+                  {errors.number && (
+                    <CustomErrorMessage message={errors.number?.message} />
                   )}
-                />
-                {errors.number && (
-                  <CustomErrorMessage message={errors.number?.message} />
+                </>
+              </CustomView>
+              <CustomView>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={isAppDark ? '#318544' : '#00ff40'}
+                  />
+                ) : (
+                  <Pressable onPress={handleSubmit(onSubmit)}>
+                    <CustomButton text="SignUp" />
+                  </Pressable>
                 )}
-              </>
-            </CustomView>
-            <CustomView>
-              {isLoading ? (
-                <ActivityIndicator
-                  size="large"
-                  color={isAppDark ? '#318544' : '#00ff40'}
-                />
-              ) : (
-                <Pressable onPress={handleSubmit(onSubmit)}>
-                  <CustomButton text="SignUp" />
-                </Pressable>
-              )}
-            </CustomView>
-          </KeyboardAvoidingView>
+              </CustomView>
+            </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
         </View>
         <View style={styles.linkContainer}>
           <Text style={styles.customFont}>Already have an account? </Text>

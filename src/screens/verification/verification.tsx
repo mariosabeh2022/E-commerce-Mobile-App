@@ -5,6 +5,8 @@ import {
   Text,
   ActivityIndicator,
   KeyboardAvoidingView,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from 'react-native';
 import FourDigitInput from './fourDigitInput';
 import {styles} from '../../styles/formStyles';
@@ -56,34 +58,36 @@ const VerificationScreen = () => {
           We Have Sent The Code To Your Mail
         </Text>
         <View style={styles.form}>
-          <KeyboardAvoidingView>
-            <CustomView>
-              <>
-                <Controller
-                  control={control}
-                  name="verificationCode"
-                  render={({field: {value, onChange}}) => (
-                    <FourDigitInput value={value} onChange={onChange} />
+          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+            <KeyboardAvoidingView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="verificationCode"
+                    render={({field: {value, onChange}}) => (
+                      <FourDigitInput value={value} onChange={onChange} />
+                    )}
+                  />
+                  {!submittable && (
+                    <CustomErrorMessage message="Incorrect Verification Code" />
                   )}
-                />
-                {!submittable && (
-                  <CustomErrorMessage message="Incorrect Verification Code" />
+                </>
+              </CustomView>
+              <CustomView>
+                {isLoading ? (
+                  <ActivityIndicator
+                    size="large"
+                    color={isAppDark ? '#318544' : '#00ff40'}
+                  />
+                ) : (
+                  <Pressable onPress={handleSubmit(handleVerify)}>
+                    <CustomButton text="Verify" />
+                  </Pressable>
                 )}
-              </>
-            </CustomView>
-            <CustomView>
-              {isLoading ? (
-                <ActivityIndicator
-                  size="large"
-                  color={isAppDark ? '#318544' : '#00ff40'}
-                />
-              ) : (
-                <Pressable onPress={handleSubmit(handleVerify)}>
-                  <CustomButton text="Verify" />
-                </Pressable>
-              )}
-            </CustomView>
-          </KeyboardAvoidingView>
+              </CustomView>
+            </KeyboardAvoidingView>
+          </TouchableWithoutFeedback>
         </View>
       </>
     </CustomContainer>

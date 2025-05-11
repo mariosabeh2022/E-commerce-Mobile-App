@@ -28,11 +28,11 @@ export const styles = StyleSheet.create({
     marginBottom: 12,
   },
   linkContainer: {
-    flex: 1,
     flexDirection: 'row',
-    paddingTop:5,
+    paddingTop: 5,
+    alignItems: 'center',
   },
-  customFont:{
-    fontFamily:'Sansation-Bold',
-  }
+  customFont: {
+    fontFamily: 'Sansation-Bold',
+  },
 });
