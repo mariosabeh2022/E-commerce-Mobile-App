@@ -10,18 +10,10 @@ import {
 } from 'react-native';
 import {styles} from './customCarousel.style';
 import {useTheme} from '../../../contexts/themeContext';
+import {customCarouselProps, ImageItem} from './customCarousel.type';
 const {width} = Dimensions.get('window');
 
-type ImageItem = {
-  _id: string;
-  uri: string;
-};
-
-type Props = {
-  images?: ImageItem[];
-};
-
-const ImageCarousel: React.FC<Props> = ({images}) => {
+const ImageCarousel = ({images}: customCarouselProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [currentIndex, setCurrentIndex] = useState(0);

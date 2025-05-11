@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, FlatList, Pressable} from 'react-native';
+import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {data} from '../../assets/Products.json';
 import {styles} from './productListings.style';
@@ -22,12 +22,12 @@ const ProductListingsScreen = () => {
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
     <View>
-      <Pressable
+      <TouchableOpacity
         onPress={() =>
           navigation.navigate('Details', {id: item._id.toString()})
         }>
         <CustomRenderItem item={item} />
-      </Pressable>
+      </TouchableOpacity>
     </View>
   );
   const {theme} = useTheme();

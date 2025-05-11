@@ -163,7 +163,7 @@ const SignUpScreen = () => {
           </KeyboardAvoidingView>
         </View>
         <View style={styles.linkContainer}>
-          <Text>Already have an account? </Text>
+          <Text style={styles.customFont}>Already have an account? </Text>
           <Pressable onPress={() => navigation.navigate('Login')}>
             <CustomLink text="Login" />
           </Pressable>

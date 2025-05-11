@@ -22,7 +22,6 @@ export const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: '100%',
-    marginRight: 10,
     resizeMode: 'contain',
     borderBottomLeftRadius: width / 1.5,
     borderBottomRightRadius: width / 1.5,
