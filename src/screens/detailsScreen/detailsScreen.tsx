@@ -4,6 +4,7 @@ import {Animated, Text, View, useColorScheme, Pressable} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
 import {AuthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+import ImageCarousel from '../../components/molecules/customCarousel/customCarousel';
 type DetailsScreenRouteProp = RouteProp<AuthenticatedStackParamList, 'Details'>;
 
 type Props = {
@@ -14,6 +15,10 @@ const DetailsScreen = ({route}: Props) => {
   const fetchedData = data.find(
     item => item._id.toString() === route.params.id,
   );
+  const images = fetchedData?.images?.map(({_id, url}) => ({
+    _id: _id,
+    uri: url,
+  }));
   const theme = useColorScheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -32,10 +37,7 @@ const DetailsScreen = ({route}: Props) => {
     <>
       <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
         <View style={styles.innerContainer}>
-          <Animated.Image
-            source={{uri: fetchedData?.images[0].url}}
-            style={[styles.image, {opacity: fadeAnim}]}
-          />
+          <ImageCarousel images={images} />
         </View>
         <View style={styles.infos}>
           <Text style={theme === 'dark' ? styles.darkTitle : styles.title}>
