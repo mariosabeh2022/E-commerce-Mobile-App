@@ -1,14 +1,15 @@
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {customIconProps} from './customShare.type';
 import {styles} from './customShare.style';
-import {useColorScheme} from 'react-native';
+import {useTheme} from '../../../contexts/themeContext';
 const CustomIcon = ({type}: customIconProps) => {
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   return (
     <Icon
       name={type}
       size={20}
-      style={theme === 'dark' ? styles.darkCustomIcon : styles.customIcon}
+      style={isAppDark ? styles.darkCustomIcon : styles.customIcon}
     />
   );
 };

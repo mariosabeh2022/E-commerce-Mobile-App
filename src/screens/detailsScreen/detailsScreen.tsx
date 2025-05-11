@@ -1,10 +1,11 @@
 import React, {useRef, useEffect} from 'react';
 import {styles} from './detailsScreen.style';
-import {Animated, Text, View, useColorScheme, Pressable} from 'react-native';
+import {Animated, Text, View, Pressable} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
 import {AuthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import ImageCarousel from '../../components/molecules/customCarousel/customCarousel';
+import {useTheme} from '../../contexts/themeContext';
 type DetailsScreenRouteProp = RouteProp<AuthenticatedStackParamList, 'Details'>;
 
 type Props = {
@@ -19,7 +20,8 @@ const DetailsScreen = ({route}: Props) => {
     _id: _id,
     uri: url,
   }));
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = () => {
@@ -35,29 +37,27 @@ const DetailsScreen = ({route}: Props) => {
   });
   return (
     <>
-      <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
+      <View style={isAppDark ? styles.darkContainer : styles.container}>
         <View style={styles.innerContainer}>
           <ImageCarousel images={images} />
         </View>
         <View style={styles.infos}>
-          <Text style={theme === 'dark' ? styles.darkTitle : styles.title}>
+          <Text style={isAppDark ? styles.darkTitle : styles.title}>
             {fetchedData?.title}
           </Text>
-          <Text style={theme === 'dark' ? styles.darkSpec : styles.spec}>
+          <Text style={isAppDark ? styles.darkSpec : styles.spec}>
             Specifications
           </Text>
           <Text style={styles.desc}>{fetchedData?.description}</Text>
-          <Text style={theme === 'dark' ? styles.darkPrice : styles.price}>
+          <Text style={isAppDark ? styles.darkPrice : styles.price}>
             Price: {fetchedData?.price}$
           </Text>
         </View>
         <Pressable
           style={
-            theme === 'dark'
-              ? styles.darkButtonContainer
-              : styles.buttonContainer
+            isAppDark ? styles.darkButtonContainer : styles.buttonContainer
           }>
-          <Text style={theme === 'dark' ? styles.darkButton : styles.button}>
+          <Text style={isAppDark ? styles.darkButton : styles.button}>
             Add To Cart
           </Text>
         </Pressable>

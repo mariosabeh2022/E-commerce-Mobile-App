@@ -1,23 +1,25 @@
-import {View, Image, Text, useColorScheme} from 'react-native';
+import {View, Image, Text} from 'react-native';
 import {styles} from './customRenderItem.style';
 import {customRenderItemProps} from './customRenderItem.type';
+import {useTheme} from '../../../contexts/themeContext';
 const CustomRenderItem = ({item}: customRenderItemProps) => {
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   return (
-    <View style={theme === 'dark' ? styles.darkContainer : styles.container}>
+    <View style={isAppDark ? styles.darkContainer : styles.container}>
       <View style={styles.innerContainer}>
         <Image source={{uri: item.images[0].url}} style={styles.image} />
         <View style={styles.infoContainer}>
-          <Text style={theme === 'dark' ? styles.darkItem : styles.item}>
+          <Text style={isAppDark ? styles.darkItem : styles.item}>
             {item.title}
           </Text>
-          <Text style={theme === 'dark' ? styles.darkPrice : styles.price}>
+          <Text style={isAppDark ? styles.darkPrice : styles.price}>
             {item.price}$
           </Text>
-          <Text style={theme === 'dark' ? styles.darkItem : styles.item}>
+          <Text style={isAppDark ? styles.darkItem : styles.item}>
             Quantity: 1
           </Text>
-          <Text style={theme === 'dark' ? styles.darkPrice : styles.price}>
+          <Text style={isAppDark ? styles.darkPrice : styles.price}>
             View More Details
           </Text>
         </View>

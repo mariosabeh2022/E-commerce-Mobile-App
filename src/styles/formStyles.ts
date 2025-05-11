@@ -30,5 +30,9 @@ export const styles = StyleSheet.create({
   linkContainer: {
     flex: 1,
     flexDirection: 'row',
+    paddingTop:5,
   },
+  customFont:{
+    fontFamily:'Sansation-Bold',
+  }
 });

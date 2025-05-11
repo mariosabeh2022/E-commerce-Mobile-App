@@ -10,6 +10,6 @@ export const styles = StyleSheet.create({
   },
   darkCustomIcon: {
     ...baseCustomShare,
-    color: '#fff',
+    color: 'lightgray',
   },
 });

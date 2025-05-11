@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {View, Text, FlatList, Pressable, useColorScheme} from 'react-native';
+import {View, Text, FlatList, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {data} from '../../assets/Products.json';
 import {styles} from './productListings.style';
@@ -12,6 +12,7 @@ import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomView from '../../components/molecules/customView/customView';
 import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
 import CustomIcon from '../../components/atoms/customShare/customShare';
+import {useTheme} from '../../contexts/themeContext';
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedStackParamList,
   'Products'
@@ -29,7 +30,8 @@ const ProductListingsScreen = () => {
       </Pressable>
     </View>
   );
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsLoading(false);
@@ -41,9 +43,7 @@ const ProductListingsScreen = () => {
     return (
       <View
         style={
-          theme === 'dark'
-            ? skeletonStyles.darkContainer
-            : skeletonStyles.container
+          isAppDark ? skeletonStyles.darkContainer : skeletonStyles.container
         }>
         <View style={skeletonStyles.innerContainer}>
           <View style={skeletonStyles.image} />
@@ -89,7 +89,7 @@ const ProductListingsScreen = () => {
           ListHeaderComponent={
             <Text
               style={
-                theme === 'dark'
+                isAppDark
                   ? styles.darkHeaderComponent
                   : styles.headerComponent
               }>
@@ -99,7 +99,7 @@ const ProductListingsScreen = () => {
           ListFooterComponent={
             <Text
               style={
-                theme === 'dark'
+                isAppDark
                   ? styles.darkFooterComponent
                   : styles.footerComponent
               }>

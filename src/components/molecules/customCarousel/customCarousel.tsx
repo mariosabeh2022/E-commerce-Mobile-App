@@ -7,9 +7,9 @@ import {
   Dimensions,
   ListRenderItemInfo,
   Text,
-  useColorScheme,
 } from 'react-native';
 import {styles} from './customCarousel.style';
+import {useTheme} from '../../../contexts/themeContext';
 const {width} = Dimensions.get('window');
 
 type ImageItem = {
@@ -22,7 +22,8 @@ type Props = {
 };
 
 const ImageCarousel: React.FC<Props> = ({images}) => {
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   const [currentIndex, setCurrentIndex] = useState(0);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -67,7 +68,7 @@ const ImageCarousel: React.FC<Props> = ({images}) => {
           <Text
             key={index}
             style={[
-              theme === 'dark' ? styles.darkIndicator : styles.indicator,
+              isAppDark ? styles.darkIndicator : styles.indicator,
               currentIndex === index && styles.activeIndicator,
             ]}>
             ●

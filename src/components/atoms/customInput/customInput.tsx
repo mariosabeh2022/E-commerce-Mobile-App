@@ -1,7 +1,8 @@
-import {TextInput, useColorScheme} from 'react-native';
+import {TextInput} from 'react-native';
 import {styles} from './customInput.style';
 import {customInputProps} from './customInput.type';
 import {placeholderColors} from './customInput.style';
+import {useTheme} from '../../../contexts/themeContext';
 const CustomInput = ({
   placeholder,
   autoCapitalize = 'none',
@@ -10,15 +11,16 @@ const CustomInput = ({
   onChangeText,
   keyboardType,
 }: customInputProps) => {
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   return (
     <TextInput
       placeholder={placeholder}
       placeholderTextColor={
-        theme === 'dark' ? placeholderColors.dark : placeholderColors.light
+        isAppDark ? placeholderColors.dark : placeholderColors.light
       }
       style={[
-        theme === 'dark' ? styles.darkInput : styles.input,
+        isAppDark ? styles.darkInput : styles.input,
         keyboardType === 'default' && {paddingRight: 45},
       ]}
       autoCapitalize={autoCapitalize}

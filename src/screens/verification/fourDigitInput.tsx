@@ -5,7 +5,8 @@ import {
   useBlurOnFulfill,
   useClearByFocusCell,
 } from 'react-native-confirmation-code-field';
-import {TextInput, useColorScheme} from 'react-native';
+import {TextInput} from 'react-native';
+import {useTheme} from '../../contexts/themeContext';
 const CELL_COUNT = 4;
 
 const FourDigitInput = ({
@@ -20,7 +21,8 @@ const FourDigitInput = ({
     value,
     setValue: onChange,
   });
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   return (
     <CodeField
       ref={ref}
@@ -35,7 +37,7 @@ const FourDigitInput = ({
         <TextInput
           key={index}
           style={[
-            theme === 'dark' ? styles.darkCell : styles.cell,
+            isAppDark ? styles.darkCell : styles.cell,
             isFocused && styles.focusCell,
           ]}
           value={symbol || (isFocused ? '|' : ' ')}

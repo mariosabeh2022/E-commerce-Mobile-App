@@ -4,7 +4,6 @@ import {
   Pressable,
   Text,
   ActivityIndicator,
-  useColorScheme,
   KeyboardAvoidingView,
 } from 'react-native';
 import FourDigitInput from './fourDigitInput';
@@ -19,8 +18,10 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
+import {useTheme} from '../../contexts/themeContext';
 const VerificationScreen = () => {
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
   const {verify} = useAuth();
@@ -51,7 +52,7 @@ const VerificationScreen = () => {
   return (
     <CustomContainer>
       <>
-        <Text style={theme === 'dark' ? styles.darkMessage : styles.message}>
+        <Text style={isAppDark ? styles.darkMessage : styles.message}>
           We Have Sent The Code To Your Mail
         </Text>
         <View style={styles.form}>
@@ -74,7 +75,7 @@ const VerificationScreen = () => {
               {isLoading ? (
                 <ActivityIndicator
                   size="large"
-                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                  color={isAppDark ? '#318544' : '#00ff40'}
                 />
               ) : (
                 <Pressable onPress={handleSubmit(handleVerify)}>

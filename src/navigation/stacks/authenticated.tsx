@@ -5,6 +5,7 @@ import DetailsScreen from '../../screens/detailsScreen/detailsScreen';
 import {Pressable, Text} from 'react-native';
 import CustomShare from '../../components/atoms/customShare/customShare';
 import {AuthenticatedStackParamList} from '../navigator/navigationTypes';
+import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
 
 const Stack = createNativeStackNavigator<AuthenticatedStackParamList>();
 
@@ -14,7 +15,10 @@ export default function AuthenticatedStack() {
       <Stack.Screen
         name="Products"
         component={ProductsScreen}
-        options={{headerTitleAlign: 'center'}}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: () => <CustomThemeButton />,
+        }}
       />
       <Stack.Screen
         name="Details"
@@ -24,7 +28,7 @@ export default function AuthenticatedStack() {
           headerRight: () => (
             <Pressable>
               <Text>
-                <CustomShare type="share" />
+                <CustomShare type="share-alt" />
               </Text>
             </Pressable>
           ),

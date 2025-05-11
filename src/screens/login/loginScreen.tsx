@@ -3,7 +3,6 @@ import {
   View,
   Text,
   Pressable,
-  useColorScheme,
   ActivityIndicator,
   KeyboardAvoidingView,
 } from 'react-native';
@@ -25,6 +24,7 @@ import CustomTouchable from '../../components/molecules/customTouchable/customTo
 import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import {useTheme} from '../../contexts/themeContext';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
@@ -32,7 +32,8 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<
 >;
 
 const LoginScreen = () => {
-  const theme = useColorScheme();
+  const {theme} = useTheme();
+    const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
   const navigation = useNavigation<LoginScreenNavigationProp>();
@@ -119,7 +120,7 @@ const LoginScreen = () => {
               {isLoading ? (
                 <ActivityIndicator
                   size="large"
-                  color={theme === 'dark' ? '#318544' : '#00ff40'}
+                  color={isAppDark ? '#318544' : '#00ff40'}
                 />
               ) : (
                 <Pressable onPress={handleSubmit(handleLogin)}>
@@ -130,7 +131,7 @@ const LoginScreen = () => {
           </KeyboardAvoidingView>
         </View>
         <View style={styles.linkContainer}>
-          <Text>Don't have an account? </Text>
+          <Text style={styles.customFont}>Don't have an account? </Text>
           <Pressable onPress={() => navigation.navigate('SignUp')}>
             <CustomLink text="SignUp" />
           </Pressable>

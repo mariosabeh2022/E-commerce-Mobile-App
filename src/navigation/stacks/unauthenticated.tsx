@@ -4,6 +4,7 @@ import HomenScreen from '../../screens/home/homeScreen';
 import LoginScreen from '../../screens/login/loginScreen';
 import SignUpScreen from '../../screens/sign-up/sign-upScreen';
 import VerificationScreen from '../../screens/verification/verification';
+import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
 
 const Stack = createNativeStackNavigator();
 
@@ -13,22 +14,34 @@ export default function UnauthenticatedStack() {
       <Stack.Screen
         name="Home"
         component={HomenScreen}
-        options={{headerTitleAlign: 'center'}}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: () => <CustomThemeButton />,
+        }}
       />
       <Stack.Screen
         name="Login"
         component={LoginScreen}
-        options={{headerTitleAlign: 'center'}}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: () => <CustomThemeButton />,
+        }}
       />
       <Stack.Screen
         name="SignUp"
         component={SignUpScreen}
-        options={{headerTitleAlign: 'center'}}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: () => <CustomThemeButton />,
+        }}
       />
       <Stack.Screen
         name="Verification"
         component={VerificationScreen}
-        options={{headerTitleAlign: 'center'}}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: () => <CustomThemeButton />,
+        }}
       />
     </Stack.Navigator>
   );
