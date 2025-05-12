@@ -5,7 +5,12 @@ export type UnauthenticatedStackParamList = {
   Verification: undefined;
 };
 
-export type AuthenticatedStackParamList = {
-  Products: undefined;
-  Details: {id: string};
+export type ProductsStackParamList = {
+  ProductsStack: undefined;
+  Details: { id: string };
+};
+
+export type AuthenticatedTabParamList = {
+  Devices: undefined;
+  Upload: undefined;
 };

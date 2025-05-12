@@ -3,7 +3,7 @@ import {Animated, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {styles} from './customThemeButton.style';
 import {useTheme} from '../../../contexts/themeContext';
-import CustomIcon from '../customShare/customShare';
+import CustomIcon from '../customIcon/customIcon';
 
 export default function GradientSwitch() {
   const {theme, toggleTheme} = useTheme();

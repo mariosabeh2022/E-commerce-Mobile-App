@@ -1,15 +1,15 @@
 import {StyleSheet, ViewStyle} from 'react-native';
-const baseCustomShare: ViewStyle = {
+const baseCustomIcon: ViewStyle = {
   alignItems: 'center',
   justifyContent: 'center',
 };
 export const styles = StyleSheet.create({
   customIcon: {
-    ...baseCustomShare,
+    ...baseCustomIcon,
     color: '#000',
   },
   darkCustomIcon: {
-    ...baseCustomShare,
+    ...baseCustomIcon,
     color: 'lightgray',
   },
 });

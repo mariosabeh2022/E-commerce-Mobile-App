@@ -1,19 +1,20 @@
+// ProductsStack.tsx
 import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ProductsScreen from '../../screens/productListings/productListings';
 import DetailsScreen from '../../screens/detailsScreen/detailsScreen';
-import {Pressable, Text} from 'react-native';
-import CustomShare from '../../components/atoms/customShare/customShare';
-import {AuthenticatedStackParamList} from '../navigator/navigationTypes';
 import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
+import { Pressable, Text } from 'react-native';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import { ProductsStackParamList } from '../navigator/navigationTypes';
 
-const Stack = createNativeStackNavigator<AuthenticatedStackParamList>();
+const Stack = createNativeStackNavigator<ProductsStackParamList>();
 
-export default function AuthenticatedStack() {
+export default function ProductsStack() {
   return (
-    <Stack.Navigator initialRouteName="Products">
+    <Stack.Navigator initialRouteName="ProductsStack">
       <Stack.Screen
-        name="Products"
+        name="ProductsStack"
         component={ProductsScreen}
         options={{
           headerTitleAlign: 'center',
@@ -28,7 +29,7 @@ export default function AuthenticatedStack() {
           headerRight: () => (
             <Pressable>
               <Text>
-                <CustomShare type="share-alt" />
+                <CustomIcon type="share-alt" />
               </Text>
             </Pressable>
           ),

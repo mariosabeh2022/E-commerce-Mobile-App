@@ -4,10 +4,11 @@ import {
   DarkTheme,
   DefaultTheme,
 } from '@react-navigation/native';
-import AuthenticatedStack from '../stacks/authenticated';
+// import AuthenticatedStack from '../stacks/authenticated';
 import UnauthenticatedStack from '../stacks/unauthenticated';
 import {useAuth} from '../../contexts/authContext';
 import {useTheme} from '../../contexts/themeContext';
+import AuthenticatedTabs from '../stacks/authenticatedTabs';
 
 export default function RootNavigator() {
   const {user, verified} = useAuth();
@@ -15,7 +16,7 @@ export default function RootNavigator() {
   const isAppDark = theme === 'dark';
   return (
     <NavigationContainer theme={isAppDark ? DarkTheme : DefaultTheme}>
-      {user && verified ? <AuthenticatedStack /> : <UnauthenticatedStack />}
+      {user && verified ? <AuthenticatedTabs /> : <UnauthenticatedStack />}
     </NavigationContainer>
   );
 }
