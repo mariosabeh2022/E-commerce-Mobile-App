@@ -16,8 +16,16 @@ export const styles = StyleSheet.create({
     backgroundColor: 'transparent',
   },
   message: {
-    marginTop:'4%',
+    marginTop: '4%',
     zIndex: 1,
     alignSelf: 'center',
+  },
+  flip: {
+    position: 'absolute',
+    bottom: 40,
+    left: 30,
+    zIndex: 1,
+    borderRadius: 50,
+    padding: 10,
   },
 });

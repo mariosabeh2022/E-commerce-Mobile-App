@@ -34,7 +34,6 @@ const basePrice: TextStyle = {
 export const styles = StyleSheet.create({
   container: {
     ...baseContainer,
-    backgroundColor: 'white',
   },
   darkContainer: {
     ...baseContainer,

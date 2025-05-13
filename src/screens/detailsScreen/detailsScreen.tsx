@@ -3,10 +3,10 @@ import {styles} from './detailsScreen.style';
 import {Animated, Text, View, Pressable} from 'react-native';
 import {data} from '../../assets/Products.json';
 import {RouteProp} from '@react-navigation/native';
-import {AuthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
 import ImageCarousel from '../../components/molecules/customCarousel/customCarousel';
 import {useTheme} from '../../contexts/themeContext';
-type DetailsScreenRouteProp = RouteProp<AuthenticatedStackParamList, 'Details'>;
+type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 
 type Props = {
   route: DetailsScreenRouteProp;

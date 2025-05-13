@@ -13,4 +13,5 @@ export type ProductsStackParamList = {
 export type AuthenticatedTabParamList = {
   Devices: undefined;
   Upload: undefined;
+  Profile: undefined
 };
