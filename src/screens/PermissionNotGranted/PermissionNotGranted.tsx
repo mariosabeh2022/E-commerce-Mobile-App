@@ -1,12 +1,12 @@
 import React from 'react';
-import {styles} from './PermissionNotGranted.style';
+import { styles } from './permissionNotGranted.style';
 import LinearGradient from 'react-native-linear-gradient';
 import {useTheme} from '../../contexts/themeContext';
 import { Text, View } from 'react-native';
 type PermissionNotYetGrantedProps={
   text:string
 }
-const PermissionNotYetGranted = ({text}:PermissionNotYetGrantedProps) => {
+const PermissionNotGranted = ({text}:PermissionNotYetGrantedProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   return (
@@ -28,4 +28,4 @@ const PermissionNotYetGranted = ({text}:PermissionNotYetGrantedProps) => {
   );
 };
 
-export default PermissionNotYetGranted;
+export default PermissionNotGranted;

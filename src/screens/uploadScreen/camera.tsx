@@ -8,8 +8,8 @@ import {useEffect, useRef, useState} from 'react';
 import {styles} from './camera.style';
 import {saveToDeviceStorage} from './saveToDevice';
 import CustomButton from '../../components/atoms/customButton/customButton';
-import PermissionNotYetGranted from '../permissionNotGranted/PermissionNotGranted';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import PermissionNotGranted from '../permissionNotGranted/permissionNotGranted';
 import {useNavigation} from '@react-navigation/native';
 import {AuthenticatedTabParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -49,9 +49,9 @@ const CamPermissionsCheck = () => {
   };
   const navigation = useNavigation<UploadScreenNavigationProp>();
   if (!hasPermission)
-    return <PermissionNotYetGranted text="Permission not granted" />;
+    return <PermissionNotGranted text="Permission not granted" />;
   if (device == null)
-    return <PermissionNotYetGranted text="No devices were found" />;
+    return <PermissionNotGranted text="No devices were found" />;
   return (
     <View style={styles.container}>
       <View style={isSaved && !isSaving ? styles.message : ''}>
