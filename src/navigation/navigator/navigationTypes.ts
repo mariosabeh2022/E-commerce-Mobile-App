@@ -6,12 +6,13 @@ export type UnauthenticatedStackParamList = {
 };
 
 export type ProductsStackParamList = {
-  ProductsStack: undefined;
+  Products: undefined;
   Details: { id: string };
 };
 
 export type AuthenticatedTabParamList = {
   Devices: undefined;
   Upload: undefined;
-  Profile: undefined
+  Cart: undefined;
+  Profile: undefined;
 };

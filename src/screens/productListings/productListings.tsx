@@ -18,7 +18,7 @@ import {useTheme} from '../../contexts/themeContext';
 
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
-  'ProductsStack'
+  'Products'
 >;
 const ProductListingsScreen = () => {
   const [isLoading, setIsLoading] = useState(true);

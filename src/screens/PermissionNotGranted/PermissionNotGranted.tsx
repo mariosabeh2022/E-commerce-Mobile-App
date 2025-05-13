@@ -1,5 +1,5 @@
 import React from 'react';
-import {styles} from './permissionNotGranted.style';
+import {styles} from './PermissionNotGranted.style';
 import LinearGradient from 'react-native-linear-gradient';
 import {useTheme} from '../../contexts/themeContext';
 import { Text, View } from 'react-native';

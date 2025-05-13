@@ -5,10 +5,15 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {AuthenticatedTabParamList} from '../navigator/navigationTypes';
 import ProductsStack from './ProductsStack';
-// import profileScreen from '../../screens/profileScreen/profileScreen';
+import {useTheme} from '../../contexts/themeContext';
+import {View} from 'react-native';
+import styles from '../../styles/tabAcitve.style';
+import ProfileScreen from '../../screens/profileScreen/profileScreen';
+import CartScreen from '../../screens/cartScreen/cartScreen';
 const Tab = createBottomTabNavigator<AuthenticatedTabParamList>();
-
 export default function AuthenticatedTabs() {
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   return (
     <Tab.Navigator
       initialRouteName="Devices"
@@ -18,9 +23,23 @@ export default function AuthenticatedTabs() {
         component={ProductsStack}
         options={{
           headerShown: false,
-          tabBarIcon: () => <CustomIcon type="mobile" />,
+          tabBarIcon: ({focused}) => (
+            <View
+              style={
+                focused
+                  ? isAppDark
+                    ? styles.darkActive
+                    : styles.active
+                  : styles.inactive
+              }>
+              <CustomIcon type="mobile" />
+            </View>
+          ),
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
+          },
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
           },
         }}
       />
@@ -30,29 +49,87 @@ export default function AuthenticatedTabs() {
         options={{
           headerTitleAlign: 'center',
           headerRight: () => <CustomThemeButton />,
-          tabBarIcon: () => <CustomIcon type="plus" />,
+          tabBarIcon: ({focused}) => (
+            <View
+              style={
+                focused
+                  ? isAppDark
+                    ? styles.darkActive
+                    : styles.active
+                  : styles.inactive
+              }>
+              <CustomIcon type="plus" />
+            </View>
+          ),
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
           },
           headerRightContainerStyle: {
             padding: 16,
+          },
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
           },
         }}
       />
-      {/* <Tab.Screen
-        name="Profile"
-        component={profileScreen}
+      <Tab.Screen
+        name="Cart"
+        component={CartScreen}
         options={{
           headerTitleAlign: 'center',
-          tabBarIcon: () => <CustomIcon type="user" />,
+          headerRight: () => <CustomThemeButton />,
+          tabBarIcon: ({focused}) => (
+            <View
+              style={
+                focused
+                  ? isAppDark
+                    ? styles.darkActive
+                    : styles.active
+                  : styles.inactive
+              }>
+              <CustomIcon type="shopping-cart" />
+            </View>
+          ),
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
           },
           headerRightContainerStyle: {
             padding: 16,
           },
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
         }}
-      /> */}
+      />
+      <Tab.Screen
+        name="Profile"
+        component={ProfileScreen}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: () => <CustomThemeButton />,
+          tabBarIcon: ({focused}) => (
+            <View
+              style={
+                focused
+                  ? isAppDark
+                    ? styles.darkActive
+                    : styles.active
+                  : styles.inactive
+              }>
+              <CustomIcon type="user" />
+            </View>
+          ),
+          tabBarLabelStyle: {
+            fontFamily: 'Sansation-Bold',
+          },
+          headerRightContainerStyle: {
+            padding: 16,
+          },
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
+        }}
+      />
     </Tab.Navigator>
   );
 }

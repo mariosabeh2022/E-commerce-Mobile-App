@@ -17,6 +17,9 @@ export default function UnauthenticatedStack() {
         options={{
           headerTitleAlign: 'center',
           headerRight: () => <CustomThemeButton />,
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
         }}
       />
       <Stack.Screen
@@ -25,6 +28,9 @@ export default function UnauthenticatedStack() {
         options={{
           headerTitleAlign: 'center',
           headerRight: () => <CustomThemeButton />,
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
         }}
       />
       <Stack.Screen
@@ -33,6 +39,9 @@ export default function UnauthenticatedStack() {
         options={{
           headerTitleAlign: 'center',
           headerRight: () => <CustomThemeButton />,
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
         }}
       />
       <Stack.Screen
@@ -41,6 +50,9 @@ export default function UnauthenticatedStack() {
         options={{
           headerTitleAlign: 'center',
           headerRight: () => <CustomThemeButton />,
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
         }}
       />
     </Stack.Navigator>

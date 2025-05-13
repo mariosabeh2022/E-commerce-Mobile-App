@@ -1,4 +1,4 @@
-import {Pressable, SafeAreaView, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {Pressable, TouchableOpacity, View} from 'react-native';
 import {
   Camera,
   useCameraDevice,
@@ -10,10 +10,17 @@ import {saveToDeviceStorage} from './saveToDevice';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import PermissionNotYetGranted from '../permissionNotGranted/PermissionNotGranted';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
-
+import {useNavigation} from '@react-navigation/native';
+import {AuthenticatedTabParamList} from '../../navigation/navigator/navigationTypes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+type UploadScreenNavigationProp = NativeStackNavigationProp<
+  AuthenticatedTabParamList,
+  'Devices'
+>;
 const CamPermissionsCheck = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
+  const [isCapturing, setIsCapturing] = useState(false);
   const [useFrontCam, setUseFrontCam] = useState(false);
   const toggleCamera = () => setUseFrontCam(!useFrontCam);
   const device = useCameraDevice(useFrontCam ? 'front' : 'back');
@@ -28,6 +35,7 @@ const CamPermissionsCheck = () => {
   const handleCapture = async () => {
     setIsSaving(true);
     setIsSaved(false);
+    setIsCapturing(false);
     const photo = await camera.current?.takePhoto();
     if (photo) {
       await saveToDeviceStorage(`file://${photo?.path}`);
@@ -39,19 +47,19 @@ const CamPermissionsCheck = () => {
       setIsSaved(false);
     }, 2500);
   };
-
+  const navigation = useNavigation<UploadScreenNavigationProp>();
   if (!hasPermission)
-    return <PermissionNotYetGranted text="Permission Not Yet Granted" />;
+    return <PermissionNotYetGranted text="Permission not granted" />;
   if (device == null)
     return <PermissionNotYetGranted text="No devices were found" />;
   return (
-    <SafeAreaView style={styles.container}>
+    <View style={styles.container}>
       <View style={isSaved && !isSaving ? styles.message : ''}>
-        <CustomButton text="Image Saved" />
+        <CustomButton text="Saved To Files !" />
       </View>
       <Camera
         ref={camera}
-        style={StyleSheet.absoluteFillObject}
+        style={styles.camera}
         device={device}
         isActive={true}
         photo={true}
@@ -59,8 +67,19 @@ const CamPermissionsCheck = () => {
       <Pressable style={styles.flip} onPress={toggleCamera}>
         <CustomIcon type="sync-alt" />
       </Pressable>
-      <TouchableOpacity style={styles.capture} onPress={handleCapture} />
-    </SafeAreaView>
+      <TouchableOpacity
+        style={isCapturing ? styles.capturing : styles.capture}
+        onPress={() => {
+          setIsCapturing(true);
+          handleCapture();
+        }}
+      />
+      <Pressable
+        style={styles.close}
+        onPress={() => navigation.navigate('Devices')}>
+        <CustomIcon type="times-circle" />
+      </Pressable>
+    </View>
   );
 };
 export default CamPermissionsCheck;
