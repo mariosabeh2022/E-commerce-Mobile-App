@@ -35,9 +35,6 @@ export const styles = StyleSheet.create({
     justifyContent:'center',
     width: '100%',
   },
-  searchIcon:{
-
-  },
   headerComponent: {
     ...baseHeaderComponent,
     color: '#00ff40',

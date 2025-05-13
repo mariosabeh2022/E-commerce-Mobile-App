@@ -1,39 +1,32 @@
-import {StyleSheet, ViewStyle} from 'react-native';
-import {Dimensions} from 'react-native';
-const {width} = Dimensions.get('window');
-const baseButtonContainer: ViewStyle = {
-  marginTop: '15%',
-  width: width / 1.5,
-  height: width / 6,
-  alignItems: 'center',
-  borderRadius: 40,
-  justifyContent: 'center',
-};
+import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+
 const baseContainer: ViewStyle = {
   flex: 1,
+  justifyContent: 'center',
   alignItems: 'center',
+  paddingHorizontal: 20,
+};
+const baseText: TextStyle = {
+  fontFamily: 'Sansation-BoldItalic',
+  fontSize: 16,
+  textAlign: 'center',
+  marginBottom: 20,
 };
 export const styles = StyleSheet.create({
-  outerContainer: {
-    flex: 1,
-  },
   container: {
     ...baseContainer,
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
   },
   darkContainer: {
     ...baseContainer,
     backgroundColor: 'gray',
   },
-  buttonContainer: {
-    ...baseButtonContainer,
+  text: {
+    ...baseText,
+    color: '#333',
   },
-  darkButtonContainer: {
-    ...baseButtonContainer,
-  },
-  gradientText: {
-    fontFamily: 'Sansation-BoldItalic',
-    fontSize: 16,
-    color: '#223a66',
+  darkText: {
+    ...baseText,
+    color: 'lightgray',
   },
 });

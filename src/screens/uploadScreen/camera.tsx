@@ -1,10 +1,10 @@
-import {Pressable, TouchableOpacity, View} from 'react-native';
+import {Linking, Pressable, TouchableOpacity, View} from 'react-native';
 import {
   Camera,
   useCameraDevice,
   useCameraPermission,
 } from 'react-native-vision-camera';
-import {useEffect, useRef, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import {styles} from './camera.style';
 import {saveToDeviceStorage} from './saveToDevice';
 import CustomButton from '../../components/atoms/customButton/customButton';
@@ -27,11 +27,15 @@ const CamPermissionsCheck = () => {
   const camera = useRef<Camera>(null);
 
   const {hasPermission, requestPermission} = useCameraPermission();
-  useEffect(() => {
-    if (!hasPermission) {
-      requestPermission();
-    }
+  const handleCameraPermission = useCallback(async () => {
+    if (hasPermission) return;
+    await requestPermission();
   }, [hasPermission, requestPermission]);
+
+  useEffect(() => {
+    handleCameraPermission();
+  }, [handleCameraPermission]);
+  const openSettings = async () => await Linking.openSettings();
   const handleCapture = async () => {
     setIsSaving(true);
     setIsSaved(false);
@@ -49,9 +53,11 @@ const CamPermissionsCheck = () => {
   };
   const navigation = useNavigation<UploadScreenNavigationProp>();
   if (!hasPermission)
-    return <PermissionNotGranted text="Permission not granted" />;
+    return <PermissionNotGranted openSettings={openSettings} />;
   if (device == null)
-    return <PermissionNotGranted text="No devices were found" />;
+    return (
+      <PermissionNotGranted text="No Devices Were Found" />
+    );
   return (
     <View style={styles.container}>
       <View style={isSaved && !isSaving ? styles.message : ''}>
