@@ -2,14 +2,13 @@ import React, {useState} from 'react';
 import {
   View,
   Pressable,
-  Text,
   ActivityIndicator,
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
 import FourDigitInput from './fourDigitInput';
-import {styles} from '../../styles/formStyles';
+import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -21,6 +20,7 @@ import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import {useTheme} from '../../contexts/themeContext';
+import CustomTitle from '../../components/atoms/customTitle/customTitle';
 const VerificationScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -54,9 +54,7 @@ const VerificationScreen = () => {
   return (
     <CustomContainer>
       <>
-        <Text style={isAppDark ? styles.darkMessage : styles.message}>
-          We Have Sent The Code To Your Mail
-        </Text>
+        <CustomTitle text="Please Check Your Mail" />
         <View style={styles.form}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
             <KeyboardAvoidingView>
@@ -78,7 +76,7 @@ const VerificationScreen = () => {
                 {isLoading ? (
                   <ActivityIndicator
                     size="large"
-                    color={isAppDark ? '#318544' : '#00ff40'}
+                    color={isAppDark ? darkBaseColor : lightBaseColor}
                   />
                 ) : (
                   <Pressable onPress={handleSubmit(handleVerify)}>

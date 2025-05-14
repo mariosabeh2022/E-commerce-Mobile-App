@@ -28,9 +28,8 @@ const CamPermissionsCheck = () => {
 
   const {hasPermission, requestPermission} = useCameraPermission();
   const handleCameraPermission = useCallback(async () => {
-    if (hasPermission) return;
     await requestPermission();
-  }, [hasPermission, requestPermission]);
+  }, [requestPermission]);
 
   useEffect(() => {
     handleCameraPermission();

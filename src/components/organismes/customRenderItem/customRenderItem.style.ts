@@ -1,4 +1,5 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
+import { darkBaseColor, lightBaseColor } from '../../../styles/formStyles';
 const baseContainer: ViewStyle = {
   borderRadius: 20,
   padding: 10,
@@ -31,20 +32,23 @@ export const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 10,
+    backgroundColor:'lightgray',
+    borderRadius: 20,
   },
   image: {
     width: 135,
     height: 135,
     marginRight: 10,
     resizeMode: 'contain',
+    borderRadius: 10,
   },
   item: {
     ...baseItem,
-    color: '#00ff40',
+    color: lightBaseColor,
   },
   darkItem: {
     ...baseItem,
-    color: '#318544',
+    color: darkBaseColor,
   },
   price: {
     ...basePrice,
@@ -52,6 +56,5 @@ export const styles = StyleSheet.create({
   },
   darkPrice: {
     ...basePrice,
-    color: 'lightgray',
   },
 });

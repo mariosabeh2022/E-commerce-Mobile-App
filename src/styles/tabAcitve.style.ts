@@ -1,4 +1,5 @@
 import {StyleSheet, ViewStyle} from 'react-native';
+import {darkBaseColor, lightBaseColor} from './formStyles';
 const baseActive: ViewStyle = {
   width: 60,
   height: 30,
@@ -9,11 +10,11 @@ const baseActive: ViewStyle = {
 const styles = StyleSheet.create({
   active: {
     ...baseActive,
-    backgroundColor: '#00ff55',
+    backgroundColor: lightBaseColor,
   },
   darkActive: {
     ...baseActive,
-    backgroundColor: '#318555',
+    backgroundColor: darkBaseColor,
   },
   inactive: {
     ...baseActive,

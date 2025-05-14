@@ -13,6 +13,14 @@ const baseContainer: ViewStyle = {
   flex: 1,
   alignItems: 'center',
 };
+const baseInnerButton: ViewStyle = {
+  flex: 1,
+  borderRadius: 40,
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
+  height: '100%',
+};
 export const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
@@ -35,13 +43,12 @@ export const styles = StyleSheet.create({
     ...baseButtonContainer,
   },
   innerButton: {
-    flex: 1,
+    ...baseInnerButton,
     backgroundColor: 'white',
-    borderRadius: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
+  },
+  darkInnerButton: {
+    ...baseInnerButton,
+    backgroundColor: 'lightgray',
   },
   gradientBorder: {
     ...baseButtonContainer,

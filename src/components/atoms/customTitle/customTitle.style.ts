@@ -1,4 +1,5 @@
 import {StyleSheet, TextStyle} from 'react-native';
+import { darkBaseColor, lightBaseColor } from '../../../styles/formStyles';
 const baseTitle: TextStyle = {
   paddingTop: '10%',
   fontSize: 30,
@@ -8,10 +9,10 @@ const baseTitle: TextStyle = {
 export const styles = StyleSheet.create({
   title: {
     ...baseTitle,
-    color: '#00ff40',
+    color: lightBaseColor,
   },
   darkTitle: {
     ...baseTitle,
-    color: '#318544',
+    color: darkBaseColor,
   },
 });

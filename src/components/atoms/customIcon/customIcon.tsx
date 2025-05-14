@@ -5,12 +5,16 @@ import {useTheme} from '../../../contexts/themeContext';
 const CustomIcon = ({type}: customIconProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
-  return (
-    <Icon
-      name={type}
-      size={20}
-      style={isAppDark ? styles.darkCustomIcon : styles.customIcon}
-    />
-  );
+  if (type === 'sun') {
+    return <Icon name={type} size={20} style={styles.sun} />;
+  } else {
+    return (
+      <Icon
+        name={type}
+        size={20}
+        style={isAppDark ? styles.darkCustomIcon : styles.customIcon}
+      />
+    );
+  }
 };
 export default CustomIcon;

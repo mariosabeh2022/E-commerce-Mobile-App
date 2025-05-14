@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 import {Dimensions} from 'react-native';
 const {width, height} = Dimensions.get('window');
 export const styles = StyleSheet.create({
-  customTouchable: {
+  customPressable: {
     position: 'absolute',
     right: width / 3.75,
     top: height / 40,

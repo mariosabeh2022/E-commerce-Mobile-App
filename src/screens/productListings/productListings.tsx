@@ -12,7 +12,7 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
 import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomView from '../../components/molecules/customView/customView';
-import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
+import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 
@@ -79,9 +79,9 @@ const ProductListingsScreen = () => {
               onChangeText={() => {}}
               keyboardType="default"
             />
-            <CustomTouchable onPress={() => {}}>
+            <CustomPressable onPress={() => {}}>
               <CustomIcon type="search" />
-            </CustomTouchable>
+            </CustomPressable>
           </>
         </CustomView>
         <FlatList

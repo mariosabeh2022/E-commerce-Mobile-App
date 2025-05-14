@@ -1,5 +1,6 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {Dimensions} from 'react-native';
+import { darkBaseColor, lightBaseColor } from '../../styles/formStyles';
 const {width} = Dimensions.get('window');
 const baseContainer: ViewStyle = {
   flex: 1,
@@ -92,14 +93,14 @@ export const styles = StyleSheet.create({
     padding: 2,
     marginTop: 20,
     borderRadius: 40,
-    backgroundColor: '#00ff40',
+    backgroundColor: lightBaseColor,
   },
   darkButtonContainer: {
     ...baseButtonContainer,
     padding: 2,
     marginTop: 20,
     borderRadius: 40,
-    backgroundColor: '#318544',
+    backgroundColor: darkBaseColor,
   },
   button: {
     fontFamily: 'Sansation-BoldItalic',

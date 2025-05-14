@@ -8,7 +8,7 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
 } from 'react-native';
-import {styles} from '../../styles/formStyles';
+import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
 import {schema} from '../../utils/signUpFormValidation';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
@@ -21,7 +21,7 @@ import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import CustomView from '../../components/molecules/customView/customView';
 import CustomLink from '../../components/atoms/customLink/customLink';
 import CustomButton from '../../components/atoms/customButton/customButton';
-import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
+import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
@@ -123,9 +123,9 @@ const SignUpScreen = () => {
                       />
                     )}
                   />
-                  <CustomTouchable onPress={toggleVisibility}>
+                  <CustomPressable onPress={toggleVisibility}>
                     <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
-                  </CustomTouchable>
+                  </CustomPressable>
                   {errors.password && (
                     <CustomErrorMessage message={errors.password?.message} />
                   )}
@@ -155,7 +155,7 @@ const SignUpScreen = () => {
                 {isLoading ? (
                   <ActivityIndicator
                     size="large"
-                    color={isAppDark ? '#318544' : '#00ff40'}
+                    color={isAppDark ? darkBaseColor : lightBaseColor}
                   />
                 ) : (
                   <Pressable onPress={handleSubmit(onSubmit)}>

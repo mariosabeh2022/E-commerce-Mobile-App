@@ -9,7 +9,7 @@ const CustomButton = ({text = 'light'}: CustomButtomProps) => {
   const isAppDark = theme === 'dark';
   return (
     <LinearGradient
-      colors={['#00ff40', '#318555', '#223a66']}
+      colors={['#00cc55', '#318555', '#223a66']}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
       style={isAppDark ? styles.darkButtonContainer : styles.buttonContainer}>

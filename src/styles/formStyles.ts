@@ -4,17 +4,19 @@ const baseMessage: TextStyle = {
   paddingTop: '10%',
   fontSize: 20,
 };
+export const lightBaseColor = '#00cc50';
+export const darkBaseColor = '#318544';
 export const styles = StyleSheet.create({
   outerContainer: {
     flex: 1,
   },
   message: {
     ...baseMessage,
-    color: '#00ff40',
+    color: lightBaseColor,
   },
   darkMessage: {
     ...baseMessage,
-    color: '#318544',
+    color: lightBaseColor,
   },
   form: {
     borderWidth: 1.5,

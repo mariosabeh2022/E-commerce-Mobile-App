@@ -1,4 +1,5 @@
 import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
+import { darkBaseColor, lightBaseColor } from '../../styles/formStyles';
 const baseSkeletonComponent: ViewStyle = {
   height: 60,
   marginVertical: 8,
@@ -37,21 +38,21 @@ export const styles = StyleSheet.create({
   },
   headerComponent: {
     ...baseHeaderComponent,
-    color: '#00ff40',
-    borderColor: '#00ff40',
+    color: lightBaseColor,
+    borderColor: lightBaseColor,
   },
   darkHeaderComponent: {
     ...baseHeaderComponent,
-    color: '#318544',
-    borderColor: '#318544',
+    color: darkBaseColor,
+    borderColor: darkBaseColor,
   },
   footerComponent: {
     ...baseFooterComponent,
-    color: '#00ff40',
+    color: lightBaseColor,
   },
   darkFooterComponent: {
     ...baseFooterComponent,
-    color: '#318544',
+    color: darkBaseColor,
   },
   flatlistContainer: {
     alignItems: 'center',

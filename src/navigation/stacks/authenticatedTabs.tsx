@@ -10,6 +10,7 @@ import {View} from 'react-native';
 import styles from '../../styles/tabAcitve.style';
 import ProfileScreen from '../../screens/profileScreen/profileScreen';
 import CartScreen from '../../screens/cartScreen/cartScreen';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 const Tab = createBottomTabNavigator<AuthenticatedTabParamList>();
 export default function AuthenticatedTabs() {
   const {theme} = useTheme();
@@ -90,6 +91,12 @@ export default function AuthenticatedTabs() {
               <CustomIcon type="shopping-cart" />
             </View>
           ),
+          tabBarBadge: '0',
+          tabBarBadgeStyle: {
+            backgroundColor: isAppDark ? 'black' : 'white',
+            color: isAppDark ? lightBaseColor : darkBaseColor,
+            fontFamily: 'Sansation-Bold',
+          },
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
           },

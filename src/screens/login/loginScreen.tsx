@@ -15,14 +15,14 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useAuth} from '../../contexts/authContext';
-import {styles} from '../../styles/formStyles';
+import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomView from '../../components/molecules/customView/customView';
 import CustomLink from '../../components/atoms/customLink/customLink';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
-import CustomTouchable from '../../components/molecules/customTouchable/customTouchable';
+import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
@@ -111,9 +111,9 @@ const LoginScreen = () => {
                       />
                     )}
                   />
-                  <CustomTouchable onPress={toggleVisibility}>
+                  <CustomPressable onPress={toggleVisibility}>
                     <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
-                  </CustomTouchable>
+                  </CustomPressable>
                   {!submittable && (
                     <CustomErrorMessage message="Email Or Password Incorrect" />
                   )}
@@ -123,7 +123,7 @@ const LoginScreen = () => {
                 {isLoading ? (
                   <ActivityIndicator
                     size="large"
-                    color={isAppDark ? '#318544' : '#00ff40'}
+                    color={isAppDark ? darkBaseColor : lightBaseColor}
                   />
                 ) : (
                   <Pressable onPress={handleSubmit(handleLogin)}>

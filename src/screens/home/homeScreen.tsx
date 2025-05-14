@@ -24,7 +24,7 @@ const HomenScreen = () => {
           <CustomTitle text="Welcome ! " />
           <Pressable onPress={() => navigation.navigate('SignUp')}>
             <LinearGradient
-              colors={['#00ff40', '#318555', '#223a66']}
+              colors={['#00cc50', '#318555', '#223a66']}
               start={{x: 0, y: 0}}
               end={{x: 1, y: 0}}
               style={
@@ -34,13 +34,13 @@ const HomenScreen = () => {
             </LinearGradient>
           </Pressable>
           <LinearGradient
-            colors={['#00ff40', '#318555', '#223a66']}
+            colors={['#00cc50', '#318555', '#223a66']}
             start={{x: 0, y: 0}}
             end={{x: 1, y: 0}}
             style={styles.gradientBorder}>
             <Pressable
               onPress={() => navigation.navigate('Login')}
-              style={styles.innerButton}>
+              style={isAppDark ? styles.darkInnerButton : styles.innerButton}>
               <Text style={styles.gradientText}>Login</Text>
             </Pressable>
           </LinearGradient>

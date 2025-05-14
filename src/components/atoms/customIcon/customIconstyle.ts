@@ -12,4 +12,7 @@ export const styles = StyleSheet.create({
     ...baseCustomIcon,
     color: 'lightgray',
   },
+  sun: {
+    color: 'yellow',
+  },
 });
