@@ -21,7 +21,9 @@ type ProductScreenNavigationProp = NativeStackNavigationProp<
   'Products'
 >;
 const ProductListingsScreen = () => {
+  const [filteredText, setFilteredText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [filteredData, setFilteredData] = useState(data);
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => (
     <View>
@@ -36,13 +38,22 @@ const ProductListingsScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    setIsLoading(true);
 
-    return () => clearTimeout(timeout);
-  });
-  const cutomSkeletonItem = () => {
+    const timeoutId = setTimeout(() => {
+      if (filteredText.length >= 1) {
+        const filtered = data.filter(item =>
+          item.title.toLowerCase().includes(filteredText.toLowerCase()),
+        );
+        setFilteredData(filtered);
+      } else {
+        setFilteredData(data);
+      }
+      setIsLoading(false);
+    }, 1500);
+    return () => clearTimeout(timeoutId);
+  }, [filteredText]);
+  const customSkeletonItem = () => {
     return (
       <View
         style={
@@ -68,6 +79,7 @@ const ProductListingsScreen = () => {
       </View>
     );
   };
+
   return (
     <CustomContainer>
       <>
@@ -75,8 +87,8 @@ const ProductListingsScreen = () => {
           <>
             <CustomInput
               placeholder="Filter Item"
-              value={''}
-              onChangeText={() => {}}
+              value={filteredText}
+              onChangeText={setFilteredText}
               keyboardType="default"
             />
             <CustomPressable onPress={() => {}}>
@@ -85,9 +97,9 @@ const ProductListingsScreen = () => {
           </>
         </CustomView>
         <FlatList
-          data={data}
+          data={filteredText ? filteredData : data}
           keyExtractor={item => item._id.toString()}
-          renderItem={isLoading ? cutomSkeletonItem : renderItem}
+          renderItem={isLoading ? customSkeletonItem : renderItem}
           ListEmptyComponent={<Text>No products found.</Text>}
           ListHeaderComponent={
             <Text
@@ -105,6 +117,7 @@ const ProductListingsScreen = () => {
               ---------------
             </Text>
           }
+          extraData={isLoading}
         />
       </>
     </CustomContainer>

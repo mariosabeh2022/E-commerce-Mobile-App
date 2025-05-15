@@ -3,6 +3,6 @@ export type customInputProps = {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   secureEntry?: boolean;
   value: string;
-  onChangeText: () => void;
+  onChangeText: (text:string) => void;
   keyboardType?: 'default' | 'email-address' | 'numeric';
 };

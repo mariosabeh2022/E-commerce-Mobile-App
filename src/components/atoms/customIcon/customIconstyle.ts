@@ -13,6 +13,6 @@ export const styles = StyleSheet.create({
     color: 'lightgray',
   },
   sun: {
-    color: 'yellow',
+    color: '#FFDB58',
   },
 });
