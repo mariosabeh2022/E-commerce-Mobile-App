@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Pressable,
@@ -26,6 +26,7 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import {useTheme} from '../../contexts/themeContext';
+import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
@@ -63,9 +64,27 @@ const SignUpScreen = () => {
     }, 800);
     return () => clearTimeout(timeout);
   };
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setKeyboardVisible(true),
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setKeyboardVisible(false),
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   return (
     <CustomContainer>
       <>
+        {!isKeyboardVisible && <WavyHeader />}
         <CustomTitle text="Welcome Dear Customer" />
         <View style={styles.form}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>

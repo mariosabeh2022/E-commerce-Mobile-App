@@ -1,66 +1,41 @@
 import React from 'react';
-import {View, StyleSheet, Text} from 'react-native';
+import {View, Text} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
-
+import {styles} from './wavyHeader.style';
+import {lightBaseColor} from '../../../styles/formStyles';
+import {useTheme} from '../../../contexts/themeContext';
 const WavyHeader = () => {
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   return (
-    <View style={styles.headerContainer}>
+    <View style={styles.mainContainer}>
       <Text style={styles.headerText}>Shopfinity</Text>
-      <Svg
-        height="160"
-        width="100%"
-        viewBox="0 0 1440 400"
-        style={styles.topWave}>
-        <Path
-          fill="#00cc50"
-          d="M0,150 C150,100 300,200 450,150 C600,100 750,200 900,150 C1050,100 1200,200 1350,150 C1400,130 1440,100 1440,100 L1440,0 L0,0 Z"
-        />
-      </Svg>
-      <Svg
-        height="160"
-        width="100%"
-        viewBox="0 0 1440 400"
-        style={styles.bottomWave}>
-        <Path
-          fill="#00cc50"
-          d="M0,250 C150,300 300,200 450,250 C600,300 750,200 900,250 C1050,300 1200,200 1350,250 C1400,270 1440,300 1440,300 L1440,400 L0,400 Z"
-        />
-      </Svg>
+      <View style={styles.upperContainer}>
+        <Svg
+          viewBox="0 0 1440 320"
+          style={styles.wave}
+          preserveAspectRatio="none">
+          <Path
+            fill={lightBaseColor}
+            fillOpacity="1"
+            d="M0,96L80,128C160,160,320,224,480,224C640,224,800,160,960,160C1120,160,1280,224,1360,256L1440,288L1440,320L1360,320C1280,320,1120,320,960,320C800,320,640,320,480,320C320,320,160,320,80,320L0,320Z"
+          />
+        </Svg>
+      </View>
+      <View
+        style={isAppDark ? styles.darkLowerContainer : styles.lowerContainer}>
+        <Svg
+          viewBox="0 0 1440 320"
+          style={styles.wave}
+          preserveAspectRatio="none">
+          <Path
+            fill={lightBaseColor}
+            fillOpacity="1"
+            d="M0,96L80,128C160,160,320,224,480,224C640,224,800,160,960,160C1120,160,1280,224,1360,256L1440,288L1440,0L1360,0C1280,0,1120,0,960,0C800,0,640,0,480,0C320,0,160,0,80,0L0,0Z"
+          />
+        </Svg>
+      </View>
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  headerContainer: {
-    width: '100%',
-    height: '25%',
-    position: 'relative',
-    overflow: 'hidden',
-    backgroundColor: '#318555',
-  },
-  headerText: {
-    position: 'absolute',
-    top: '35%',
-    fontSize: 40,
-    fontFamily: 'Sansation-BoldItalic',
-    color: '#223a66',
-    alignSelf: 'center',
-    zIndex: 1,
-  },
-  topWave: {
-    position: 'absolute',
-    top: 60,
-    left: 0,
-    width: '100%',
-    height: 'auto',
-  },
-  bottomWave: {
-    position: 'absolute',
-    bottom: 60,
-    left: 0,
-    width: '100%',
-    height: 'auto',
-  },
-});
-
 export default WavyHeader;

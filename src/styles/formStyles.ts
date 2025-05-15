@@ -24,6 +24,7 @@ export const styles = StyleSheet.create({
     width: '95%',
     alignSelf: 'center',
     marginTop: 20,
+    marginBottom: 20,
   },
   text: {
     fontSize: 18,
@@ -33,6 +34,7 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingTop: 5,
     alignItems: 'center',
+    marginBottom: '5%',
   },
   customFont: {
     fontFamily: 'Sansation-Bold',

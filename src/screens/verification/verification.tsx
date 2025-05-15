@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Pressable,
@@ -21,6 +21,7 @@ import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import {useTheme} from '../../contexts/themeContext';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
+import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
 const VerificationScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -50,10 +51,27 @@ const VerificationScreen = () => {
     }, 800);
     return () => clearTimeout(timeout);
   };
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => setKeyboardVisible(true),
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => setKeyboardVisible(false),
+    );
+
+    return () => {
+      keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
+    };
+  }, []);
   return (
     <CustomContainer>
       <>
+        {!isKeyboardVisible && <WavyHeader />}
         <CustomTitle text="Please Check Your Mail" />
         <View style={styles.form}>
           <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
