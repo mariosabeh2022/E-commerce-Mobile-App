@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -54,6 +54,12 @@ const LoginScreen = () => {
   });
 
   const {login} = useAuth();
+  const handleSignUpNavigation = useCallback(
+    () => navigation.navigate('SignUp'),
+    [navigation],
+  );
+
+  const handleKeyboardDismiss = () => Keyboard.dismiss();
 
   const handleLogin = (data: FormData) => {
     setIsLoading(true);
@@ -74,16 +80,18 @@ const LoginScreen = () => {
     }, 800);
     return () => clearTimeout(timeout);
   };
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useEffect(() => {
+    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
+    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      () => setKeyboardVisible(true),
+      handleKeyboardIsVisible,
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      () => setKeyboardVisible(false),
+      handleKeyboardIsNotVisible,
     );
 
     return () => {
@@ -97,7 +105,7 @@ const LoginScreen = () => {
         {!isKeyboardVisible && <WavyHeader />}
         <CustomTitle text="Good To See You Again" />
         <View style={styles.form}>
-          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
             <KeyboardAvoidingView>
               <CustomView>
                 <Controller
@@ -154,7 +162,7 @@ const LoginScreen = () => {
         </View>
         <View style={styles.linkContainer}>
           <Text style={styles.customFont}>Don't have an account? </Text>
-          <Pressable onPress={() => navigation.navigate('SignUp')}>
+          <Pressable onPress={handleSignUpNavigation}>
             <CustomLink text="SignUp" />
           </Pressable>
         </View>

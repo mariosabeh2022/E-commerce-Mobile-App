@@ -1,4 +1,4 @@
 export type customPressableProps = {
-  onPress: () => void;
+  onPress?: () => void;
   children: React.ReactElement;
 };

@@ -35,6 +35,10 @@ const CamPermissionsCheck = () => {
     handleCameraPermission();
   }, [handleCameraPermission]);
   const openSettings = async () => await Linking.openSettings();
+  const handleCaptureButtom = () => {
+    setIsCapturing(true);
+    handleCapture();
+  };
   const handleCapture = async () => {
     setIsSaving(true);
     setIsSaved(false);
@@ -51,12 +55,12 @@ const CamPermissionsCheck = () => {
     }, 2500);
   };
   const navigation = useNavigation<UploadScreenNavigationProp>();
-  if (!hasPermission)
+  if (!hasPermission) {
     return <PermissionNotGranted openSettings={openSettings} />;
-  if (device == null)
-    return (
-      <PermissionNotGranted text="No Devices Were Found" />
-    );
+  }
+  if (device == null) {
+    return <PermissionNotGranted text="No Devices Were Found" />;
+  }
   return (
     <View style={styles.container}>
       <View style={isSaved && !isSaving ? styles.message : ''}>
@@ -74,10 +78,7 @@ const CamPermissionsCheck = () => {
       </Pressable>
       <TouchableOpacity
         style={isCapturing ? styles.capturing : styles.capture}
-        onPress={() => {
-          setIsCapturing(true);
-          handleCapture();
-        }}
+        onPress={handleCaptureButtom}
       />
       <Pressable
         style={styles.close}

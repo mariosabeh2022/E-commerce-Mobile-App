@@ -9,6 +9,7 @@ import CustomThemeButton from '../../components/atoms/customThemeButton/customTh
 const Stack = createNativeStackNavigator();
 
 export default function UnauthenticatedStack() {
+  const renderCustomThemeButton = () => <CustomThemeButton />;
   return (
     <Stack.Navigator initialRouteName="Home">
       <Stack.Screen
@@ -16,7 +17,7 @@ export default function UnauthenticatedStack() {
         component={HomenScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
+          headerRight: renderCustomThemeButton,
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
           },
@@ -27,7 +28,7 @@ export default function UnauthenticatedStack() {
         component={LoginScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
+          headerRight: renderCustomThemeButton,
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
           },
@@ -38,7 +39,7 @@ export default function UnauthenticatedStack() {
         component={SignUpScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
+          headerRight: renderCustomThemeButton,
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
           },
@@ -49,7 +50,7 @@ export default function UnauthenticatedStack() {
         component={VerificationScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
+          headerRight: renderCustomThemeButton,
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
           },

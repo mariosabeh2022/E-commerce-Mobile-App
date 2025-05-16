@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -15,44 +15,53 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
+import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
   'Products'
 >;
+
+const renderCustomErrorMessage = () => (
+  <CustomErrorMessage message="No items available" />
+);
+
 const ProductListingsScreen = () => {
   const [filteredText, setFilteredText] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [filteredData, setFilteredData] = useState(data);
   const navigation = useNavigation<ProductScreenNavigationProp>();
+  const handleDetailsNavigation = ({item}: any) =>
+    navigation.navigate('Details', {id: item._id.toString()});
   const renderItem = ({item}: {item: any}) => (
     <View>
-      <TouchableOpacity
-        onPress={() =>
-          navigation.navigate('Details', {id: item._id.toString()})
-        }>
+      <TouchableOpacity onPress={handleDetailsNavigation}>
         <CustomRenderItem item={item} />
       </TouchableOpacity>
     </View>
   );
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
-  useEffect(() => {
-    setIsLoading(true);
 
-    const timeoutId = setTimeout(() => {
-      if (filteredText.length >= 1) {
-        const filtered = data.filter(item =>
-          item.title.toLowerCase().includes(filteredText.toLowerCase()),
-        );
-        setFilteredData(filtered);
-      } else {
-        setFilteredData(data);
-      }
-      setIsLoading(false);
-    }, 1500);
-    return () => clearTimeout(timeoutId);
+  const filterData = useCallback(() => {
+    if (filteredText.length >= 1) {
+      return data.filter(item =>
+        item.title.toLowerCase().includes(filteredText.toLowerCase()),
+      );
+    }
+    return data;
   }, [filteredText]);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      setIsLoading(true);
+      const result = filterData();
+      setFilteredData(result);
+      setIsLoading(false);
+    }, 1000);
+    return () => clearTimeout(timeoutId);
+  }, [filterData]);
+
   const customSkeletonItem = () => {
     return (
       <View
@@ -63,16 +72,16 @@ const ProductListingsScreen = () => {
           <View style={skeletonStyles.image} />
           <View style={skeletonStyles.infoContainer}>
             <View style={skeletonStyles.item}>
-              <View style={skeletonStyles.textLine}></View>
+              <View style={skeletonStyles.textLine} />
             </View>
             <View style={skeletonStyles.price}>
-              <View style={skeletonStyles.textLineShort}></View>
+              <View style={skeletonStyles.textLineShort} />
             </View>
             <View style={skeletonStyles.item}>
-              <View style={skeletonStyles.textLine}></View>
+              <View style={skeletonStyles.textLine} />
             </View>
             <View style={skeletonStyles.price}>
-              <View style={skeletonStyles.textLineShort}></View>
+              <View style={skeletonStyles.textLineShort} />
             </View>
           </View>
         </View>
@@ -91,7 +100,7 @@ const ProductListingsScreen = () => {
               onChangeText={setFilteredText}
               keyboardType="default"
             />
-            <CustomPressable onPress={() => {}}>
+            <CustomPressable>
               <CustomIcon type="search" />
             </CustomPressable>
           </>
@@ -100,7 +109,7 @@ const ProductListingsScreen = () => {
           data={filteredText ? filteredData : data}
           keyExtractor={item => item._id.toString()}
           renderItem={isLoading ? customSkeletonItem : renderItem}
-          ListEmptyComponent={<Text>No products found.</Text>}
+          ListEmptyComponent={renderCustomErrorMessage}
           ListHeaderComponent={
             <Text
               style={

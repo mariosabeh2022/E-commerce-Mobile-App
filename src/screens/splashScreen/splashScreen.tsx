@@ -1,8 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {View, ActivityIndicator, Animated, Easing} from 'react-native';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import {styles} from './splashScreen.style';
-import { SplashScreenProps } from './splashScreen.type';
+import {SplashScreenProps} from './splashScreen.type';
 
 export default function SplashScreen({onFinish}: SplashScreenProps) {
   const progress = useRef(new Animated.Value(0)).current;
@@ -13,19 +13,21 @@ export default function SplashScreen({onFinish}: SplashScreenProps) {
       duration: 3500,
       useNativeDriver: false,
       easing: Easing.linear,
-    }).start(() => {
-      onFinish();
-    });
-  });
+    }).start(onFinish);
+  }, [progress, onFinish]);
 
-  const animatedWidth = progress.interpolate({
-    inputRange: [0, 0.25, 0.5, 0.75, 1],
-    outputRange: ['0%', '25%', '50%', '75%', '100%'],
-  });
+  const animatedWidth = useMemo(
+    () =>
+      progress.interpolate({
+        inputRange: [0, 0.25, 0.5, 0.75, 1],
+        outputRange: ['0%', '25%', '50%', '75%', '100%'],
+      }),
+    [progress],
+  );
 
   return (
     <View style={styles.container}>
-      <CustomTitle text="Booting App" />
+      <CustomTitle text="SHOPFINITY" />
       <View style={styles.innercontainer}>
         <ActivityIndicator size="large" color="#318555" />
       </View>

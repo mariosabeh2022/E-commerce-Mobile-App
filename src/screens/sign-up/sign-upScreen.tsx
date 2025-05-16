@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Pressable,
@@ -32,11 +32,18 @@ type SignUpScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'SignUp'
 >;
+
+const handleKeyboardDismiss = () => Keyboard.dismiss();
+
 const SignUpScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const navigation = useNavigation<SignUpScreenNavigationProp>();
+  const handleLoginNavigation = useCallback(
+    () => navigation.navigate('Login'),
+    [navigation],
+  );
   const [visiblePassword, setVisiblePassword] = useState(true);
   const toggleVisibility = () => setVisiblePassword(prev => !prev);
   type FormData = z.infer<typeof schema>;
@@ -64,16 +71,18 @@ const SignUpScreen = () => {
     }, 800);
     return () => clearTimeout(timeout);
   };
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useEffect(() => {
+    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
+    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      () => setKeyboardVisible(true),
+      handleKeyboardIsVisible,
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      () => setKeyboardVisible(false),
+      handleKeyboardIsNotVisible,
     );
 
     return () => {
@@ -87,7 +96,7 @@ const SignUpScreen = () => {
         {!isKeyboardVisible && <WavyHeader />}
         <CustomTitle text="Welcome Dear Customer" />
         <View style={styles.form}>
-          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
             <KeyboardAvoidingView>
               <CustomView>
                 <>
@@ -150,7 +159,6 @@ const SignUpScreen = () => {
                   )}
                 </>
               </CustomView>
-
               <CustomView>
                 <>
                   <Controller
@@ -187,7 +195,7 @@ const SignUpScreen = () => {
         </View>
         <View style={styles.linkContainer}>
           <Text style={styles.customFont}>Already have an account? </Text>
-          <Pressable onPress={() => navigation.navigate('Login')}>
+          <Pressable onPress={handleLoginNavigation}>
             <CustomLink text="Login" />
           </Pressable>
         </View>

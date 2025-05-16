@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   NavigationContainer,
   DarkTheme,
@@ -15,8 +15,9 @@ export default function RootNavigator() {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [loading, setLoading] = useState(true);
+  const toggleOnFinish = useCallback(() => setLoading(false), []);
   if (loading) {
-    return <SplashScreen onFinish={() => setLoading(false)} />;
+    return <SplashScreen onFinish={toggleOnFinish} />;
   }
   return (
     <NavigationContainer theme={isAppDark ? DarkTheme : DefaultTheme}>

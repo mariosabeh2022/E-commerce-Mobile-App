@@ -11,6 +11,14 @@ import {ProductsStackParamList} from '../navigator/navigationTypes';
 const Stack = createNativeStackNavigator<ProductsStackParamList>();
 
 export default function ProductsStack() {
+  const renderCustomThemeButton = () => <CustomThemeButton />;
+  const renderShareButton = () => (
+    <Pressable>
+      <Text>
+        <CustomIcon type="share-alt" />
+      </Text>
+    </Pressable>
+  );
   return (
     <Stack.Navigator initialRouteName="Products">
       <Stack.Screen
@@ -18,7 +26,7 @@ export default function ProductsStack() {
         component={ProductsScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
+          headerRight: renderCustomThemeButton,
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
           },
@@ -29,13 +37,7 @@ export default function ProductsStack() {
         component={DetailsScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => (
-            <Pressable>
-              <Text>
-                <CustomIcon type="share-alt" />
-              </Text>
-            </Pressable>
-          ),
+          headerRight: renderShareButton,
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
           },

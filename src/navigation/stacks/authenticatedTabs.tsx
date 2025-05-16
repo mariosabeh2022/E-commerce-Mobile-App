@@ -11,10 +11,64 @@ import styles from '../../styles/tabAcitve.style';
 import ProfileScreen from '../../screens/profileScreen/profileScreen';
 import CartScreen from '../../screens/cartScreen/cartScreen';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
+
+type TabBarIconProps = {
+  focused: boolean;
+};
+
 const Tab = createBottomTabNavigator<AuthenticatedTabParamList>();
 export default function AuthenticatedTabs() {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  const renderCustomThemeButton = () => <CustomThemeButton />;
+  const renderDevicesIcon = ({focused}: TabBarIconProps) => (
+    <View
+      style={
+        focused
+          ? isAppDark
+            ? styles.darkActive
+            : styles.active
+          : styles.inactive
+      }>
+      <CustomIcon type="mobile" />
+    </View>
+  );
+  const renderUploadIcon = ({focused}: TabBarIconProps) => (
+    <View
+      style={
+        focused
+          ? isAppDark
+            ? styles.darkActive
+            : styles.active
+          : styles.inactive
+      }>
+      <CustomIcon type="plus" />
+    </View>
+  );
+  const renderShoppingIcon = ({focused}: TabBarIconProps) => (
+    <View
+      style={
+        focused
+          ? isAppDark
+            ? styles.darkActive
+            : styles.active
+          : styles.inactive
+      }>
+      <CustomIcon type="shopping-cart" />
+    </View>
+  );
+  const renderProfileIcon = ({focused}: TabBarIconProps) => (
+    <View
+      style={
+        focused
+          ? isAppDark
+            ? styles.darkActive
+            : styles.active
+          : styles.inactive
+      }>
+      <CustomIcon type="user" />
+    </View>
+  );
   return (
     <Tab.Navigator
       initialRouteName="Devices"
@@ -24,18 +78,7 @@ export default function AuthenticatedTabs() {
         component={ProductsStack}
         options={{
           headerShown: false,
-          tabBarIcon: ({focused}) => (
-            <View
-              style={
-                focused
-                  ? isAppDark
-                    ? styles.darkActive
-                    : styles.active
-                  : styles.inactive
-              }>
-              <CustomIcon type="mobile" />
-            </View>
-          ),
+          tabBarIcon: renderDevicesIcon,
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
           },
@@ -49,19 +92,8 @@ export default function AuthenticatedTabs() {
         component={CamPermissionsCheck}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
-          tabBarIcon: ({focused}) => (
-            <View
-              style={
-                focused
-                  ? isAppDark
-                    ? styles.darkActive
-                    : styles.active
-                  : styles.inactive
-              }>
-              <CustomIcon type="plus" />
-            </View>
-          ),
+          headerRight: renderCustomThemeButton,
+          tabBarIcon: renderUploadIcon,
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
           },
@@ -78,19 +110,8 @@ export default function AuthenticatedTabs() {
         component={CartScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
-          tabBarIcon: ({focused}) => (
-            <View
-              style={
-                focused
-                  ? isAppDark
-                    ? styles.darkActive
-                    : styles.active
-                  : styles.inactive
-              }>
-              <CustomIcon type="shopping-cart" />
-            </View>
-          ),
+          headerRight: renderCustomThemeButton,
+          tabBarIcon: renderShoppingIcon,
           tabBarBadge: '0',
           tabBarBadgeStyle: {
             backgroundColor: isAppDark ? 'black' : 'white',
@@ -113,19 +134,8 @@ export default function AuthenticatedTabs() {
         component={ProfileScreen}
         options={{
           headerTitleAlign: 'center',
-          headerRight: () => <CustomThemeButton />,
-          tabBarIcon: ({focused}) => (
-            <View
-              style={
-                focused
-                  ? isAppDark
-                    ? styles.darkActive
-                    : styles.active
-                  : styles.inactive
-              }>
-              <CustomIcon type="user" />
-            </View>
-          ),
+          headerRight: renderCustomThemeButton,
+          tabBarIcon: renderProfileIcon,
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
           },

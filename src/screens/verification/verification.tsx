@@ -22,6 +22,9 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import {useTheme} from '../../contexts/themeContext';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
+
+const handleKeyboardDismiss = () => Keyboard.dismiss();
+
 const VerificationScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -51,16 +54,18 @@ const VerificationScreen = () => {
     }, 800);
     return () => clearTimeout(timeout);
   };
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
   useEffect(() => {
+    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
+    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
     const keyboardDidShowListener = Keyboard.addListener(
       'keyboardDidShow',
-      () => setKeyboardVisible(true),
+      handleKeyboardIsVisible,
     );
     const keyboardDidHideListener = Keyboard.addListener(
       'keyboardDidHide',
-      () => setKeyboardVisible(false),
+      handleKeyboardIsNotVisible,
     );
 
     return () => {
@@ -74,7 +79,7 @@ const VerificationScreen = () => {
         {!isKeyboardVisible && <WavyHeader />}
         <CustomTitle text="Please Check Your Mail" />
         <View style={styles.form}>
-          <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+          <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
             <KeyboardAvoidingView>
               <CustomView>
                 <>

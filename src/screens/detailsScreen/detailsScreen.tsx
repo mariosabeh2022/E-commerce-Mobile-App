@@ -1,4 +1,4 @@
-import React, {useRef, useEffect} from 'react';
+import React, {useRef, useEffect, useCallback} from 'react';
 import {styles} from './detailsScreen.style';
 import {Animated, Text, View, Pressable} from 'react-native';
 import {data} from '../../assets/Products.json';
@@ -24,17 +24,17 @@ const DetailsScreen = ({route}: Props) => {
   const isAppDark = theme === 'dark';
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
-  const fadeIn = () => {
+  const fadeIn = useCallback(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 2500,
       useNativeDriver: true,
     }).start();
-  };
+  }, [fadeAnim]);
 
   useEffect(() => {
     fadeIn();
-  });
+  }, [fadeIn]);
   return (
     <>
       <View style={isAppDark ? styles.darkContainer : styles.container}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {Text, View, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -16,13 +16,21 @@ const HomenScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const navigation = useNavigation<HomeScreenNavigationProp>();
+  const handleSignUpNavigation = useCallback(
+    () => navigation.navigate('SignUp'),
+    [navigation],
+  );
+  const handleLoginNavigation = useCallback(
+    () => navigation.navigate('Login'),
+    [navigation],
+  );
   return (
     <View style={styles.outerContainer}>
       <WavyHeader />
       <View style={isAppDark ? styles.darkContainer : styles.container}>
         <View>
           <CustomTitle text="Welcome ! " />
-          <Pressable onPress={() => navigation.navigate('SignUp')}>
+          <Pressable onPress={handleSignUpNavigation}>
             <LinearGradient
               colors={['#00cc50', '#318555', '#223a66']}
               start={{x: 0, y: 0}}
@@ -39,7 +47,7 @@ const HomenScreen = () => {
             end={{x: 1, y: 0}}
             style={styles.gradientBorder}>
             <Pressable
-              onPress={() => navigation.navigate('Login')}
+              onPress={handleLoginNavigation}
               style={isAppDark ? styles.darkInnerButton : styles.innerButton}>
               <Text style={styles.gradientText}>Login</Text>
             </Pressable>
