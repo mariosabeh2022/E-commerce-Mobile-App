@@ -15,3 +15,7 @@ export interface VerifyCredentials {
   email: string;
   otp: string;
 }
+
+export interface reVerificationCredentials {
+  email: string;
+}

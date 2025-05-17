@@ -22,23 +22,34 @@ import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
 import {verification} from '../../lib/axiosInstance';
 import CustomInput from '../../components/atoms/customInput/customInput';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp} from '@react-navigation/native';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+
+type VerificationRouteProp = RouteProp<
+  UnauthenticatedStackParamList,
+  'Verification'
+>;
+
 type VerificationScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
-  'SignUp'
+  'Verification'
 >;
+
+type Props = {
+  route: VerificationRouteProp;
+  navigation: VerificationScreenNavigationProp;
+};
 
 const handleKeyboardDismiss = () => Keyboard.dismiss();
 
-const VerificationScreen = () => {
+const VerificationScreen = ({route, navigation}: Props) => {
+  const Email = route.params.email;
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
   const [resultMessage, setResultMessage] = useState('');
-  const navigation = useNavigation<VerificationScreenNavigationProp>();
   type FormData = z.infer<typeof schema>;
 
   const {control, handleSubmit, setValue} = useForm<FormData>({
@@ -89,6 +100,9 @@ const VerificationScreen = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
+  useEffect(() => {
+    setValue('email', Email);
+  }, [Email, setValue]);
   return (
     <CustomContainer>
       <>
@@ -97,17 +111,18 @@ const VerificationScreen = () => {
         <View style={styles.form}>
           <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
             <KeyboardAvoidingView>
+              <CustomTitle text="Verification For" />
               <CustomView>
                 <Controller
                   control={control}
                   name="email"
-                  render={({field: {value, onChange}}) => (
+                  render={() => (
                     <CustomInput
                       placeholder="Email"
-                      value={value}
-                      onChangeText={onChange}
+                      value={Email}
                       keyboardType="email-address"
                       autoCapitalize="none"
+                      editable={false}
                     />
                   )}
                 />

@@ -27,26 +27,29 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-import {login} from '../../lib/axiosInstance';
+import {login, reVerification} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
+import {errorCodes} from '../../lib/errorCodes';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'
 >;
 const LoginScreen = () => {
+  const {UNAUTHORIZED, NOT_FOUND, FLARE, NOT_VERIFIED} = errorCodes;
   const setTokens = useAuthStore(state => state.setTokens);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
   const [resultMessage, setResultMessage] = useState('');
+  const [showVerification, setShowVerification] = useState(false);
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [visiblePassword, setVisiblePassword] = useState(true);
   const toggleVisibility = () => setVisiblePassword(prev => !prev);
 
   type FormData = z.infer<typeof schema>;
 
-  const {control, handleSubmit, setValue} = useForm<FormData>({
+  const {control, handleSubmit, setValue, getValues} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
       email: '',
@@ -70,17 +73,19 @@ const LoginScreen = () => {
       });
       if (result.success === true) {
         setTokens(result.data.accessToken, result.data.refreshToken);
-      } else if (result.code === 401) {
+      } else if (result.code === UNAUTHORIZED) {
+        setValue('password', '');
         setResultMessage(result.message);
-      } else if (result.code === 403) {
+      } else if (result.code === NOT_VERIFIED) {
+        setShowVerification(true);
+        setValue('password', '');
         setResultMessage(result.message);
-      } else if (result.code === 404) {
+      } else if (result.code === NOT_FOUND) {
         setResultMessage(result.message);
-      } else if (result.code === 521) {
+        setValue('password', '');
+      } else if (result.code === FLARE) {
         setResultMessage(result.message);
       }
-      setValue('email', '');
-      setValue('password', '');
     } catch (err) {
       console.error('Login error:', err);
     }
@@ -106,6 +111,15 @@ const LoginScreen = () => {
       keyboardDidHideListener.remove();
     };
   }, []);
+  const handleVerificationRedirection = async () => {
+    setIsLoading(true);
+    const Email = getValues('email');
+    const result = await reVerification({email: Email});
+    setIsLoading(false);
+    if (result.success === true) {
+      navigation.navigate('Verification', {email: Email});
+    }
+  };
   return (
     <CustomContainer>
       <>
@@ -148,7 +162,16 @@ const LoginScreen = () => {
                     <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
                   </CustomPressable>
                   {!submittable && (
-                    <CustomErrorMessage message={resultMessage} />
+                    <>
+                      <CustomErrorMessage message={resultMessage} />
+                      {showVerification ? (
+                        <Pressable onPress={handleVerificationRedirection}>
+                          <CustomLink text="Click To Verify" />
+                        </Pressable>
+                      ) : (
+                        ''
+                      )}
+                    </>
                   )}
                 </>
               </CustomView>

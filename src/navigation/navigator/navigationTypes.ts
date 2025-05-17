@@ -2,12 +2,12 @@ export type UnauthenticatedStackParamList = {
   Home: undefined;
   Login: undefined;
   SignUp: undefined;
-  Verification: undefined;
+  Verification: {email: string};
 };
 
 export type ProductsStackParamList = {
   Products: undefined;
-  Details: { id: string };
+  Details: {id: string};
 };
 
 export type AuthenticatedTabParamList = {

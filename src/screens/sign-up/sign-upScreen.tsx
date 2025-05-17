@@ -76,7 +76,7 @@ const SignUpScreen = () => {
         password: data.password,
       });
       if (result.success === true) {
-        navigation.navigate('Verification');
+        navigation.navigate('Verification', {email: data.email});
       } else {
         setResultMessage(result.message);
       }

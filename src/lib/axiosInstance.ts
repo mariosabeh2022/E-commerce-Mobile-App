@@ -4,15 +4,16 @@ import {
   SignUpCredentials,
   VerifyCredentials,
   LoginCredentials,
+  reVerificationCredentials,
 } from './interfaceTypes.ts';
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
 
-const axiosInstace = axios.create({
+const axiosInstance = axios.create({
   baseURL: 'https://backend-practice.eurisko.me',
   timeout: 10000,
 });
 
-axiosInstace?.interceptors.request?.use(config => {
+axiosInstance?.interceptors.request?.use(config => {
   if (config.auth) {
     config.headers.Authorization = `Bearer ${config.headers.Authorization}`;
   }
@@ -21,31 +22,31 @@ axiosInstace?.interceptors.request?.use(config => {
 
 const login = async (credentials: LoginCredentials) => {
   try {
-    const response = await axiosInstace.post('/api/auth/login', credentials);
+    const response = await axiosInstance.post('/api/auth/login', credentials);
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === UNAUTHORIZED) {
       return {
         success: false,
-        code: 401,
+        code: UNAUTHORIZED,
         message: 'Email Or Password Incorrect.',
       };
     } else if (error.response && error.response.status === NOT_VERIFIED) {
       return {
         success: false,
-        code: 404,
+        code: EXISTS,
         message: 'You Must Verify Your Account First',
       };
     } else if (error.response && error.response.status === NOT_FOUND) {
       return {
         success: false,
-        code: 404,
+        code: NOT_FOUND,
         message: 'User Not Found',
       };
     } else if (error.response && error.response.status === FLARE) {
       return {
         success: false,
-        code: 521,
+        code: FLARE,
         message: 'Server Error',
       };
     }
@@ -59,7 +60,7 @@ const login = async (credentials: LoginCredentials) => {
 
 const signup = async (credentials: SignUpCredentials) => {
   try {
-    const response = await axiosInstace.post('/api/auth/signup', credentials);
+    const response = await axiosInstance.post('/api/auth/signup', credentials);
     return response.data;
   } catch (error: any) {
     if (error.response && error.response.status === EXISTS) {
@@ -85,7 +86,7 @@ const signup = async (credentials: SignUpCredentials) => {
 
 const verification = async (credentials: VerifyCredentials) => {
   try {
-    const response = await axiosInstace.post(
+    const response = await axiosInstance.post(
       '/api/auth/verify-otp',
       credentials,
     );
@@ -112,7 +113,31 @@ const verification = async (credentials: VerifyCredentials) => {
   }
 };
 
-axiosInstace?.interceptors.response?.use(
+const reVerification = async (credentials: reVerificationCredentials) => {
+  try {
+    const response = await axiosInstance.post(
+      '/api/auth/resend-verification-otp',
+      credentials,
+    );
+    console.log(response);
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === FLARE) {
+      return {
+        success: false,
+        code: 521,
+        message: 'Server Error',
+      };
+    }
+    console.error('Verification API error:', error);
+    return {
+      success: false,
+      message: error || 'Verification failed',
+    };
+  }
+};
+
+axiosInstance?.interceptors.response?.use(
   response => response,
   (error: AxiosError) => {
     if (error?.response?.status === UNAUTHORIZED) {
@@ -122,4 +147,4 @@ axiosInstace?.interceptors.response?.use(
   },
 );
 
-export {axiosInstace, login, signup, verification};
+export {axiosInstance, login, signup, verification, reVerification};
