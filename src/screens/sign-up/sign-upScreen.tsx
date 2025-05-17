@@ -27,10 +27,11 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
+import {signup} from '../../lib/axiosInstance';
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
-  'SignUp'
+  'Login'
 >;
 
 const handleKeyboardDismiss = () => Keyboard.dismiss();
@@ -39,6 +40,7 @@ const SignUpScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
+  const [resultMessage, setResultMessage] = useState('');
   const navigation = useNavigation<SignUpScreenNavigationProp>();
   const handleLoginNavigation = useCallback(
     () => navigation.navigate('Login'),
@@ -51,25 +53,41 @@ const SignUpScreen = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: {errors},
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      name: '',
+      firstName: '',
+      lastName: '',
       email: '',
       password: '',
-      number: '',
     },
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    console.log('submitting');
     setIsLoading(true);
-    const timeout = setTimeout(() => {
-      console.log('Submitted:', data);
-      navigation.navigate('Login');
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timeout);
+    try {
+      const result = await signup({
+        firstName: data.firstName,
+        lastName: data.lastName,
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+      });
+      if (result.success === true) {
+        navigation.navigate('Verification');
+      } else {
+        setResultMessage(result.message);
+      }
+      setValue('firstName', '');
+      setValue('lastName', '');
+      setValue('email', '');
+      setValue('password', '');
+    } catch (err) {
+      console.error('SignUp error:', err);
+    }
+    setIsLoading(false);
   };
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -102,17 +120,35 @@ const SignUpScreen = () => {
                 <>
                   <Controller
                     control={control}
-                    name="name"
+                    name="firstName"
                     render={({field: {value, onChange}}) => (
                       <CustomInput
-                        placeholder="Name"
+                        placeholder="First Name"
                         value={value}
                         onChangeText={onChange}
                       />
                     )}
                   />
-                  {errors.name && (
-                    <CustomErrorMessage message={errors.name?.message} />
+                  {errors.firstName && (
+                    <CustomErrorMessage message={errors.firstName?.message} />
+                  )}
+                </>
+              </CustomView>
+              <CustomView>
+                <>
+                  <Controller
+                    control={control}
+                    name="lastName"
+                    render={({field: {value, onChange}}) => (
+                      <CustomInput
+                        placeholder="Last Name"
+                        value={value}
+                        onChangeText={onChange}
+                      />
+                    )}
+                  />
+                  {errors.lastName && (
+                    <CustomErrorMessage message={errors.lastName?.message} />
                   )}
                 </>
               </CustomView>
@@ -160,26 +196,9 @@ const SignUpScreen = () => {
                 </>
               </CustomView>
               <CustomView>
-                <>
-                  <Controller
-                    control={control}
-                    name="number"
-                    render={({field: {value, onChange}}) => (
-                      <CustomInput
-                        placeholder="Number: xx-xxxxxx"
-                        value={value}
-                        onChangeText={onChange}
-                        keyboardType="numeric"
-                      />
-                    )}
-                  />
-                  {errors.number && (
-                    <CustomErrorMessage message={errors.number?.message} />
-                  )}
-                </>
-              </CustomView>
-              <CustomView>
-                {isLoading ? (
+                {resultMessage.length > 1 ? (
+                  <CustomErrorMessage message={resultMessage} />
+                ) : isLoading ? (
                   <ActivityIndicator
                     size="large"
                     color={isAppDark ? darkBaseColor : lightBaseColor}

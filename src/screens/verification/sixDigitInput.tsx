@@ -1,5 +1,5 @@
 import React from 'react';
-import {styles} from './fourDigitInput.style';
+import {styles} from './sixDigitInput.style';
 import {
   CodeField,
   useBlurOnFulfill,
@@ -7,7 +7,7 @@ import {
 } from 'react-native-confirmation-code-field';
 import {TextInput} from 'react-native';
 import {useTheme} from '../../contexts/themeContext';
-const CELL_COUNT = 4;
+const CELL_COUNT = 6;
 
 const FourDigitInput = ({
   value,

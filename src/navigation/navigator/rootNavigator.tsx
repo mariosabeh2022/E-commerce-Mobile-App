@@ -5,23 +5,26 @@ import {
   DefaultTheme,
 } from '@react-navigation/native';
 import UnauthenticatedStack from '../stacks/unauthenticated';
-import {useAuth} from '../../contexts/authContext';
 import {useTheme} from '../../contexts/themeContext';
 import AuthenticatedTabs from '../stacks/authenticatedTabs';
 import SplashScreen from '../../screens/splashScreen/splashScreen';
+import useAuthStore from '../../stores/authStore/authStore';
 
 export default function RootNavigator() {
-  const {user, verified} = useAuth();
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  const accessToken = useAuthStore(state => state.accessToken);
   const [loading, setLoading] = useState(true);
   const toggleOnFinish = useCallback(() => setLoading(false), []);
-  if (loading) {
-    return <SplashScreen onFinish={toggleOnFinish} />;
-  }
   return (
     <NavigationContainer theme={isAppDark ? DarkTheme : DefaultTheme}>
-      {user && verified ? <AuthenticatedTabs /> : <UnauthenticatedStack />}
+      {loading ? (
+        <SplashScreen onFinish={toggleOnFinish} />
+      ) : accessToken ? (
+        <AuthenticatedTabs />
+      ) : (
+        <UnauthenticatedStack />
+      )}
     </NavigationContainer>
   );
 }

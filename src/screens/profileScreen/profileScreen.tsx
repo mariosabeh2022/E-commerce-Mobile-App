@@ -1,10 +1,14 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-
+import {Pressable, View} from 'react-native';
+import useAuthStore from '../../stores/authStore/authStore';
+import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 const ProfileScreen = () => {
+  const clearToken = useAuthStore(state => state.clearToken);
   return (
-    <View>
-      <Text>Profile Screen</Text>
+    <View style={{alignSelf: 'center'}}>
+      <Pressable onPress={clearToken}>
+        <CustomErrorMessage message="Logout" />
+      </Pressable>
     </View>
   );
 };

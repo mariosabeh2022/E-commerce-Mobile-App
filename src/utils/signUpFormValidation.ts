@@ -1,6 +1,7 @@
 import {z} from 'zod';
 export const schema = z.object({
-  name: z.string().trim().min(3, 'Name too short'),
+  firstName: z.string().trim().min(3, 'First Name too short'),
+  lastName: z.string().trim().min(3, 'Last Name too short'),
   email: z.string().email('Email is invalid'),
   password: z
     .string()
@@ -12,7 +13,4 @@ export const schema = z.object({
       /[^A-Za-z0-9]/,
       'Password must contain at least one special character',
     ),
-  number: z
-    .string()
-    .regex(/^\d{2}-\d{6}$/, 'Invalid format. Expected format is xx-xxxxxx'),
 });

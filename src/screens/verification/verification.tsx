@@ -7,14 +7,12 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
 } from 'react-native';
-import FourDigitInput from './fourDigitInput';
+import SixDigitInput from './sixDigitInput';
 import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
 import {z} from 'zod';
 import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {schema} from '../../utils/verificationValidation';
-
-import {useAuth} from '../../contexts/authContext';
 import CustomView from '../../components/molecules/customView/customView';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomButton from '../../components/atoms/customButton/customButton';
@@ -22,6 +20,15 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import {useTheme} from '../../contexts/themeContext';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
+import {verification} from '../../lib/axiosInstance';
+import CustomInput from '../../components/atoms/customInput/customInput';
+import {useNavigation} from '@react-navigation/native';
+import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+type VerificationScreenNavigationProp = NativeStackNavigationProp<
+  UnauthenticatedStackParamList,
+  'SignUp'
+>;
 
 const handleKeyboardDismiss = () => Keyboard.dismiss();
 
@@ -30,29 +37,38 @@ const VerificationScreen = () => {
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
-  const {verify} = useAuth();
-
+  const [resultMessage, setResultMessage] = useState('');
+  const navigation = useNavigation<VerificationScreenNavigationProp>();
   type FormData = z.infer<typeof schema>;
 
   const {control, handleSubmit, setValue} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      verificationCode: '',
+      email: '',
+      otp: '',
     },
   });
 
-  const handleVerify = (data: FormData) => {
+  const handleVerify = async (data: FormData) => {
     setIsLoading(true);
-    const timeout = setTimeout(() => {
-      if (data.verificationCode === '1234') {
-        verify();
-      } else {
-        setValue('verificationCode', '');
-        setSubmittable(false);
+    setSubmittable(false);
+    try {
+      const result = await verification({
+        email: data.email.trim().toLowerCase(),
+        otp: data.otp,
+      });
+      if (result.success === true) {
+        navigation.navigate('Login');
+      } else if (result.code === 400) {
+        setResultMessage(result.message);
       }
-      setIsLoading(false);
-    }, 800);
-    return () => clearTimeout(timeout);
+      setValue('email', '');
+      setValue('otp', '');
+    } catch (err) {
+      console.error('Login error:', err);
+    }
+    setIsLoading(false);
+    setSubmittable(true);
   };
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -82,16 +98,35 @@ const VerificationScreen = () => {
           <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
             <KeyboardAvoidingView>
               <CustomView>
+                <Controller
+                  control={control}
+                  name="email"
+                  render={({field: {value, onChange}}) => (
+                    <CustomInput
+                      placeholder="Email"
+                      value={value}
+                      onChangeText={onChange}
+                      keyboardType="email-address"
+                      autoCapitalize="none"
+                    />
+                  )}
+                />
+              </CustomView>
+              <CustomView>
                 <>
                   <Controller
                     control={control}
-                    name="verificationCode"
+                    name="otp"
                     render={({field: {value, onChange}}) => (
-                      <FourDigitInput value={value} onChange={onChange} />
+                      <SixDigitInput value={value} onChange={onChange} />
                     )}
                   />
-                  {!submittable && (
+                  {!submittable ? (
                     <CustomErrorMessage message="Incorrect Verification Code" />
+                  ) : resultMessage ? (
+                    <CustomErrorMessage message={resultMessage} />
+                  ) : (
+                    ''
                   )}
                 </>
               </CustomView>

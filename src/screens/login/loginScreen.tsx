@@ -14,7 +14,6 @@ import {useForm, Controller} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-import {useAuth} from '../../contexts/authContext';
 import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
@@ -28,17 +27,19 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-
+import {login} from '../../lib/axiosInstance';
+import useAuthStore from '../../stores/authStore/authStore';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'
 >;
-
 const LoginScreen = () => {
+  const setTokens = useAuthStore(state => state.setTokens);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
   const [submittable, setSubmittable] = useState(true);
+  const [resultMessage, setResultMessage] = useState('');
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const [visiblePassword, setVisiblePassword] = useState(true);
   const toggleVisibility = () => setVisiblePassword(prev => !prev);
@@ -52,8 +53,6 @@ const LoginScreen = () => {
       password: '',
     },
   });
-
-  const {login} = useAuth();
   const handleSignUpNavigation = useCallback(
     () => navigation.navigate('SignUp'),
     [navigation],
@@ -61,24 +60,32 @@ const LoginScreen = () => {
 
   const handleKeyboardDismiss = () => Keyboard.dismiss();
 
-  const handleLogin = (data: FormData) => {
+  const handleLogin = async (data: FormData) => {
     setIsLoading(true);
-    const timeout = setTimeout(() => {
-      if (
-        data.email.trim().toLocaleLowerCase() === 'eurisko@gmail.com' &&
-        data.password === 'academy2025'
-      ) {
-        login(data.email);
-        setIsLoading(false);
-        navigation.navigate('Verification');
-      } else {
-        setValue('email', '');
-        setValue('password', '');
-        setSubmittable(false);
-        setIsLoading(false);
+    setSubmittable(true);
+    try {
+      const result = await login({
+        email: data.email.trim().toLowerCase(),
+        password: data.password,
+      });
+      if (result.success === true) {
+        setTokens(result.data.accessToken, result.data.refreshToken);
+      } else if (result.code === 401) {
+        setResultMessage(result.message);
+      } else if (result.code === 403) {
+        setResultMessage(result.message);
+      } else if (result.code === 404) {
+        setResultMessage(result.message);
+      } else if (result.code === 521) {
+        setResultMessage(result.message);
       }
-    }, 800);
-    return () => clearTimeout(timeout);
+      setValue('email', '');
+      setValue('password', '');
+    } catch (err) {
+      console.error('Login error:', err);
+    }
+    setIsLoading(false);
+    setSubmittable(false);
   };
   const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
@@ -141,7 +148,7 @@ const LoginScreen = () => {
                     <CustomIcon type={visiblePassword ? 'eye' : 'eye-slash'} />
                   </CustomPressable>
                   {!submittable && (
-                    <CustomErrorMessage message="Email Or Password Incorrect" />
+                    <CustomErrorMessage message={resultMessage} />
                   )}
                 </>
               </CustomView>
