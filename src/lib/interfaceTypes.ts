@@ -23,3 +23,10 @@ export interface reVerificationCredentials {
 export interface fetchProfileCredentials {
   token: string;
 }
+
+export interface updateProfileCredentials {
+  token: string;
+  firstName: string;
+  lastName: string;
+  image?: {url: string};
+}

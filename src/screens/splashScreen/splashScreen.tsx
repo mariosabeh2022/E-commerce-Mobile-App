@@ -3,8 +3,12 @@ import {View, ActivityIndicator, Animated, Easing} from 'react-native';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import {styles} from './splashScreen.style';
 import {SplashScreenProps} from './splashScreen.type';
+import {useTheme} from '../../contexts/themeContext';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 
 export default function SplashScreen({onFinish}: SplashScreenProps) {
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
   const progress = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -29,7 +33,10 @@ export default function SplashScreen({onFinish}: SplashScreenProps) {
     <View style={styles.container}>
       <CustomTitle text="SHOPFINITY" />
       <View style={styles.innercontainer}>
-        <ActivityIndicator size="large" color="#318555" />
+        <ActivityIndicator
+          size="large"
+          color={isAppDark ? darkBaseColor : lightBaseColor}
+        />
       </View>
       <View style={styles.meterBackground}>
         <Animated.View style={[styles.meterFill, {width: animatedWidth}]} />

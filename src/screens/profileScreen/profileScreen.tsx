@@ -1,11 +1,39 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Pressable, Text, View} from 'react-native';
+import {ActivityIndicator, Pressable, Text, View, Image} from 'react-native';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
-import {fetchProfile} from '../../lib/axiosInstance';
+import {styles} from './profileScreenstyle';
+import {fetchProfile, updateProfile} from '../../lib/axiosInstance';
 import {errorCodes} from '../../lib/errorCodes';
-const {FLARE} = errorCodes;
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import CustomButton from '../../components/atoms/customButton/customButton';
+import {useTheme} from '../../contexts/themeContext';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
+import {Controller, useForm} from 'react-hook-form';
+import CustomInput from '../../components/atoms/customInput/customInput';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
+import {schema} from '../../utils/editFormTypeValidation';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import {validateInput} from '../../utils/editFormValidation';
+const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
+  const {theme} = useTheme();
+  const isAppDark = theme === 'dark';
+  const infos = isAppDark ? styles.darkInfo : styles.info;
+  const data = isAppDark ? styles.darkData : styles.data;
+  const [isEditing, setIsEditing] = useState(false);
+  const [user, setUser] = useState<User>({
+    id: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    profileImage: '',
+    createdAt: '',
+  });
+  const [verified, setVerified] = useState(false);
+  const [fetchingUserLoad, setFetchingUserLoad] = useState(false);
+  const [saveLoad, setSaveLoading] = useState(false);
   const userToken = useAuthStore(state => state.accessToken!);
   const clearToken = useAuthStore(state => state.clearToken);
   type User = {
@@ -16,54 +44,172 @@ const ProfileScreen = () => {
     profileImage: string;
     createdAt: string;
   };
-
-  const [user, setUser] = useState<User>({
-    id: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    profileImage: '',
-    createdAt: '',
-  });
-  const [verified, setVerified] = useState(false);
-  const [loading, setLoading] = useState(false);
-
   useEffect(() => {
     const getProfile = async () => {
       try {
-        setLoading(true);
+        setFetchingUserLoad(true);
         let result = await fetchProfile({token: userToken});
-        if (result.status === FLARE) {
+        if (result.status === FLARE || result.status === NOT_FOUND) {
           result = await fetchProfile({token: userToken});
         }
-        console.log(result.data.user);
+        if (result.status === NOT_VERIFIED) {
+          console.log('Unauthorized user');
+        }
         setUser(result.data.user);
-        console.log('verificatiobn:', result.data.user.isEmailVerified);
         setVerified(result.data.user.isEmailVerified);
       } catch (err: any) {
         console.log(err.message || 'Failed to load profile');
       }
-      setLoading(false);
+      setFetchingUserLoad(false);
     };
 
     getProfile();
   }, [userToken]);
-  if (!user || loading) {
-    return <ActivityIndicator />;
+
+  const creationDate = new Date(user.createdAt);
+  const year = creationDate.getFullYear();
+  const m = creationDate.getMonth() + 1;
+  const month = m < 10 ? '0' + m : String(m);
+  const d = creationDate.getDate();
+  const day = d < 10 ? '0' + d : String(d);
+  const formattedCreationDate = `${year}-${month}-${day}`;
+
+  type FormData = z.infer<typeof schema>;
+
+  const {
+    control,
+    handleSubmit,
+    formState: {errors},
+    reset,
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      userName: '',
+    },
+  });
+  useEffect(() => {
+    if (user.firstName && user.lastName) {
+      reset({userName: `${user.firstName} ${user.lastName}`});
+    }
+  }, [user, reset]);
+  const handleEditing = () => {
+    setIsEditing(true);
+  };
+  const onSubmit = async (formData: FormData) => {
+    setSaveLoading(true);
+    const {firstName, lastName} = validateInput(formData.userName);
+    try {
+      let result = await updateProfile({
+        token: userToken,
+        firstName: firstName,
+        lastName: lastName,
+      });
+      if (result.success === true) {
+        setUser(prevUser => ({
+          ...prevUser,
+          firstName,
+          lastName,
+        }));
+        setIsEditing(false);
+      }
+      if (result.status === FLARE || result.status === NOT_FOUND) {
+        result = await fetchProfile({token: userToken});
+      }
+      if (result.status === NOT_VERIFIED) {
+        console.log('Unauthorized user');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    setSaveLoading(false);
+  };
+  if (!user || fetchingUserLoad) {
+    return (
+      <View style={styles.spinnerContainer}>
+        <ActivityIndicator
+          size="large"
+          color={isAppDark ? darkBaseColor : lightBaseColor}
+        />
+      </View>
+    );
   }
   return (
-    <View style={{alignSelf: 'center'}}>
+    <View style={isAppDark ? styles.darkContainer : styles.container}>
       <View>
-        <Text>{user.profileImage}</Text>
-        <Text>First Name: {user.firstName}</Text>
-        <Text>Last Name: {user.lastName}</Text>
-        <Text>Email: {user.email}</Text>
-        <Text>Verfication: {verified? 'Verified':'Not Yet Verified'}</Text>
-        <Text>Account Creationg: {user.createdAt}</Text>
+        <View style={styles.profileImage}>
+          {user.profileImage ? (
+            <Image
+              source={{uri: user.profileImage}}
+              style={styles.profileImage}
+              resizeMode="contain"
+            />
+          ) : (
+            <Icon name="user" size={100} color="gray" />
+          )}
+        </View>
+        <Text style={infos}>
+          User Name:{' '}
+          {isEditing ? (
+            <Controller
+              control={control}
+              name="userName"
+              render={({field: {value, onChange}}) => (
+                <CustomInput
+                  placeholder="User Name"
+                  value={value}
+                  onChangeText={onChange}
+                  keyboardType="default"
+                />
+              )}
+            />
+          ) : (
+            <Text style={data}>{user.firstName + ' ' + user.lastName}</Text>
+          )}
+        </Text>
+        <Text style={infos}>
+          Email: <Text style={data}>{user.email}</Text>
+        </Text>
+        <Text style={infos}>
+          Verification:{' '}
+          <Text style={data}>
+            {verified ? (
+              <CustomIcon type="check" />
+            ) : (
+              <CustomIcon type="times-circle" />
+            )}
+          </Text>
+        </Text>
+        <Text style={infos}>
+          Account Creation: <Text style={data}>{formattedCreationDate}</Text>
+        </Text>
       </View>
-      <Pressable onPress={clearToken}>
-        <CustomErrorMessage message="Logout" />
-      </Pressable>
+      {saveLoad ? (
+        <ActivityIndicator
+          size="large"
+          color={isAppDark ? darkBaseColor : lightBaseColor}
+        />
+      ) : !isEditing ? (
+        <Pressable style={styles.buttonContainer} onPress={handleEditing}>
+          <CustomButton text="Edit Profile" />
+        </Pressable>
+      ) : (
+        <>
+          {errors.userName && (
+            <CustomErrorMessage message={errors.userName.message} />
+          )}
+          <Pressable
+            style={styles.buttonContainer}
+            onPress={handleSubmit(onSubmit)}>
+            <CustomButton text="Save Profile" />
+          </Pressable>
+        </>
+      )}
+
+      <View style={styles.buttonContainer}>
+        <Pressable onPress={clearToken}>
+          <CustomErrorMessage message="Logout" />
+        </Pressable>
+      </View>
     </View>
   );
 };
