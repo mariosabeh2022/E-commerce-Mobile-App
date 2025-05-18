@@ -81,6 +81,7 @@ export default function AuthenticatedTabs() {
           tabBarIcon: renderDevicesIcon,
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
+            color: isAppDark ? darkBaseColor : lightBaseColor,
           },
           headerTitleStyle: {
             fontFamily: 'Sansation-BoldItalic',
@@ -96,6 +97,7 @@ export default function AuthenticatedTabs() {
           tabBarIcon: renderUploadIcon,
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
+            color: isAppDark ? darkBaseColor : lightBaseColor,
           },
           headerRightContainerStyle: {
             padding: 16,
@@ -120,6 +122,7 @@ export default function AuthenticatedTabs() {
           },
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
+            color: isAppDark ? darkBaseColor : lightBaseColor,
           },
           headerRightContainerStyle: {
             padding: 16,
@@ -138,6 +141,7 @@ export default function AuthenticatedTabs() {
           tabBarIcon: renderProfileIcon,
           tabBarLabelStyle: {
             fontFamily: 'Sansation-Bold',
+            color: isAppDark ? darkBaseColor : lightBaseColor,
           },
           headerRightContainerStyle: {
             padding: 16,

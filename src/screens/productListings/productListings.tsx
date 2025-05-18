@@ -31,15 +31,17 @@ const ProductListingsScreen = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [filteredData, setFilteredData] = useState(data);
   const navigation = useNavigation<ProductScreenNavigationProp>();
-  const handleDetailsNavigation = ({item}: any) =>
-    navigation.navigate('Details', {id: item._id.toString()});
-  const renderItem = ({item}: {item: any}) => (
-    <View>
-      <TouchableOpacity onPress={handleDetailsNavigation}>
-        <CustomRenderItem item={item} />
-      </TouchableOpacity>
-    </View>
-  );
+  const renderItem = ({item}: {item: any}) => {
+    const handleDetailsNavigation = () =>
+      navigation.navigate('Details', {id: item._id.toString()});
+    return (
+      <View>
+        <TouchableOpacity onPress={handleDetailsNavigation}>
+          <CustomRenderItem item={item} />
+        </TouchableOpacity>
+      </View>
+    );
+  };
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
 

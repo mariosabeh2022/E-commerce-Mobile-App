@@ -19,3 +19,7 @@ export interface VerifyCredentials {
 export interface reVerificationCredentials {
   email: string;
 }
+
+export interface fetchProfileCredentials {
+  token: string;
+}

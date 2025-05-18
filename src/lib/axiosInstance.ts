@@ -5,6 +5,7 @@ import {
   VerifyCredentials,
   LoginCredentials,
   reVerificationCredentials,
+  fetchProfileCredentials,
 } from './interfaceTypes.ts';
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
 
@@ -137,6 +138,33 @@ const reVerification = async (credentials: reVerificationCredentials) => {
   }
 };
 
+const fetchProfile = async (credentials: fetchProfileCredentials) => {
+  try {
+    const response = await axiosInstance.get('/api/user/profile', {
+      headers: {
+        Authorization: `Bearer ${credentials.token}`,
+      },
+    });
+    if (response) {
+      console.log(response);
+    }
+    return response.data;
+  } catch (error: any) {
+    if (error.response && error.response.status === FLARE) {
+      return {
+        success: false,
+        code: FLARE,
+        message: 'Server Error',
+      };
+    }
+    console.error('User Fetching API error:', error);
+    return {
+      success: false,
+      message: error || 'Verification failed',
+    };
+  }
+};
+
 axiosInstance?.interceptors.response?.use(
   response => response,
   (error: AxiosError) => {
@@ -147,4 +175,11 @@ axiosInstance?.interceptors.response?.use(
   },
 );
 
-export {axiosInstance, login, signup, verification, reVerification};
+export {
+  axiosInstance,
+  login,
+  signup,
+  verification,
+  reVerification,
+  fetchProfile,
+};
