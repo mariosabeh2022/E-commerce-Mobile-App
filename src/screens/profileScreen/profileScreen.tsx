@@ -16,34 +16,24 @@ import {z} from 'zod';
 import {schema} from '../../utils/editFormTypeValidation';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {validateInput} from '../../utils/editFormValidation';
+import {Modal} from 'react-native';
+import CustomTitle from '../../components/atoms/customTitle/customTitle';
+import CustomModalIcon from '../../components/atoms/customModalIcon/customModalIcon';
+import useUserStore from '../../stores/profileStore/profileStore';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
+  const {user, setUser} = useUserStore();
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const infos = isAppDark ? styles.darkInfo : styles.info;
   const data = isAppDark ? styles.darkData : styles.data;
   const [isEditing, setIsEditing] = useState(false);
-  const [user, setUser] = useState<User>({
-    id: '',
-    email: '',
-    firstName: '',
-    lastName: '',
-    profileImage: '',
-    createdAt: '',
-  });
   const [verified, setVerified] = useState(false);
   const [fetchingUserLoad, setFetchingUserLoad] = useState(false);
   const [saveLoad, setSaveLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
   const userToken = useAuthStore(state => state.accessToken!);
   const clearToken = useAuthStore(state => state.clearToken);
-  type User = {
-    id: string;
-    email: string;
-    firstName: string;
-    lastName: string;
-    profileImage: string;
-    createdAt: string;
-  };
   useEffect(() => {
     const getProfile = async () => {
       try {
@@ -64,7 +54,7 @@ const ProfileScreen = () => {
     };
 
     getProfile();
-  }, [userToken]);
+  }, [userToken, setUser]);
 
   const creationDate = new Date(user.createdAt);
   const year = creationDate.getFullYear();
@@ -98,18 +88,24 @@ const ProfileScreen = () => {
   const onSubmit = async (formData: FormData) => {
     setSaveLoading(true);
     const {firstName, lastName} = validateInput(formData.userName);
+    const image = user.profileImage?.substring(
+      user.profileImage?.lastIndexOf('/') + 1,
+    );
+    console.log(image);
     try {
       let result = await updateProfile({
         token: userToken,
         firstName: firstName,
         lastName: lastName,
+        image: image,
       });
       if (result.success === true) {
-        setUser(prevUser => ({
-          ...prevUser,
+        setUser({
+          ...user,
           firstName,
           lastName,
-        }));
+        });
+        console.log(result);
         setIsEditing(false);
       }
       if (result.status === FLARE || result.status === NOT_FOUND) {
@@ -122,6 +118,9 @@ const ProfileScreen = () => {
       console.log(error);
     }
     setSaveLoading(false);
+  };
+  const toggleModalVisibility = () => {
+    setShowModal(prev => !prev);
   };
   if (!user || fetchingUserLoad) {
     return (
@@ -139,13 +138,16 @@ const ProfileScreen = () => {
         <View style={styles.profileImage}>
           {user.profileImage ? (
             <Image
-              source={{uri: user.profileImage}}
+              source={{uri: `file://${user.profileImage}`}}
               style={styles.profileImage}
               resizeMode="contain"
             />
           ) : (
             <Icon name="user" size={100} color="gray" />
           )}
+          <Pressable style={styles.uploadImage} onPress={toggleModalVisibility}>
+            <Icon name="edit" size={25} />
+          </Pressable>
         </View>
         <Text style={infos}>
           User Name:{' '}
@@ -183,33 +185,54 @@ const ProfileScreen = () => {
           Account Creation: <Text style={data}>{formattedCreationDate}</Text>
         </Text>
       </View>
-      {saveLoad ? (
-        <ActivityIndicator
-          size="large"
-          color={isAppDark ? darkBaseColor : lightBaseColor}
-        />
-      ) : !isEditing ? (
-        <Pressable style={styles.buttonContainer} onPress={handleEditing}>
-          <CustomButton text="Edit Profile" />
-        </Pressable>
-      ) : (
-        <>
-          {errors.userName && (
-            <CustomErrorMessage message={errors.userName.message} />
-          )}
-          <Pressable
-            style={styles.buttonContainer}
-            onPress={handleSubmit(onSubmit)}>
-            <CustomButton text="Save Profile" />
+      <View style={styles.buttonsContainer}>
+        {saveLoad ? (
+          <ActivityIndicator
+            size="large"
+            color={isAppDark ? darkBaseColor : lightBaseColor}
+          />
+        ) : !isEditing ? (
+          <Pressable style={styles.buttonContainer} onPress={handleEditing}>
+            <CustomButton text="Edit Profile" />
           </Pressable>
-        </>
-      )}
-
+        ) : (
+          <>
+            {errors.userName && (
+              <CustomErrorMessage message={errors.userName.message} />
+            )}
+            <Pressable
+              style={styles.buttonContainer}
+              onPress={handleSubmit(onSubmit)}>
+              <CustomButton text="Save Profile" />
+            </Pressable>
+          </>
+        )}
+      </View>
       <View style={styles.buttonContainer}>
         <Pressable onPress={clearToken}>
           <CustomErrorMessage message="Logout" />
         </Pressable>
       </View>
+      <Modal visible={showModal} animationType="slide" transparent={true}>
+        <View style={styles.mainModalContainer}>
+          <Pressable
+            style={styles.upperOverlay}
+            onPress={() => toggleModalVisibility()}
+          />
+          <View
+            style={
+              isAppDark ? styles.darkModalContainer : styles.modalContainer
+            }>
+            <Pressable onPress={toggleModalVisibility}>
+              <CustomIcon type="times-circle" />
+            </Pressable>
+            <CustomTitle text="Profile Photo" />
+            <View>
+              <CustomModalIcon />
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };

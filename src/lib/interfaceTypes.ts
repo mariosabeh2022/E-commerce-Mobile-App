@@ -28,5 +28,5 @@ export interface updateProfileCredentials {
   token: string;
   firstName: string;
   lastName: string;
-  image?: {url: string};
+  image?: string;
 }

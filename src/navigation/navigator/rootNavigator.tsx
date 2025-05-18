@@ -6,9 +6,9 @@ import {
 } from '@react-navigation/native';
 import UnauthenticatedStack from '../stacks/unauthenticated';
 import {useTheme} from '../../contexts/themeContext';
-import AuthenticatedTabs from '../stacks/authenticatedTabs';
 import SplashScreen from '../../screens/splashScreen/splashScreen';
 import useAuthStore from '../../stores/authStore/authStore';
+import AuthenticatedStack from '../stacks/authenticatedStack';
 
 export default function RootNavigator() {
   const {theme} = useTheme();
@@ -21,7 +21,7 @@ export default function RootNavigator() {
       {loading ? (
         <SplashScreen onFinish={toggleOnFinish} />
       ) : accessToken ? (
-        <AuthenticatedTabs />
+        <AuthenticatedStack />
       ) : (
         <UnauthenticatedStack />
       )}

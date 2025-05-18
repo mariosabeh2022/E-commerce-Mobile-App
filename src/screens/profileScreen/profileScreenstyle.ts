@@ -25,6 +25,19 @@ export const styles = StyleSheet.create({
     ...baseContainer,
     backgroundColor: 'grey',
   },
+  uploadImage: {
+    position: 'absolute',
+    bottom: 10,
+    right: 10,
+    backgroundColor: 'white',
+    padding: 5,
+    borderRadius: 20,
+    elevation: 2, // for Android shadow
+    shadowColor: '#000', // for iOS shadow
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.3,
+    shadowRadius: 1.41,
+  },
   spinnerContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -36,25 +49,27 @@ export const styles = StyleSheet.create({
     marginBottom: '5%',
   },
   profileImage: {
-    width: '80%',
-    height: '50%',
+    width: 150,
+    height: 150,
     backgroundColor: 'lightgray',
     alignSelf: 'center',
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 50,
+    borderRadius: 75,
+    overflow: 'hidden', // optional, for clipping
   },
+
   editingInput: {
-    width:'100%',
-    paddingHorizontal:10,
-    paddingVertical:10,
+    width: '100%',
+    paddingHorizontal: 10,
+    paddingVertical: 10,
   },
   info: {
     ...baseInfo,
   },
   darkInfo: {
     ...baseInfo,
-    color: 'white',
+    color: 'lightgray',
   },
   data: {
     ...baseData,
@@ -64,4 +79,36 @@ export const styles = StyleSheet.create({
     ...baseData,
     color: darkBaseColor,
   },
+  mainModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+
+  upperOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.25)',
+  },
+
+  modalContainer: {
+    width: '100%',
+    height: '35%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderLeftColor: 'white',
+    borderRightColor: 'white',
+  },
+
+  darkModalContainer: {
+    width: '100%',
+    height: '35%',
+    backgroundColor: '#222',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderLeftColor: '#222',
+    borderRightColor: '#222',
+  },
+  buttonsContainer: {marginTop: '10%'},
 });

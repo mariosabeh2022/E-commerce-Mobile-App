@@ -10,14 +10,22 @@ import {saveToDeviceStorage} from './saveToDevice';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import PermissionNotGranted from '../permissionNotGranted/permissionNotGranted';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {AuthenticatedTabParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
   'Devices'
 >;
+type CameraScreenRouteProp = RouteProp<
+  AuthenticatedStackParamList,
+  'CameraScreen'
+>;
+
 const CamPermissionsCheck = () => {
+  const route = useRoute<CameraScreenRouteProp>();
+  const onCapture = route.params?.onCapture;
   const [isSaving, setIsSaving] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -48,7 +56,12 @@ const CamPermissionsCheck = () => {
       await saveToDeviceStorage(`file://${photo?.path}`);
       setIsSaving(false);
       setIsSaved(true);
+      if (onCapture) {
+        onCapture(photo);
+      }
+      navigation.goBack();
     }
+
     setTimeout(() => {
       setIsSaving(true);
       setIsSaved(false);

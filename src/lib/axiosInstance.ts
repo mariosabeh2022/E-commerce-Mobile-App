@@ -171,11 +171,8 @@ const updateProfile = async (credentials: updateProfileCredentials) => {
     const body: any = {
       firstName: credentials.firstName,
       lastName: credentials.lastName,
+      image: credentials.image,
     };
-
-    if (credentials.image?.url) {
-      body.image = credentials.image.url;
-    }
 
     const response = await axiosInstance.put('/api/user/profile', body, {
       headers: {

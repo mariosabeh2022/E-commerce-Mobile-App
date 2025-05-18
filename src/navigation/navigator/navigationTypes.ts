@@ -16,3 +16,8 @@ export type AuthenticatedTabParamList = {
   Cart: undefined;
   Profile: undefined;
 };
+
+export type UploadStackParamList = {
+  UploadHome: undefined;
+  CameraScreen: undefined;
+};
