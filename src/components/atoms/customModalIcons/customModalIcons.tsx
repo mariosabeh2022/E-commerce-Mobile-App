@@ -1,12 +1,12 @@
 import Icon from 'react-native-vector-icons/FontAwesome5';
-import {styles} from './customModalIcon.style.ts';
-import {useTheme} from '../../../contexts/themeContext';
+import {styles} from './customModalIcons.style.ts';
+import {useTheme} from '../../../contexts/themeContext.tsx';
 import {Text, TouchableOpacity, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthenticatedStackParamList} from '../../../navigation/stacks/authenticatedStack.tsx';
 import useUserStore from '../../../stores/profileStore/profileStore.tsx';
-const CustomIcon = () => {
+const CustomIcons = () => {
   const {theme} = useTheme();
   const {updateProfileImage} = useUserStore();
   const isAppDark = theme === 'dark';
@@ -15,8 +15,10 @@ const CustomIcon = () => {
     useNavigation<NativeStackNavigationProp<AuthenticatedStackParamList>>();
   const goToCamera = () => {
     navigation.navigate('CameraScreen', {
-      onCapture: image => {
-        updateProfileImage(image?.path ?? '');
+      onCapture: async image => {
+        const x = image.path;
+        updateProfileImage(x);
+        console.log('Image path captured: ', x);
       },
     });
   };
@@ -68,4 +70,4 @@ const CustomIcon = () => {
     </View>
   );
 };
-export default CustomIcon;
+export default CustomIcons;

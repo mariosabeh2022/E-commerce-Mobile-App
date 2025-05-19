@@ -1,13 +1,10 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState} from 'react';
 import {View, Text, FlatList, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-
-import {data} from '../../assets/Products.json';
 import {styles} from './productListings.style';
 import {skeletonStyles} from '../../components/organismes/customSkeletonItem/customSkeletonItem.style';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
-
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
 import CustomInput from '../../components/atoms/customInput/customInput';
@@ -16,20 +13,45 @@ import CustomPressable from '../../components/molecules/customPressable/customPr
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
+import {useQuery} from '@tanstack/react-query';
+import {fetchProducts} from '../../lib/axiosInstance';
+import useAuthStore from '../../stores/authStore/authStore';
 
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
   'Products'
 >;
 
+type ProductImage = {
+  url: string;
+  _id: string;
+};
+
+type Products = {
+  _id: string;
+  title: string;
+  description: string;
+  price: number;
+  images: ProductImage[];
+};
+
 const renderCustomErrorMessage = () => (
   <CustomErrorMessage message="No items available" />
 );
 
 const ProductListingsScreen = () => {
+  const userToken = useAuthStore(state => state.accessToken);
   const [filteredText, setFilteredText] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [filteredData, setFilteredData] = useState(data);
+  const {data: responseData, isLoading} = useQuery<{
+    success: boolean;
+    data: Products[];
+    pagination: any;
+  }>({
+    queryKey: ['products'],
+    queryFn: () => fetchProducts({token: userToken!}),
+    enabled: !!userToken,
+  });
+  console.log(responseData);
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => {
     const handleDetailsNavigation = () =>
@@ -45,25 +67,14 @@ const ProductListingsScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
 
-  const filterData = useCallback(() => {
-    if (filteredText.length >= 1) {
-      return data.filter(item =>
-        item.title.toLowerCase().includes(filteredText.toLowerCase()),
-      );
-    }
-    return data;
-  }, [filteredText]);
-
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      setIsLoading(true);
-      const result = filterData();
-      setFilteredData(result);
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(timeoutId);
-  }, [filterData]);
-
+  // const filterData = useCallback(() => {
+  //   if (filteredText.length >= 1) {
+  //     return data.filter(item =>
+  //       item.title.toLowerCase().includes(filteredText.toLowerCase()),
+  //     );
+  //   }
+  //   return data;
+  // }, [filteredText]);
   const customSkeletonItem = () => {
     return (
       <View
@@ -108,9 +119,11 @@ const ProductListingsScreen = () => {
           </>
         </CustomView>
         <FlatList
-          data={filteredText ? filteredData : data}
+          data={responseData?.data}
           keyExtractor={item => item._id.toString()}
-          renderItem={isLoading ? customSkeletonItem : renderItem}
+          renderItem={({item}) =>
+            isLoading ? customSkeletonItem() : renderItem({item})
+          }
           ListEmptyComponent={renderCustomErrorMessage}
           ListHeaderComponent={
             <Text
@@ -128,7 +141,6 @@ const ProductListingsScreen = () => {
               ---------------
             </Text>
           }
-          extraData={isLoading}
         />
       </>
     </CustomContainer>

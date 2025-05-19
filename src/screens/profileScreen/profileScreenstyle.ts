@@ -86,7 +86,7 @@ export const styles = StyleSheet.create({
 
   upperOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.25)',
+    backgroundColor: 'rgba(0,0,0,0)',
   },
 
   modalContainer: {

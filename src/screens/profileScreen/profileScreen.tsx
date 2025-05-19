@@ -18,11 +18,16 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {validateInput} from '../../utils/editFormValidation';
 import {Modal} from 'react-native';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
-import CustomModalIcon from '../../components/atoms/customModalIcon/customModalIcon';
+import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
 import useUserStore from '../../stores/profileStore/profileStore';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
+  const loggedInUserToken = useAuthStore(state => state.accessToken);
   const {user, setUser} = useUserStore();
+  const profilePicture = user.profileImage?.substring(
+    user.profileImage.lastIndexOf('/') + 1,
+  );
+  console.log("this user's token is:", loggedInUserToken);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const infos = isAppDark ? styles.darkInfo : styles.info;
@@ -75,37 +80,40 @@ const ProfileScreen = () => {
     resolver: zodResolver(schema),
     defaultValues: {
       userName: '',
+      profileImage: '',
     },
   });
   useEffect(() => {
     if (user.firstName && user.lastName) {
-      reset({userName: `${user.firstName} ${user.lastName}`});
+      reset({
+        userName: `${user.firstName} ${user.lastName}`,
+        profileImage: profilePicture ?? '',
+      });
     }
-  }, [user, reset]);
+  }, [user, reset, profilePicture]);
   const handleEditing = () => {
     setIsEditing(true);
   };
   const onSubmit = async (formData: FormData) => {
     setSaveLoading(true);
     const {firstName, lastName} = validateInput(formData.userName);
-    const image = user.profileImage?.substring(
-      user.profileImage?.lastIndexOf('/') + 1,
-    );
-    console.log(image);
+
+    console.log('Profile screen user image: ...', profilePicture);
     try {
       let result = await updateProfile({
         token: userToken,
         firstName: firstName,
         lastName: lastName,
-        image: image,
+        image: profilePicture,
       });
       if (result.success === true) {
         setUser({
           ...user,
           firstName,
           lastName,
+          profileImage: result.data?.user?.profileImage ?? user.profileImage,
         });
-        console.log(result);
+        console.log(result.data.user);
         setIsEditing(false);
       }
       if (result.status === FLARE || result.status === NOT_FOUND) {
@@ -138,7 +146,9 @@ const ProfileScreen = () => {
         <View style={styles.profileImage}>
           {user.profileImage ? (
             <Image
-              source={{uri: `file://${user.profileImage}`}}
+              source={{
+                uri: `file://${user.profileImage}`,
+              }}
               style={styles.profileImage}
               resizeMode="contain"
             />
@@ -228,7 +238,7 @@ const ProfileScreen = () => {
             </Pressable>
             <CustomTitle text="Profile Photo" />
             <View>
-              <CustomModalIcon />
+              <CustomModalIcons />
             </View>
           </View>
         </View>

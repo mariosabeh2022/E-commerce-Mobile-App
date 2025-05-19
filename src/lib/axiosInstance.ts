@@ -9,6 +9,7 @@ import {
   fetchProfileCredentials,
   updateProfileCredentials,
   RefreshCredentials,
+  fetchProductsCredentials,
 } from './interfaceTypes';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
@@ -150,18 +151,72 @@ const fetchProfile = async ({token}: fetchProfileCredentials) => {
   }
 };
 
+const getMimeType = (uri: string): string => {
+  const extension = uri.split('.').pop()?.toLowerCase();
+  switch (extension) {
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg';
+    case 'png':
+      return 'image/png';
+    case 'gif':
+      return 'image/gif';
+    default:
+      return 'application/octet-stream';
+  }
+};
+
 const updateProfile = async (credentials: updateProfileCredentials) => {
   try {
     const {token, firstName, lastName, image} = credentials;
-    const body = {firstName, lastName, image};
 
-    const {data} = await axiosInstance.put('/api/user/profile', body, {
-      headers: {Authorization: `Bearer ${token}`},
+    const formData = new FormData();
+    formData.append('firstName', firstName);
+    formData.append('lastName', lastName);
+    if (image) {
+      const mimeType = getMimeType(image);
+      const filename = image.split('/').pop() || 'profile-image';
+      formData.append('profileImage', {
+        uri: image,
+        name: filename,
+        type: mimeType,
+      } as any);
+    }
+    const {data} = await axiosInstance.put('/api/user/profile', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
     });
 
     return data;
   } catch (error: any) {
     return handleError(error, 'Update profile failed', {
+      [FLARE]: 'Server error',
+    });
+  }
+};
+
+const fetchProducts = async (credentials: fetchProductsCredentials) => {
+  try {
+    const {token, ...queryParams} = credentials;
+    const {data} = await axiosInstance.get('/api/products', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: {
+        page: queryParams.page ?? 1,
+        limit: queryParams.limit ?? 10,
+        minPrice: queryParams.minPrice,
+        maxPrice: queryParams.maxPrice,
+        sortBy: queryParams.sortBy,
+        order: queryParams.order ?? 'desc',
+      },
+    });
+
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Products fetching failed', {
       [FLARE]: 'Server error',
     });
   }
@@ -176,4 +231,5 @@ export {
   fetchProfile,
   updateProfile,
   refreshToken,
+  fetchProducts,
 };
