@@ -1,4 +1,5 @@
 import axios, {AxiosError} from 'axios';
+import Config from 'react-native-config';
 import {errorCodes} from './errorCodes';
 import {
   SignUpCredentials,
@@ -7,205 +8,164 @@ import {
   reVerificationCredentials,
   fetchProfileCredentials,
   updateProfileCredentials,
-} from './interfaceTypes.ts';
+  RefreshCredentials,
+} from './interfaceTypes';
+
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
+const API_URL = Config.API_URL;
 
 const axiosInstance = axios.create({
-  baseURL: 'https://backend-practice.eurisko.me',
+  baseURL: API_URL,
   timeout: 10000,
 });
-
-axiosInstance?.interceptors.request?.use(config => {
+const MAX_RETRIES = 3;
+axiosInstance.interceptors.request.use(config => {
   if (config.auth) {
     config.headers.Authorization = `Bearer ${config.headers.Authorization}`;
   }
   return config;
 });
 
+axiosInstance.interceptors.response.use(
+  res => res,
+  async (error: AxiosError) => {
+    const originalRequest: any = error.config;
+
+    if (error?.response?.status === FLARE) {
+      originalRequest._retryCount = originalRequest._retryCount || 0;
+
+      if (originalRequest._retryCount < MAX_RETRIES) {
+        originalRequest._retryCount += 1;
+
+        console.warn(
+          `Retrying request due to FLARE error. Attempt ${originalRequest._retryCount}`,
+        );
+
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        return axiosInstance(originalRequest);
+      } else {
+        console.error('Max retry attempts reached for FLARE error.');
+      }
+    }
+    if (error?.response?.status === UNAUTHORIZED) {
+      // trigger token refresh
+    }
+    return Promise.reject(error);
+  },
+);
+
+const handleError = (
+  error: AxiosError,
+  fallbackMessage = 'Something went wrong',
+  customMessages: Record<number, string> = {},
+) => {
+  const status = error.response?.status;
+  const message = customMessages[status!] || fallbackMessage;
+  console.error('API Error:', error.response?.data || error);
+  return {
+    success: false,
+    code: status,
+    message,
+  };
+};
+
 const login = async (credentials: LoginCredentials) => {
   try {
-    const response = await axiosInstance.post('/api/auth/login', credentials);
-    return response.data;
+    const {data} = await axiosInstance.post('/api/auth/login', credentials);
+    return data;
   } catch (error: any) {
-    if (error.response && error.response.status === UNAUTHORIZED) {
-      return {
-        success: false,
-        code: UNAUTHORIZED,
-        message: 'Email Or Password Incorrect.',
-      };
-    } else if (error.response && error.response.status === NOT_VERIFIED) {
-      return {
-        success: false,
-        code: EXISTS,
-        message: 'You Must Verify Your Account First',
-      };
-    } else if (error.response && error.response.status === NOT_FOUND) {
-      return {
-        success: false,
-        code: NOT_FOUND,
-        message: 'User Not Found',
-      };
-    } else if (error.response && error.response.status === FLARE) {
-      return {
-        success: false,
-        code: FLARE,
-        message: 'Server Error',
-      };
-    }
-    console.error('Login API error:', error);
-    return {
-      success: false,
-      message: error || 'Login failed',
-    };
+    return handleError(error, 'Login failed', {
+      [UNAUTHORIZED]: 'Email or password incorrect',
+      [NOT_VERIFIED]: 'You must verify your account first',
+      [NOT_FOUND]: 'User not found',
+      [FLARE]: 'Server error',
+    });
+  }
+};
+
+const refreshToken = async (credentials: RefreshCredentials) => {
+  try {
+    const {data} = await axiosInstance.post('/auth/refresh-token', credentials);
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Token refresh failed', {
+      [FLARE]: 'Server error',
+      [UNAUTHORIZED]: 'Invalid refresh token',
+    });
   }
 };
 
 const signup = async (credentials: SignUpCredentials) => {
   try {
-    const response = await axiosInstance.post('/api/auth/signup', credentials);
-    return response.data;
+    const {data} = await axiosInstance.post('/api/auth/signup', credentials);
+    return data;
   } catch (error: any) {
-    if (error.response && error.response.status === EXISTS) {
-      return {
-        success: false,
-        code: 400,
-        message: 'User Already Exists',
-      };
-    } else if (error.response && error.response.status === FLARE) {
-      return {
-        success: false,
-        code: 521,
-        message: 'Server Error',
-      };
-    }
-    console.error('SignUp API error:', error);
-    return {
-      success: false,
-      message: error || 'SignUp failed',
-    };
+    return handleError(error, 'Signup failed', {
+      [EXISTS]: 'User already exists',
+      [FLARE]: 'Server error',
+    });
   }
 };
 
 const verification = async (credentials: VerifyCredentials) => {
   try {
-    const response = await axiosInstance.post(
+    const {data} = await axiosInstance.post(
       '/api/auth/verify-otp',
       credentials,
     );
-    return response.data;
+    return data;
   } catch (error: any) {
-    if (error.response && error.response.status === 400) {
-      return {
-        success: false,
-        code: 400,
-        message: 'Invalid Or Expired OTP',
-      };
-    } else if (error.response && error.response.status === FLARE) {
-      return {
-        success: false,
-        code: 521,
-        message: 'Server Error',
-      };
-    }
-    console.error('Verification API error:', error);
-    return {
-      success: false,
-      message: error || 'Verification failed',
-    };
+    return handleError(error, 'Verification failed', {
+      400: 'Invalid or expired OTP',
+      [FLARE]: 'Server error',
+    });
   }
 };
 
 const reVerification = async (credentials: reVerificationCredentials) => {
   try {
-    const response = await axiosInstance.post(
+    const {data} = await axiosInstance.post(
       '/api/auth/resend-verification-otp',
       credentials,
     );
-    console.log(response);
-    return response.data;
+    return data;
   } catch (error: any) {
-    if (error.response && error.response.status === FLARE) {
-      return {
-        success: false,
-        code: 521,
-        message: 'Server Error',
-      };
-    }
-    console.error('Verification API error:', error);
-    return {
-      success: false,
-      message: error || 'Verification failed',
-    };
+    return handleError(error, 'Verification failed', {
+      [FLARE]: 'Server error',
+    });
   }
 };
 
-const fetchProfile = async (credentials: fetchProfileCredentials) => {
+const fetchProfile = async ({token}: fetchProfileCredentials) => {
   try {
-    const response = await axiosInstance.get('/api/user/profile', {
-      headers: {
-        Authorization: `Bearer ${credentials.token}`,
-      },
+    const {data} = await axiosInstance.get('/api/user/profile', {
+      headers: {Authorization: `Bearer ${token}`},
     });
-    if (response) {
-      console.log(response);
-    }
-    return response.data;
+    return data;
   } catch (error: any) {
-    if (error.response && error.response.status === FLARE) {
-      return {
-        success: false,
-        code: FLARE,
-        message: 'Server Error',
-      };
-    }
-    console.error('User Fetching API error:', error);
-    return {
-      success: false,
-      message: error || 'Fetch failed',
-    };
+    return handleError(error, 'Fetch profile failed', {
+      [FLARE]: 'Server error',
+    });
   }
 };
 
 const updateProfile = async (credentials: updateProfileCredentials) => {
   try {
-    const body: any = {
-      firstName: credentials.firstName,
-      lastName: credentials.lastName,
-      image: credentials.image,
-    };
+    const {token, firstName, lastName, image} = credentials;
+    const body = {firstName, lastName, image};
 
-    const response = await axiosInstance.put('/api/user/profile', body, {
-      headers: {
-        Authorization: `Bearer ${credentials.token}`,
-      },
+    const {data} = await axiosInstance.put('/api/user/profile', body, {
+      headers: {Authorization: `Bearer ${token}`},
     });
 
-    return response.data;
+    return data;
   } catch (error: any) {
-    if (error.response && error.response.status === FLARE) {
-      return {
-        success: false,
-        code: FLARE,
-        message: 'Server Error',
-      };
-    }
-    console.error('User Fetching API error:', error.response?.data || error);
-    return {
-      success: false,
-      message: error?.response?.data?.message || 'Update failed',
-    };
+    return handleError(error, 'Update profile failed', {
+      [FLARE]: 'Server error',
+    });
   }
 };
-
-axiosInstance?.interceptors.response?.use(
-  response => response,
-  (error: AxiosError) => {
-    if (error?.response?.status === UNAUTHORIZED) {
-      //
-    }
-    return Promise.reject(error);
-  },
-);
 
 export {
   axiosInstance,
@@ -215,4 +175,5 @@ export {
   reVerification,
   fetchProfile,
   updateProfile,
+  refreshToken,
 };
