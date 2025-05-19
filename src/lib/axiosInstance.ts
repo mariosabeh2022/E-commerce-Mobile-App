@@ -38,12 +38,10 @@ axiosInstance.interceptors.response.use(
       if (originalRequest._retryCount < MAX_RETRIES) {
         originalRequest._retryCount += 1;
 
-        console.warn(
+        console.log(
           `Retrying request due to FLARE error. Attempt ${originalRequest._retryCount}`,
         );
-
         await new Promise(resolve => setTimeout(resolve, 1000));
-
         return axiosInstance(originalRequest);
       } else {
         console.error('Max retry attempts reached for FLARE error.');
@@ -213,7 +211,10 @@ const fetchProducts = async (credentials: fetchProductsCredentials) => {
         order: queryParams.order ?? 'desc',
       },
     });
-
+    console.log('Query Params:', {
+      ...queryParams,
+      token,
+    });
     return data;
   } catch (error: any) {
     return handleError(error, 'Products fetching failed', {

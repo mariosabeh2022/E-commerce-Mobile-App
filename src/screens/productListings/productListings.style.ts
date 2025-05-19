@@ -1,5 +1,5 @@
 import {StyleSheet, ViewStyle, TextStyle} from 'react-native';
-import { darkBaseColor, lightBaseColor } from '../../styles/formStyles';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 const baseSkeletonComponent: ViewStyle = {
   height: 60,
   marginVertical: 8,
@@ -20,6 +20,15 @@ const baseFooterComponent: ViewStyle & TextStyle = {
   textAlign: 'center',
 };
 export const styles = StyleSheet.create({
+  scrollview: {
+    margin: 2,
+  },
+  scrollViewItemContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    gap: 5,
+    justifyContent: 'space-around',
+  },
   skeletonItem: {
     ...baseSkeletonComponent,
     backgroundColor: 'gray',
@@ -29,11 +38,11 @@ export const styles = StyleSheet.create({
     backgroundColor: 'lightgray',
   },
   filterContainer: {
-    flex:1,
-    flexDirection:'row',
-    margin:10,
-    alignItems:'center',
-    justifyContent:'center',
+    flex: 1,
+    flexDirection: 'row',
+    margin: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
     width: '100%',
   },
   headerComponent: {

@@ -44,4 +44,5 @@ export interface fetchProductsCredentials {
   maxPrice?: number;
   sortBy?: string;
   order?: 'asc' | 'desc';
+  search?:string
 }

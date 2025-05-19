@@ -1,5 +1,12 @@
 import React, {useState} from 'react';
-import {View, Text, FlatList, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  ScrollView,
+  Pressable,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {styles} from './productListings.style';
@@ -16,24 +23,12 @@ import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage
 import {useQuery} from '@tanstack/react-query';
 import {fetchProducts} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
+import CustomButton from '../../components/atoms/customButton/customButton';
 
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
   'Products'
 >;
-
-type ProductImage = {
-  url: string;
-  _id: string;
-};
-
-type Products = {
-  _id: string;
-  title: string;
-  description: string;
-  price: number;
-  images: ProductImage[];
-};
 
 const renderCustomErrorMessage = () => (
   <CustomErrorMessage message="No items available" />
@@ -41,17 +36,34 @@ const renderCustomErrorMessage = () => (
 
 const ProductListingsScreen = () => {
   const userToken = useAuthStore(state => state.accessToken);
-  const [filteredText, setFilteredText] = useState('');
-  const {data: responseData, isLoading} = useQuery<{
-    success: boolean;
-    data: Products[];
-    pagination: any;
-  }>({
-    queryKey: ['products'],
-    queryFn: () => fetchProducts({token: userToken!}),
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<'title' | 'price'>('title');
+  const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const toggleAlphaSort = () => {
+    setSortBy('title');
+    setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+  };
+
+  const togglePriceSort = () => {
+    setSortBy('price');
+    setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
+  };
+  const {
+    data: responseData,
+    isFetching,
+    isRefetching,
+    refetch,
+  } = useQuery({
+    queryKey: ['products', {sortBy, order}],
+    queryFn: () =>
+      fetchProducts({
+        token: userToken!,
+        sortBy,
+        order,
+      }),
     enabled: !!userToken,
   });
-  console.log(responseData);
+
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => {
     const handleDetailsNavigation = () =>
@@ -67,14 +79,6 @@ const ProductListingsScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
 
-  // const filterData = useCallback(() => {
-  //   if (filteredText.length >= 1) {
-  //     return data.filter(item =>
-  //       item.title.toLowerCase().includes(filteredText.toLowerCase()),
-  //     );
-  //   }
-  //   return data;
-  // }, [filteredText]);
   const customSkeletonItem = () => {
     return (
       <View
@@ -107,13 +111,31 @@ const ProductListingsScreen = () => {
       <>
         <CustomView>
           <>
+            <ScrollView horizontal={true} style={styles.scrollview}>
+              <View style={styles.scrollViewItemContainer}>
+                <Pressable onPress={toggleAlphaSort}>
+                  <CustomButton
+                    text={`By Name ${sortBy === 'title' ? order : ''}`}
+                  />
+                </Pressable>
+                <Pressable onPress={togglePriceSort}>
+                  <CustomButton
+                    text={`By Price ${sortBy === 'price' ? order : ''}`}
+                  />
+                </Pressable>
+              </View>
+            </ScrollView>
+          </>
+        </CustomView>
+        <CustomView>
+          <>
             <CustomInput
               placeholder="Filter Item"
-              value={filteredText}
-              onChangeText={setFilteredText}
+              value={search}
+              onChangeText={setSearch}
               keyboardType="default"
             />
-            <CustomPressable>
+            <CustomPressable onPress={refetch}>
               <CustomIcon type="search" />
             </CustomPressable>
           </>
@@ -122,8 +144,12 @@ const ProductListingsScreen = () => {
           data={responseData?.data}
           keyExtractor={item => item._id.toString()}
           renderItem={({item}) =>
-            isLoading ? customSkeletonItem() : renderItem({item})
+            isFetching || isRefetching
+              ? customSkeletonItem()
+              : renderItem({item})
           }
+          onRefresh={refetch}
+          refreshing={isRefetching}
           ListEmptyComponent={renderCustomErrorMessage}
           ListHeaderComponent={
             <Text
