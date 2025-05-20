@@ -60,3 +60,8 @@ export interface searchProductsCredentials {
   token: string;
   query: string;
 }
+
+export interface productDetailCredentials {
+  token: string;
+  id: string;
+}

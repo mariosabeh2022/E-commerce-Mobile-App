@@ -7,10 +7,14 @@ import {
   Dimensions,
   ListRenderItemInfo,
   Text,
+  TouchableWithoutFeedback,
+  Alert,
 } from 'react-native';
 import {styles} from './customCarousel.style';
 import {useTheme} from '../../../contexts/themeContext';
 import {customCarouselProps, ImageItem} from './customCarousel.type';
+import {API_URL} from '../../../config/index';
+import {downloadImage} from '../../../hooks/useSaveImage';
 const {width} = Dimensions.get('window');
 
 const ImageCarousel = ({images}: customCarouselProps) => {
@@ -26,11 +30,37 @@ const ImageCarousel = ({images}: customCarouselProps) => {
       useNativeDriver: true,
     }).start();
   });
-
+  const showConfirmation = (onConfirm: () => void) => {
+    Alert.alert(
+      'Download Image',
+      'Are you sure you want to download this image?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Download cancelled'),
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: onConfirm,
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+  const handlePictureDownload = (path: string) => {
+    return () => showConfirmation(() => downloadImage(API_URL + path));
+  };
   const renderItem = ({item}: ListRenderItemInfo<ImageItem>) => (
-    <View style={styles.imageContainer}>
-      <Image key={item._id} source={{uri: item.uri}} style={styles.image} />
-    </View>
+    <TouchableWithoutFeedback onLongPress={handlePictureDownload(item.uri)}>
+      <View style={styles.imageContainer}>
+        <Image
+          key={item._id}
+          source={{uri: API_URL + item.uri}}
+          style={styles.image}
+        />
+      </View>
+    </TouchableWithoutFeedback>
   );
 
   const handleScroll = (event: any) => {

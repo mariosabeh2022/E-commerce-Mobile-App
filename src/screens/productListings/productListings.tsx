@@ -19,7 +19,7 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
-import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
+// import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import {useQuery} from '@tanstack/react-query';
 import {fetchProducts, searchProducts} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
@@ -30,9 +30,9 @@ type ProductScreenNavigationProp = NativeStackNavigationProp<
   'Products'
 >;
 
-const renderCustomErrorMessage = () => (
-  <CustomErrorMessage message="No items available" />
-);
+// const renderCustomErrorMessage = () => (
+//   <CustomErrorMessage message="No items available" />
+// );
 
 const ProductListingsScreen = () => {
   const userToken = useAuthStore(state => state.accessToken);
@@ -129,12 +129,12 @@ const ProductListingsScreen = () => {
             <View style={styles.scrollViewItemContainer}>
               <Pressable onPress={toggleAlphaSort}>
                 <CustomButton
-                  text={`By Name ${sortBy === 'title' ? order : ''}`}
+                  text={`Name ${sortBy === 'title' ? order : ''}`}
                 />
               </Pressable>
               <Pressable onPress={togglePriceSort}>
                 <CustomButton
-                  text={`By Price ${sortBy === 'price' ? order : ''}`}
+                  text={`Price ${sortBy === 'price' ? order : ''}`}
                 />
               </Pressable>
             </View>
@@ -158,13 +158,14 @@ const ProductListingsScreen = () => {
           data={showSearchResults ? filteredData?.data : responseData?.data}
           keyExtractor={item => item._id.toString()}
           renderItem={({item}) =>
-            (showSearchResults ? isFetchingSearch : isFetchingAll)
+            (showSearchResults ? isFetchingSearch : isFetchingAll) ||
+            !responseData
               ? customSkeletonItem()
               : renderItem({item})
           }
           onRefresh={showSearchResults ? refetchSearch : refetchAll}
           refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
-          ListEmptyComponent={renderCustomErrorMessage}
+          ListEmptyComponent={customSkeletonItem}
           ListHeaderComponent={
             <Text
               style={

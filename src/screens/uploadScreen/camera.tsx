@@ -43,7 +43,7 @@ const CamPermissionsCheck = () => {
     handleCameraPermission();
   }, [handleCameraPermission]);
   const openSettings = async () => await Linking.openSettings();
-  const handleCaptureButtom = () => {
+  const handleCaptureButton = () => {
     setIsCapturing(true);
     handleCapture();
   };
@@ -91,7 +91,7 @@ const CamPermissionsCheck = () => {
       </Pressable>
       <TouchableOpacity
         style={isCapturing ? styles.capturing : styles.capture}
-        onPress={handleCaptureButtom}
+        onPress={handleCaptureButton}
       />
       <Pressable
         style={styles.close}

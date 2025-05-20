@@ -11,6 +11,7 @@ import {
   RefreshCredentials,
   fetchProductsCredentials,
   searchProductsCredentials,
+  productDetailCredentials,
 } from './interfaceTypes';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
@@ -242,6 +243,21 @@ const searchProducts = async (credentials: searchProductsCredentials) => {
   }
 };
 
+const productDetails = async (credentials: productDetailCredentials) => {
+  try {
+    const {data} = await axiosInstance.get(`/api/products/${credentials.id}`, {
+      headers: {
+        Authorization: `Bearer ${credentials.token}`,
+      },
+    });
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Product details fetch failed', {
+      [FLARE]: 'Server error',
+    });
+  }
+};
+
 export {
   axiosInstance,
   login,
@@ -253,4 +269,5 @@ export {
   refreshToken,
   fetchProducts,
   searchProducts,
+  productDetails,
 };
