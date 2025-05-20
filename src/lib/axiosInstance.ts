@@ -10,6 +10,7 @@ import {
   updateProfileCredentials,
   RefreshCredentials,
   fetchProductsCredentials,
+  searchProductsCredentials,
 } from './interfaceTypes';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
@@ -223,6 +224,24 @@ const fetchProducts = async (credentials: fetchProductsCredentials) => {
   }
 };
 
+const searchProducts = async (credentials: searchProductsCredentials) => {
+  try {
+    const {data} = await axiosInstance.get('/api/products/search', {
+      headers: {
+        Authorization: `Bearer ${credentials.token}`,
+      },
+      params: {
+        query: credentials.query,
+      },
+    });
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Products search failed', {
+      [FLARE]: 'Server error',
+    });
+  }
+};
+
 export {
   axiosInstance,
   login,
@@ -233,4 +252,5 @@ export {
   updateProfile,
   refreshToken,
   fetchProducts,
+  searchProducts,
 };

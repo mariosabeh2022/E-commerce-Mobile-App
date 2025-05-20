@@ -44,5 +44,19 @@ export interface fetchProductsCredentials {
   maxPrice?: number;
   sortBy?: string;
   order?: 'asc' | 'desc';
-  search?:string
+}
+
+export interface fetchProductsCredentials {
+  token: string;
+  page?: number;
+  limit?: number;
+  minPrice?: number;
+  maxPrice?: number;
+  sortBy?: string;
+  order?: 'asc' | 'desc';
+}
+
+export interface searchProductsCredentials {
+  token: string;
+  query: string;
 }

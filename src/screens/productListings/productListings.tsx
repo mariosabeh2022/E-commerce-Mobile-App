@@ -21,7 +21,7 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import {useQuery} from '@tanstack/react-query';
-import {fetchProducts} from '../../lib/axiosInstance';
+import {fetchProducts, searchProducts} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomButton from '../../components/atoms/customButton/customButton';
 
@@ -50,9 +50,9 @@ const ProductListingsScreen = () => {
   };
   const {
     data: responseData,
-    isFetching,
-    isRefetching,
-    refetch,
+    isFetching: isFetchingAll,
+    isRefetching: isRefetchingAll,
+    refetch: refetchAll,
   } = useQuery({
     queryKey: ['products', {sortBy, order}],
     queryFn: () =>
@@ -64,6 +64,21 @@ const ProductListingsScreen = () => {
     enabled: !!userToken,
   });
 
+  const {
+    data: filteredData,
+    isFetching: isFetchingSearch,
+    isRefetching: isRefetchingSeach,
+    refetch: refetchSearch,
+  } = useQuery({
+    queryKey: ['search', {search}],
+    queryFn: () =>
+      searchProducts({
+        token: userToken!,
+        query: search,
+      }),
+    enabled: !!userToken && !!search,
+  });
+  const showSearchResults = search.length >= 2;
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => {
     const handleDetailsNavigation = () =>
@@ -110,22 +125,20 @@ const ProductListingsScreen = () => {
     <CustomContainer>
       <>
         <CustomView>
-          <>
-            <ScrollView horizontal={true} style={styles.scrollview}>
-              <View style={styles.scrollViewItemContainer}>
-                <Pressable onPress={toggleAlphaSort}>
-                  <CustomButton
-                    text={`By Name ${sortBy === 'title' ? order : ''}`}
-                  />
-                </Pressable>
-                <Pressable onPress={togglePriceSort}>
-                  <CustomButton
-                    text={`By Price ${sortBy === 'price' ? order : ''}`}
-                  />
-                </Pressable>
-              </View>
-            </ScrollView>
-          </>
+          <ScrollView horizontal={true} style={styles.scrollview}>
+            <View style={styles.scrollViewItemContainer}>
+              <Pressable onPress={toggleAlphaSort}>
+                <CustomButton
+                  text={`By Name ${sortBy === 'title' ? order : ''}`}
+                />
+              </Pressable>
+              <Pressable onPress={togglePriceSort}>
+                <CustomButton
+                  text={`By Price ${sortBy === 'price' ? order : ''}`}
+                />
+              </Pressable>
+            </View>
+          </ScrollView>
         </CustomView>
         <CustomView>
           <>
@@ -135,21 +148,22 @@ const ProductListingsScreen = () => {
               onChangeText={setSearch}
               keyboardType="default"
             />
-            <CustomPressable onPress={refetch}>
+            <CustomPressable
+              onPress={showSearchResults ? refetchSearch : refetchAll}>
               <CustomIcon type="search" />
             </CustomPressable>
           </>
         </CustomView>
         <FlatList
-          data={responseData?.data}
+          data={showSearchResults ? filteredData?.data : responseData?.data}
           keyExtractor={item => item._id.toString()}
           renderItem={({item}) =>
-            isFetching || isRefetching
+            (showSearchResults ? isFetchingSearch : isFetchingAll)
               ? customSkeletonItem()
               : renderItem({item})
           }
-          onRefresh={refetch}
-          refreshing={isRefetching}
+          onRefresh={showSearchResults ? refetchSearch : refetchAll}
+          refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
           ListEmptyComponent={renderCustomErrorMessage}
           ListHeaderComponent={
             <Text

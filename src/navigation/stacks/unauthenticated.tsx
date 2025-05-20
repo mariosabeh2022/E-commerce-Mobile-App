@@ -5,8 +5,9 @@ import LoginScreen from '../../screens/login/loginScreen';
 import SignUpScreen from '../../screens/sign-up/sign-upScreen';
 import VerificationScreen from '../../screens/verification/verification';
 import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
+import { UnauthenticatedStackParamList } from 'navigation/navigator/navigationTypes';
 
-const Stack = createNativeStackNavigator();
+const Stack = createNativeStackNavigator<UnauthenticatedStackParamList>();
 
 export default function UnauthenticatedStack() {
   const renderCustomThemeButton = () => <CustomThemeButton />;
