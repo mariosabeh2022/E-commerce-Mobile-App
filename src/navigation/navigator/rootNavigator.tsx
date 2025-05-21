@@ -18,9 +18,10 @@ export default function RootNavigator() {
   const toggleOnFinish = useCallback(() => setLoading(false), []);
   return (
     <NavigationContainer theme={isAppDark ? DarkTheme : DefaultTheme}>
-      {loading ? (
-        <SplashScreen onFinish={toggleOnFinish} />
-      ) : accessToken ? (
+      {/* //loading ? ( */}
+        {/* <SplashScreen onFinish={toggleOnFinish} /> */}
+      {/* ) : */}
+      { accessToken ? (
         <AuthenticatedStack />
       ) : (
         <UnauthenticatedStack />

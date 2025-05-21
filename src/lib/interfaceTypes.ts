@@ -65,3 +65,16 @@ export interface productDetailCredentials {
   token: string;
   id: string;
 }
+
+export interface createProductCredentials {
+  token: string;
+  title: string;
+  description: string;
+  price: number;
+  location: {
+    name: string;
+    longitude: number;
+    latitude: number;
+  };
+  images: {url: string; _id: string}[];
+}

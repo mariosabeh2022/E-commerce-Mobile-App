@@ -1,6 +1,6 @@
 import React from 'react';
 import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
-import CamPermissionsCheck from '../../screens/uploadScreen/camera';
+import CreateProduct from '../../screens/createProduct/createProduct';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {AuthenticatedTabParamList} from '../navigator/navigationTypes';
@@ -90,7 +90,7 @@ export default function AuthenticatedTabs() {
       />
       <Tab.Screen
         name="Upload"
-        component={CamPermissionsCheck}
+        component={CreateProduct}
         options={{
           headerTitleAlign: 'center',
           headerRight: renderCustomThemeButton,

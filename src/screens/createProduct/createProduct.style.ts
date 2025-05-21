@@ -14,7 +14,14 @@ const baseCaptureStyle: ViewStyle = {
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    position: 'relative',
+  },
+  form: {
+    borderWidth: 1.5,
+    borderRadius: 10,
+    width: '95%',
+    alignSelf: 'center',
+    marginTop: 20,
+    marginBottom: 20,
   },
   camera: {
     width: '100%',

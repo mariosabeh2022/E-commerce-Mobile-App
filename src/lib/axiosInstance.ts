@@ -12,6 +12,7 @@ import {
   fetchProductsCredentials,
   searchProductsCredentials,
   productDetailCredentials,
+  createProductCredentials,
 } from './interfaceTypes';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
@@ -258,6 +259,23 @@ const productDetails = async (credentials: productDetailCredentials) => {
   }
 };
 
+const createProduct = async (credentials: createProductCredentials) => {
+  const {token, ...productData} = credentials;
+  try {
+    const {data} = await axiosInstance.post('/api/products', productData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Product details fetch failed', {
+      [FLARE]: 'Server error',
+    });
+  }
+};
+
 export {
   axiosInstance,
   login,
@@ -270,4 +288,5 @@ export {
   fetchProducts,
   searchProducts,
   productDetails,
+  createProduct,
 };
