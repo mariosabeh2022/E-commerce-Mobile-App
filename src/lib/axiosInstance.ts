@@ -13,6 +13,7 @@ import {
   searchProductsCredentials,
   productDetailCredentials,
   createProductCredentials,
+  deleteProductCredentials,
 } from './interfaceTypes';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
@@ -297,6 +298,21 @@ const createProduct = async (credentials: createProductCredentials) => {
     });
   }
 };
+
+const deleteProduct = async (credentials: deleteProductCredentials) => {
+  try {
+    const {data} = await axiosInstance.delete(`/api/products/${credentials.id}`, {
+      headers: {
+        Authorization: `Bearer ${credentials.token}`,
+      },
+    });
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Product deletion failed', {
+      [FLARE]: 'Server error',
+    });
+  }
+};
 export {
   axiosInstance,
   login,
@@ -310,4 +326,5 @@ export {
   searchProducts,
   productDetails,
   createProduct,
+  deleteProduct,
 };

@@ -1,21 +1,36 @@
 import React, {useRef, useEffect, useCallback} from 'react';
 import {styles} from './detailsScreen.style';
-import {Animated, Text, View, Pressable} from 'react-native';
-import {RouteProp, useRoute} from '@react-navigation/native';
+import {
+  Animated,
+  Text,
+  View,
+  Pressable,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
 import ImageCarousel from '../../components/molecules/customCarousel/customCarousel';
 import {useTheme} from '../../contexts/themeContext';
 import {useQuery} from '@tanstack/react-query';
-import {productDetails} from '../../lib/axiosInstance';
+import {
+  deleteProduct,
+  fetchProfile,
+  productDetails,
+} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
-type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
+import MapScreen from '../../screens/createProduct/mapScreen';
+import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 
+type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 const DetailsScreen = () => {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const route = useRoute<DetailsScreenRouteProp>();
   const {id: itemId} = route.params;
   const userToken = useAuthStore(state => state.accessToken);
-  const {data} = useQuery({
+  const {data: details, isFetching: fetchingDetails} = useQuery({
     queryKey: ['fetchDetails'],
     queryFn: () =>
       productDetails({
@@ -24,7 +39,7 @@ const DetailsScreen = () => {
       }),
     enabled: !!userToken,
   });
-  const images = data?.data?.images?.map(
+  const images = details?.data?.images?.map(
     ({_id, url}: {_id: string; url: string}) => ({
       _id: _id,
       uri: url,
@@ -32,6 +47,18 @@ const DetailsScreen = () => {
   );
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  const {data: userData, isFetching: fetchingProfile} = useQuery({
+    queryKey: ['fetchProfile'],
+    queryFn: () =>
+      fetchProfile({
+        token: userToken!,
+      }),
+    enabled: !!userToken,
+  });
+  const userIsCreator = details?.data?.user?._id === userData?.data?.user?.id;
+  const longitude = details?.data?.location?.longitude;
+  const latitude = details?.data?.location?.latitude;
+  console.log(longitude, latitude);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = useCallback(() => {
@@ -45,8 +72,8 @@ const DetailsScreen = () => {
   useEffect(() => {
     fadeIn();
   }, [fadeIn]);
-  console.log(data);
-  const creationDate = new Date(data?.data?.createdAt);
+  console.log(details);
+  const creationDate = new Date(details?.data?.createdAt);
   const creationYear = creationDate.getFullYear();
   const cm = creationDate.getMonth() + 1;
   const creationMonth = cm < 10 ? '0' + cm : String(cm);
@@ -54,7 +81,7 @@ const DetailsScreen = () => {
   const creationDay = cd < 10 ? '0' + cd : String(cd);
   const formattedCreationDate = `${creationYear}-${creationMonth}-${creationDay}`;
 
-  const updateDate = new Date(data?.data?.createdAt);
+  const updateDate = new Date(details?.data?.createdAt);
   const updateYear = updateDate.getFullYear();
   const um = creationDate.getMonth() + 1;
   const updateMonth = um < 10 ? '0' + um : String(um);
@@ -64,45 +91,90 @@ const DetailsScreen = () => {
     `${updateYear}-${updateMonth}-${updateDay}` !== formattedCreationDate
       ? `${updateYear}-${updateMonth}-${updateDay}`
       : 'No updates yet';
-
+  const handleDeleteProduct = () => {
+    if (!userIsCreator) {
+      return;
+    } else {
+      deleteProduct({token: userToken!, id: details?.data?._id});
+      navigation.goBack();
+    }
+  };
+  if (fetchingDetails || fetchingProfile) return <ActivityIndicator />;
   return (
-    <>
-      <View style={isAppDark ? styles.darkContainer : styles.container}>
-        <View style={styles.innerContainer}>
-          <ImageCarousel images={images || []} />
+    <SafeAreaView style={isAppDark ? styles.darkSaveArea : styles.saveArea}>
+      <ScrollView
+        contentContainerStyle={{
+          paddingBottom: insets.bottom + 100,
+        }}>
+        <View style={isAppDark ? styles.darkContainer : styles.container}>
+          <View style={styles.innerContainer}>
+            <ImageCarousel images={images || []} />
+          </View>
+          <View style={styles.infos}>
+            <Text style={isAppDark ? styles.darkTitle : styles.title}>
+              {details?.data?.title}
+            </Text>
+            <Text style={isAppDark ? styles.darkSpec : styles.spec}>
+              Specifications
+            </Text>
+            <Text style={styles.desc}>{details?.data?.description}</Text>
+            <Text style={isAppDark ? styles.darkPrice : styles.price}>
+              Price: {details?.data?.price}$
+            </Text>
+            <Text style={isAppDark ? styles.darkTitle : styles.title}>
+              <CustomErrorMessage message="Product Owner:" />{' '}
+              {details?.data?.user.email}
+            </Text>
+            <Text style={isAppDark ? styles.darkSpec : styles.spec}>
+              Added AT : {formattedCreationDate}
+            </Text>
+            <Text style={isAppDark ? styles.darkSpec : styles.spec}>
+              Updated AT : {formattedUpdateDate}
+            </Text>
+          </View>
+          <View
+            style={{
+              borderColor: 'red',
+              borderWidth: 2,
+              width: '100%',
+              height: '15%',
+            }}>
+            <MapScreen coordinates={[longitude, latitude]} />
+          </View>
+          {userIsCreator && (
+            <>
+              <Pressable
+                style={
+                  isAppDark
+                    ? styles.darkButtonContainer
+                    : styles.buttonContainer
+                }>
+                <Text style={isAppDark ? styles.darkButton : styles.button}>
+                  Edit Product
+                </Text>
+              </Pressable>
+              <Pressable
+                style={
+                  isAppDark
+                    ? styles.darkButtonContainer
+                    : styles.buttonContainer
+                }
+                onPress={handleDeleteProduct}>
+                <CustomErrorMessage message="Delete Product" />
+              </Pressable>
+            </>
+          )}
+          <Pressable
+            style={
+              isAppDark ? styles.darkButtonContainer : styles.buttonContainer
+            }>
+            <Text style={isAppDark ? styles.darkButton : styles.button}>
+              Add To Cart
+            </Text>
+          </Pressable>
         </View>
-        <View style={styles.infos}>
-          <Text style={isAppDark ? styles.darkTitle : styles.title}>
-            {data?.data?.title}
-          </Text>
-          <Text style={isAppDark ? styles.darkSpec : styles.spec}>
-            Specifications
-          </Text>
-          <Text style={styles.desc}>{data?.data?.description}</Text>
-          <Text style={isAppDark ? styles.darkPrice : styles.price}>
-            Price: {data?.data?.price}$
-          </Text>
-          <Text style={isAppDark ? styles.darkSpec : styles.spec}>
-            <CustomErrorMessage message="Product Owner:" />{' '}
-            {data?.data?.user.email}
-          </Text>
-          <Text style={isAppDark ? styles.darkSpec : styles.spec}>
-            Added AT : {formattedCreationDate}
-          </Text>
-          <Text style={isAppDark ? styles.darkSpec : styles.spec}>
-            Updated AT : {formattedUpdateDate}
-          </Text>
-        </View>
-        <Pressable
-          style={
-            isAppDark ? styles.darkButtonContainer : styles.buttonContainer
-          }>
-          <Text style={isAppDark ? styles.darkButton : styles.button}>
-            Add To Cart
-          </Text>
-        </Pressable>
-      </View>
-    </>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 

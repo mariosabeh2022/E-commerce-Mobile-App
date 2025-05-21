@@ -3,11 +3,13 @@ import MapLibreGL from '@maplibre/maplibre-react-native';
 import {StyleSheet, View} from 'react-native';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
 MapLibreGL.setAccessToken('CYR7xfJUCqmrqb10LQqN');
-
-export default function MapScreen() {
-  const center = useMapStore(state => state.center);
+type MapScreenProps = {
+  coordinates?: [number, number];
+};
+export default function MapScreen({coordinates}: MapScreenProps) {
+  const defaultCenter = useMapStore(state => state.center);
   const setCenter = useMapStore(state => state.setCenter);
-
+  const center = coordinates ?? defaultCenter;
   const handleMapPress = (e: any) => {
     const coords = e.geometry.coordinates as [number, number];
     setCenter(coords);
@@ -35,7 +37,6 @@ export default function MapScreen() {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   mainMapcontainer: {
     flex: 1,

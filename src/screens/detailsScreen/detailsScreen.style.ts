@@ -1,6 +1,6 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 import {Dimensions} from 'react-native';
-import { darkBaseColor, lightBaseColor } from '../../styles/formStyles';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 const {width} = Dimensions.get('window');
 const baseContainer: ViewStyle = {
   flex: 1,
@@ -33,6 +33,13 @@ const basePrice: TextStyle = {
   textDecorationLine: 'underline',
 };
 export const styles = StyleSheet.create({
+  saveArea: {
+    flex: 1,
+  },
+  darkSaveArea: {
+    flex: 1,
+    backgroundColor: 'gray',
+  },
   container: {
     ...baseContainer,
   },

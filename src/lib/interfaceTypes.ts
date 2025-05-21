@@ -78,3 +78,8 @@ export interface createProductCredentials {
   };
   image: {uri: string; _id: string};
 }
+
+export interface deleteProductCredentials {
+  token: string;
+  id: string;
+}
