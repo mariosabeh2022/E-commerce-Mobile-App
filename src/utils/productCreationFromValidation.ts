@@ -1,7 +1,8 @@
 import {z} from 'zod';
+
 export const schema = z.object({
   title: z.string().trim().min(3, 'Title too short'),
-  description: z.string().trim().min(5, 'Desciption too short'),
+  description: z.string().trim().min(5, 'Description too short'), // fixed typo
   price: z
     .number({required_error: 'Price is required'})
     .min(1, 'Price must be at least 1')
@@ -11,12 +12,8 @@ export const schema = z.object({
     longitude: z.number(),
     latitude: z.number(),
   }),
-  images: z
-    .array(
-      z.object({
-        url: z.string().min(1, 'Image URL is required'),
-        _id: z.string().optional(),
-      }),
-    )
-    .min(1, 'At least one image is required'),
+  image: z.object({
+    uri: z.string().min(1, 'Image URL is required'),
+    _id: z.string().min(1, '_id is required'),
+  }),
 });

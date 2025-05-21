@@ -14,7 +14,7 @@ export default function MapScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={styles.mainMapcontainer}>
       <View style={styles.mapContainer}>
         <MapLibreGL.MapView style={{flex: 1}} onPress={handleMapPress}>
           <MapLibreGL.Camera centerCoordinate={center} zoomLevel={8} />
@@ -37,15 +37,15 @@ export default function MapScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  mainMapcontainer: {
     flex: 1,
     width: '100%',
-    height: '20%',
+    height: '45%',
   },
   mapContainer: {
     position: 'absolute',
     bottom: 0,
-    height: '40%',
+    height: '100%',
     width: '100%',
   },
 });

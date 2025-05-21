@@ -76,5 +76,5 @@ export interface createProductCredentials {
     longitude: number;
     latitude: number;
   };
-  images: {url: string; _id: string}[];
+  image: {uri: string; _id: string};
 }

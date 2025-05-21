@@ -260,22 +260,43 @@ const productDetails = async (credentials: productDetailCredentials) => {
 };
 
 const createProduct = async (credentials: createProductCredentials) => {
-  const {token, ...productData} = credentials;
+  const {token, title, description, price, location, image} = credentials;
+
   try {
-    const {data} = await axiosInstance.post('/api/products', productData, {
+    const formData = new FormData();
+
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('price', price.toString());
+    formData.append('location', JSON.stringify(location));
+
+    if (image && image.uri) {
+      const uriParts = image.uri.split('.');
+      const fileType = uriParts[uriParts.length - 1];
+
+      formData.append('images', {
+        uri: image.uri,
+        name: `photo.${fileType}`,
+        type: `image/${fileType}`,
+      } as any);
+    } else {
+      throw new Error('No image URI provided');
+    }
+
+    const {data} = await axiosInstance.post('/api/products', formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
       },
     });
+
     return data;
   } catch (error: any) {
-    return handleError(error, 'Product details fetch failed', {
+    return handleError(error, 'Creation attempt failed', {
       [FLARE]: 'Server error',
     });
   }
 };
-
 export {
   axiosInstance,
   login,

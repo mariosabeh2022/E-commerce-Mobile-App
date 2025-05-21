@@ -11,6 +11,7 @@ const CustomInput = ({
   onChangeText,
   keyboardType,
   editable = true,
+  multiline,
 }: customInputProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -30,6 +31,7 @@ const CustomInput = ({
       onChangeText={onChangeText}
       keyboardType={keyboardType}
       editable={editable}
+      multiline={multiline}
     />
   );
 };

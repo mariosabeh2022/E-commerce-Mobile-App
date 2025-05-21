@@ -1,85 +1,94 @@
-import React, {useEffect} from 'react';
-import {View, Image, TouchableOpacity} from 'react-native';
-import {launchImageLibrary} from 'react-native-image-picker';
+import React from 'react';
+import {
+  View,
+  Image,
+  TouchableOpacity,
+  PermissionsAndroid,
+  Platform,
+} from 'react-native';
 import {useTheme} from '../../../contexts/themeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import {PermissionsAndroid, Platform} from 'react-native';
+import ImagePicker from 'react-native-image-crop-picker';
 
 const requestGalleryPermission = async () => {
   if (Platform.OS === 'android') {
     try {
-      if (Platform.Version >= 33) {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
-          {
-            title: 'Gallery Permission',
-            message: 'App needs access to your photos',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      } else {
-        const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-          {
-            title: 'Gallery Permission',
-            message: 'App needs access to your photos',
-            buttonNeutral: 'Ask Me Later',
-            buttonNegative: 'Cancel',
-            buttonPositive: 'OK',
-          },
-        );
-        return granted === PermissionsAndroid.RESULTS.GRANTED;
-      }
+      const permission =
+        Platform.Version >= 33
+          ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
+          : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
+
+      const granted = await PermissionsAndroid.request(permission, {
+        title: 'Gallery Permission',
+        message: 'App needs access to your photos',
+        buttonNeutral: 'Ask Me Later',
+        buttonNegative: 'Cancel',
+        buttonPositive: 'OK',
+      });
+
+      return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err) {
       console.warn(err);
       return false;
     }
   } else {
-    return true; // iOS handled automatically
+    return true; // iOS handled by library
   }
 };
 
 type CustomImageInputProps = {
-  images: {url: string; _id?: string}[];
-  onImagesChange: (images: {url: string; _id?: string}[]) => void;
+  image: {
+    uri?: string;
+    _id?: string;
+  } | null;
+  onImagesChange: (img: {uri: string; _id: string}) => void;
 };
-const CustomImageInput = ({images, onImagesChange}: CustomImageInputProps) => {
+
+const CustomImageInput: React.FC<CustomImageInputProps> = ({
+  image,
+  onImagesChange,
+}) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
 
-  useEffect(() => {
-    console.log('Current images:', images);
-  }, [images]);
-
   const handleImagePick = async () => {
-    console.log('Opening image library...');
     const hasPermission = await requestGalleryPermission();
     if (!hasPermission) {
       console.log('Gallery permission denied');
       return;
     }
-    launchImageLibrary({mediaType: 'photo'}, response => {
-      console.log('Image picker response:', response);
-      if (response.assets && response.assets.length > 0) {
-        const uri = response.assets[0].uri;
-        if (uri) {
-          onImagesChange([...images, {url: uri}]);
-        }
-      }
-    });
+
+    ImagePicker.openPicker({
+      multiple: false,
+      mediaType: 'photo',
+    })
+      .then(selectedImage => {
+        const newImage = {
+          uri: selectedImage.path,
+          _id: `${Math.floor(Math.random() * 9000) + 1000}`,
+        };
+        onImagesChange(newImage);
+        console.log('Selected image:', newImage);
+      })
+      .catch(error => {
+        console.log('Image picker error:', error);
+      });
   };
+
   return (
     <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-      {images.map((image, i) => (
+      {image?.uri && (
         <Image
-          key={i}
-          source={{uri: image.url}}
-          style={{width: 80, height: 80, marginRight: 8, borderRadius: 8}}
+          source={{uri: image.uri}}
+          style={{
+            width: 80,
+            height: 80,
+            marginRight: 8,
+            marginBottom: 8,
+            borderRadius: 8,
+          }}
         />
-      ))}
+      )}
       <TouchableOpacity
         onPress={handleImagePick}
         style={{
@@ -95,4 +104,5 @@ const CustomImageInput = ({images, onImagesChange}: CustomImageInputProps) => {
     </View>
   );
 };
+
 export default CustomImageInput;

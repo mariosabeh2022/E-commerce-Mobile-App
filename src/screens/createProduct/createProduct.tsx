@@ -54,6 +54,8 @@ import useAuthStore from '../../stores/authStore/authStore';
 import MapScreen from './mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
 import CustomImageInput from '../../components/atoms/customImageInput/customImageInput';
+import {useImageStore} from '../../stores/uploadStore/uploadStore';
+import {sanitizeImageUrls} from '../../utils/sanitizeImages';
 
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
@@ -68,7 +70,7 @@ type UploadScreenNavigationProp = NativeStackNavigationProp<
 const CreateProduct = () => {
   // Access user token for API authentication
   const userToken = useAuthStore(state => state.accessToken);
-
+  console.log('Create Product user token', userToken);
   // Uncomment below to access navigation params if using camera capture callback
   // const route = useRoute<CameraScreenRouteProp>();
   // const onCapture = route.params?.onCapture;
@@ -117,7 +119,7 @@ const CreateProduct = () => {
   //   setIsCapturing(false);
   //   const photo = await camera.current?.takePhoto();
   //   if (photo) {
-  //     await saveToDeviceStorage(`file://${photo?.path}`);
+  //     await saveToDeviceStorage(file://${photo?.path});
   //     setIsSaving(false);
   //     setIsSaved(true);
   //     if (onCapture) {
@@ -138,10 +140,17 @@ const CreateProduct = () => {
 
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
-
+  const image = useImageStore(state => state.images);
+  const clearImages = useImageStore(state => state.clearImage);
   // Map center coordinates from store
   const center = useMapStore(state => state.center);
+  const setImage = useImageStore(state => state.setImage);
 
+  useEffect(() => {
+    if (image) {
+      setImage(image);
+    }
+  }, [image, setImage]);
   const {
     control,
     handleSubmit,
@@ -159,7 +168,7 @@ const CreateProduct = () => {
         longitude: center[0],
         latitude: center[1],
       },
-      images: [],
+      image: {uri: '', _id: ''},
     },
   });
 
@@ -167,7 +176,8 @@ const CreateProduct = () => {
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);
-  }, [center, setValue]);
+    setValue('image', image!);
+  }, [center, image, setValue]);
 
   const [resultMessage, setResultMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -178,6 +188,13 @@ const CreateProduct = () => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setResultMessage('');
+
+    if (!data.image || !data.image.uri) {
+      setResultMessage('Please select an image');
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const result = await createProduct({
         token: userToken!,
@@ -185,7 +202,10 @@ const CreateProduct = () => {
         description: data.description,
         price: Number(data.price),
         location: data.location,
-        images: data.images,
+        image: {
+          uri: data.image.uri,
+          _id: data.image._id,
+        },
       });
 
       if (result.success === true) {
@@ -198,8 +218,9 @@ const CreateProduct = () => {
             longitude: center[0],
             latitude: center[1],
           },
-          images: [],
+          image: {uri: '', _id: ''}, // Reset form image here
         });
+        clearImages(); // optionally clear Zustand if needed
         navigation.navigate('Devices');
       } else {
         setResultMessage(result.message ?? 'Failed to create product');
@@ -208,9 +229,9 @@ const CreateProduct = () => {
       console.error('Product Creation:', err);
       setResultMessage('An error occurred. Please try again.');
     }
+
     setIsLoading(false);
   };
-
   const handleKeyboardDismiss = () => Keyboard.dismiss();
 
   // Optional: show permission denied screen if camera permission not granted
@@ -221,7 +242,9 @@ const CreateProduct = () => {
   // if (device == null) {
   //   return <PermissionNotGranted text="No Devices Were Found" />;
   // }
-
+  useEffect(() => {
+    console.log('Form Errors:', errors);
+  }, [errors]);
   return (
     <View style={styles.container}>
       <CustomContainer>
@@ -261,7 +284,7 @@ const CreateProduct = () => {
                           placeholder="Description"
                           value={value}
                           onChangeText={onChange}
-                          multiline
+                          multiline={true}
                         />
                       )}
                     />
@@ -325,10 +348,10 @@ const CreateProduct = () => {
                 <CustomView>
                   <Controller
                     control={control}
-                    name="images"
+                    name="image"
                     render={({field: {value, onChange}}) => (
                       <CustomImageInput
-                        images={value}
+                        image={value}
                         onImagesChange={onChange}
                       />
                     )}
@@ -350,24 +373,19 @@ const CreateProduct = () => {
 
                 {resultMessage !== '' && (
                   <CustomView>
-                    <Text
-                      style={{
-                        color: isAppDark ? 'salmon' : 'red',
-                        textAlign: 'center',
-                        marginVertical: 8,
-                      }}>
-                      {resultMessage}
-                    </Text>
+                    <CustomErrorMessage message={resultMessage} />
                   </CustomView>
                 )}
               </KeyboardAvoidingView>
             </TouchableWithoutFeedback>
           </View>
+
+          <MapScreen />
         </>
       </CustomContainer>
 
       {/* Render map screen for location selection */}
-      <MapScreen />
+      {/* <MapScreen /> */}
 
       {/* Uncomment below to add camera UI */}
       {/* 
