@@ -2,6 +2,7 @@ import React from 'react';
 import MapLibreGL from '@maplibre/maplibre-react-native';
 import {StyleSheet, View} from 'react-native';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 MapLibreGL.setAccessToken('CYR7xfJUCqmrqb10LQqN');
 type MapScreenProps = {
   coordinates?: [number, number];
@@ -23,12 +24,12 @@ export default function MapScreen({coordinates}: MapScreenProps) {
           <MapLibreGL.PointAnnotation id="centerMarker" coordinate={center}>
             <View
               style={{
-                width: 30,
-                height: 30,
-                backgroundColor: 'red',
+                width: 10,
+                height: 10,
+                backgroundColor: lightBaseColor,
                 borderRadius: 15,
-                borderWidth: 2,
-                borderColor: 'white',
+                borderWidth: 1,
+                borderColor: darkBaseColor,
               }}
             />
           </MapLibreGL.PointAnnotation>

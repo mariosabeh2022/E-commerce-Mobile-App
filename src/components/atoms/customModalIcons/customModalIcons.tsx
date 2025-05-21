@@ -6,13 +6,20 @@ import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthenticatedStackParamList} from '../../../navigation/stacks/authenticatedStack.tsx';
 import useUserStore from '../../../stores/profileStore/profileStore.tsx';
-const CustomIcons = () => {
+import {pickImageFromGallery} from '../../../utils/imagePicker.ts';
+type innerCustomIconProp = {
+  includeRemove: boolean;
+  onSelectImage?: () => void;
+};
+
+const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
   const {theme} = useTheme();
   const {updateProfileImage} = useUserStore();
   const isAppDark = theme === 'dark';
   const borderColor = isAppDark ? 'darkgray' : 'black';
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthenticatedStackParamList>>();
+
   const goToCamera = () => {
     navigation.navigate('CameraScreen', {
       onCapture: async image => {
@@ -22,9 +29,23 @@ const CustomIcons = () => {
       },
     });
   };
+
   const handleRemoveProfile = () => {
     updateProfileImage('');
   };
+
+  const handleGalleryPress = async () => {
+    if (onSelectImage) {
+      onSelectImage(); // delegate to parent
+      return;
+    }
+    const image = await pickImageFromGallery();
+    if (image) {
+      updateProfileImage(image.uri);
+      console.log('Selected from gallery:', image);
+    }
+  };
+
   return (
     <View style={styles.mainContainer}>
       <View style={styles.middleContainer}>
@@ -41,8 +62,11 @@ const CustomIcons = () => {
         </TouchableOpacity>
         <Text style={isAppDark ? styles.darkLabel : styles.label}>Camera</Text>
       </View>
+
       <View style={styles.middleContainer}>
-        <TouchableOpacity style={[styles.iconWrapper, {borderColor}]}>
+        <TouchableOpacity
+          style={[styles.iconWrapper, {borderColor}]}
+          onPress={handleGalleryPress}>
           <Icon
             name="image"
             style={
@@ -53,21 +77,27 @@ const CustomIcons = () => {
         </TouchableOpacity>
         <Text style={isAppDark ? styles.darkLabel : styles.label}>Gallery</Text>
       </View>
-      <View style={styles.middleContainer}>
-        <TouchableOpacity
-          style={[styles.iconWrapper, {borderColor}]}
-          onPress={handleRemoveProfile}>
-          <Icon
-            name="minus-circle"
-            style={
-              isAppDark ? styles.darkCustomModalIcon : styles.customModalIcon
-            }
-            size={50}
-          />
-        </TouchableOpacity>
-        <Text style={isAppDark ? styles.darkLabel : styles.label}>Remove</Text>
-      </View>
+
+      {includeRemove && (
+        <View style={styles.middleContainer}>
+          <TouchableOpacity
+            style={[styles.iconWrapper, {borderColor}]}
+            onPress={handleRemoveProfile}>
+            <Icon
+              name="minus-circle"
+              style={
+                isAppDark ? styles.darkCustomModalIcon : styles.customModalIcon
+              }
+              size={50}
+            />
+          </TouchableOpacity>
+          <Text style={isAppDark ? styles.darkLabel : styles.label}>
+            Remove
+          </Text>
+        </View>
+      )}
     </View>
   );
 };
+
 export default CustomIcons;

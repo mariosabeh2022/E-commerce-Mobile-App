@@ -1,51 +1,22 @@
 import React from 'react';
-import {
-  View,
-  Image,
-  TouchableOpacity,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
-import {useTheme} from '../../../contexts/themeContext';
+import {View, Image, TouchableOpacity, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import {useTheme} from '../../../contexts/themeContext';
 import ImagePicker from 'react-native-image-crop-picker';
+import {requestGalleryPermission} from '../../../utils/requestGalleryPermission';
 
-const requestGalleryPermission = async () => {
-  if (Platform.OS === 'android') {
-    try {
-      const permission =
-        Platform.Version >= 33
-          ? PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
-          : PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE;
-
-      const granted = await PermissionsAndroid.request(permission, {
-        title: 'Gallery Permission',
-        message: 'App needs access to your photos',
-        buttonNeutral: 'Ask Me Later',
-        buttonNegative: 'Cancel',
-        buttonPositive: 'OK',
-      });
-
-      return granted === PermissionsAndroid.RESULTS.GRANTED;
-    } catch (err) {
-      console.warn(err);
-      return false;
-    }
-  } else {
-    return true; // iOS handled by library
-  }
+type ImageType = {
+  uri: string;
+  _id: number;
 };
 
 type CustomImageInputProps = {
-  image: {
-    uri?: string;
-    _id?: string;
-  } | null;
-  onImagesChange: (img: {uri: string; _id: string}) => void;
+  images: ImageType[]; // Array of uploaded images
+  onImagesChange: (images: ImageType[]) => void;
 };
 
 const CustomImageInput: React.FC<CustomImageInputProps> = ({
-  image,
+  images,
   onImagesChange,
 }) => {
   const {theme} = useTheme();
@@ -58,37 +29,26 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
       return;
     }
 
-    ImagePicker.openPicker({
-      multiple: false,
-      mediaType: 'photo',
-    })
-      .then(selectedImage => {
-        const newImage = {
-          uri: selectedImage.path,
-          _id: `${Math.floor(Math.random() * 9000) + 1000}`,
-        };
-        onImagesChange(newImage);
-        console.log('Selected image:', newImage);
-      })
-      .catch(error => {
-        console.log('Image picker error:', error);
+    try {
+      const selectedImage = await ImagePicker.openPicker({
+        multiple: false,
+        mediaType: 'photo',
       });
-  };
 
+      const newImage = {
+        uri: selectedImage.path,
+        _id: Math.floor(Math.random() * 9000) + 1000,
+      };
+
+      onImagesChange([...images, newImage]);
+      console.log('Selected image:', newImage);
+    } catch (error) {
+      console.log('Image picker error:', error);
+    }
+  };
   return (
-    <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-      {image?.uri && (
-        <Image
-          source={{uri: image.uri}}
-          style={{
-            width: 80,
-            height: 80,
-            marginRight: 8,
-            marginBottom: 8,
-            borderRadius: 8,
-          }}
-        />
-      )}
+    <View>
+      {/* Upload Button */}
       <TouchableOpacity
         onPress={handleImagePick}
         style={{
@@ -98,9 +58,27 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
           justifyContent: 'center',
           alignItems: 'center',
           borderRadius: 8,
+          marginBottom: 12,
         }}>
         <Icon name="add" size={30} color={isAppDark ? 'white' : 'black'} />
       </TouchableOpacity>
+      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+        {images.map(img => (
+          <ScrollView horizontal={true}>
+            <Image
+              key={img._id}
+              source={{uri: img.uri}}
+              style={{
+                width: 80,
+                height: 80,
+                marginRight: 8,
+                marginBottom: 8,
+                borderRadius: 8,
+              }}
+            />
+          </ScrollView>
+        ))}
+      </View>
     </View>
   );
 };

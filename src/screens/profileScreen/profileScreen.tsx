@@ -227,7 +227,7 @@ const ProfileScreen = () => {
         <View style={styles.mainModalContainer}>
           <Pressable
             style={styles.upperOverlay}
-            onPress={() => toggleModalVisibility()}
+            onPress={toggleModalVisibility}
           />
           <View
             style={
@@ -238,7 +238,7 @@ const ProfileScreen = () => {
             </Pressable>
             <CustomTitle text="Profile Photo" />
             <View>
-              <CustomModalIcons />
+              <CustomModalIcons includeRemove={true}/>
             </View>
           </View>
         </View>

@@ -2,12 +2,14 @@ import {
   ActivityIndicator,
   Keyboard,
   KeyboardAvoidingView,
-  Linking, // For opening device settings if permission denied
   Platform,
   Pressable,
   TouchableWithoutFeedback,
   View,
   Text,
+  Modal,
+  Image,
+  ScrollView,
 } from 'react-native';
 
 // CAMERA IMPORTS (commented out):
@@ -18,7 +20,7 @@ import {
 //   useCameraPermission,
 // } from 'react-native-vision-camera';
 
-import {useCallback, useEffect, useRef, useState} from 'react';
+import {useEffect, useState} from 'react';
 import {styles} from './createProduct.style';
 
 // Uncomment this when implementing saving photos to device storage
@@ -53,9 +55,11 @@ import {createProduct} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import MapScreen from './mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
-import CustomImageInput from '../../components/atoms/customImageInput/customImageInput';
 import {useImageStore} from '../../stores/uploadStore/uploadStore';
-import {sanitizeImageUrls} from '../../utils/sanitizeImages';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
+import Icon from 'react-native-vector-icons/FontAwesome5';
+import {launchImageLibrary} from 'react-native-image-picker';
 
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
@@ -181,9 +185,26 @@ const CreateProduct = () => {
 
   const [resultMessage, setResultMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [showModal, setShowModal] = useState(false);
+  const toggleModalVisibility = () => {
+    setShowModal(prev => !prev);
+  };
   const navigation = useNavigation<UploadScreenNavigationProp>();
+  const handleSelectImage = async () => {
+    const result = await launchImageLibrary({mediaType: 'photo'});
+    if (result.assets && result.assets.length > 0) {
+      const selectedImage = result.assets[0];
 
+      console.log('Selected Image:', selectedImage);
+
+      // Manually assign a placeholder `_id` or wait for upload to assign a real one
+      const imageForForm = {
+        uri: selectedImage.uri || '',
+        _id: 'local-temp-id', // Or generate UUID if needed
+      };
+      setValue('image', imageForForm, {shouldValidate: true}); // ✅ updates form state
+    }
+  };
   // Submit handler for product creation form
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
@@ -344,18 +365,63 @@ const CreateProduct = () => {
                     )}
                   </>
                 </CustomView>
-
                 <CustomView>
-                  <Controller
-                    control={control}
-                    name="image"
-                    render={({field: {value, onChange}}) => (
-                      <CustomImageInput
-                        image={value}
-                        onImagesChange={onChange}
+                  <>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 10,
+                      }}>
+                      <Pressable onPress={toggleModalVisibility}>
+                        <Icon
+                          name="upload"
+                          size={40}
+                          style={isAppDark ? {color: 'white'} : {color: 'gray'}}
+                        />
+                      </Pressable>
+                    </View>
+
+                    {/* Horizontal ScrollView for image preview (just 1 image for now) */}
+                    <ScrollView
+                      horizontal
+                      showsHorizontalScrollIndicator={false}
+                      contentContainerStyle={{marginTop: 10}}>
+                      <Controller
+                        control={control}
+                        name="image"
+                        render={({field: {value}}) => {
+                          console.log('Image URI in controller:', value?.uri); // ✅ Should now show path
+
+                          return (
+                            <ScrollView horizontal>
+                              {value?.uri ? (
+                                <Image
+                                  key={value.uri}
+                                  source={{uri: value.uri}}
+                                  style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: 10,
+                                    marginRight: 10,
+                                  }}
+                                  resizeMode="cover"
+                                  onError={e =>
+                                    console.log(
+                                      'Image load error:',
+                                      e.nativeEvent.error,
+                                    )
+                                  }
+                                />
+                              ) : (
+                                <Text>No image</Text>
+                              )}
+                            </ScrollView>
+                          );
+                        }}
                       />
-                    )}
-                  />
+                    </ScrollView>
+                  </>
                 </CustomView>
 
                 <CustomView>
@@ -381,6 +447,29 @@ const CreateProduct = () => {
           </View>
 
           <MapScreen />
+          <Modal visible={showModal} animationType="slide" transparent={true}>
+            <View style={styles.mainModalContainer}>
+              <Pressable
+                style={styles.upperOverlay}
+                onPress={toggleModalVisibility}
+              />
+              <View
+                style={
+                  isAppDark ? styles.darkModalContainer : styles.modalContainer
+                }>
+                <Pressable onPress={toggleModalVisibility}>
+                  <CustomIcon type="times-circle" />
+                </Pressable>
+                <CustomTitle text="Profile Photo" />
+                <View>
+                  <CustomModalIcons
+                    includeRemove={false}
+                    onSelectImage={handleSelectImage}
+                  />
+                </View>
+              </View>
+            </View>
+          </Modal>
         </>
       </CustomContainer>
 
@@ -388,7 +477,7 @@ const CreateProduct = () => {
       {/* <MapScreen /> */}
 
       {/* Uncomment below to add camera UI */}
-      {/* 
+      {/*
       <Camera
         ref={camera}
         style={styles.camera}

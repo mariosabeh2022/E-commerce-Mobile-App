@@ -12,6 +12,36 @@ const baseCaptureStyle: ViewStyle = {
   borderColor: '#fff',
 };
 export const styles = StyleSheet.create({
+  mainModalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+
+  upperOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0)',
+  },
+  modalContainer: {
+    width: '100%',
+    height: '35%',
+    backgroundColor: 'white',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderLeftColor: 'white',
+    borderRightColor: 'white',
+  },
+
+  darkModalContainer: {
+    width: '100%',
+    height: '35%',
+    backgroundColor: '#222',
+    padding: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    borderLeftColor: '#222',
+    borderRightColor: '#222',
+  },
   container: {
     flex: 1,
   },
