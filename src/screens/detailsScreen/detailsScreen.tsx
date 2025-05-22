@@ -8,6 +8,9 @@ import {
   ActivityIndicator,
   ScrollView,
   ToastAndroid,
+  Linking,
+  Alert,
+  TouchableOpacity,
 } from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
@@ -25,6 +28,7 @@ import MapScreen from '../../screens/createProduct/mapScreen';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
+import CustomLink from '../../components/atoms/customLink/customLink';
 
 type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 const DetailsScreen = () => {
@@ -109,6 +113,20 @@ const DetailsScreen = () => {
       });
     }
   };
+  const openGmail = (email: string) => {
+    const gmailUrl = `googlegmail://co?to=${email}`;
+    Linking.canOpenURL(gmailUrl)
+      .then(supported => {
+        if (supported) {
+          return Linking.openURL(gmailUrl);
+        } else {
+          return Linking.openURL(`mailto:${email}`);
+        }
+      })
+      .catch(() => {
+        Alert.alert('Error', 'Unable to open mail app');
+      });
+  };
   const handleEditNavigation = () => {
     editNavigation.navigate('Edit Product', {id: itemId});
   };
@@ -147,7 +165,10 @@ const DetailsScreen = () => {
             </Text>
             <Text style={isAppDark ? styles.darkTitle : styles.title}>
               <CustomErrorMessage message="Product Owner:" />{' '}
-              {details?.data?.user.email}
+              <TouchableOpacity
+                onPress={() => openGmail(details?.data?.user.email)}>
+                <CustomLink text={details?.data?.user.email} />
+              </TouchableOpacity>
             </Text>
             <Text style={isAppDark ? styles.darkSpec : styles.spec}>
               Added AT : {formattedCreationDate}
