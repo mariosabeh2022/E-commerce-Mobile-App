@@ -11,45 +11,23 @@ import {
   Image,
   ScrollView,
 } from 'react-native';
-
-// CAMERA IMPORTS (commented out):
-// Uncomment these and install react-native-vision-camera to enable camera functionality
-// import {
-//   Camera,
-//   useCameraDevice,
-//   useCameraPermission,
-// } from 'react-native-vision-camera';
-
 import {useEffect, useState} from 'react';
 import {styles} from './createProduct.style';
-
-// Uncomment this when implementing saving photos to device storage
-// import { saveToDeviceStorage } from './saveToDevice';
-
 import CustomButton from '../../components/atoms/customButton/customButton';
-// import CustomIcon from '../../components/atoms/customIcon/customIcon'; // For camera UI icons
-
 import PermissionNotGranted from '../permissionNotGranted/permissionNotGranted';
 import {useNavigation, useRoute} from '@react-navigation/native';
 import {useTheme} from '../../contexts/themeContext';
-
 import {AuthenticatedTabParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
-// import { AuthenticatedStackParamList } from '../../navigation/stacks/authenticatedStack'; // For camera screen route type
-
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import CustomView from '../../components/molecules/customView/customView';
 import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
-// import CustomPressable from '../../components/molecules/customPressable/customPressable'; // For pressable UI components
-// import CustomLink from '../../components/atoms/customLink/customLink'; // For clickable links
-
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Controller, useForm} from 'react-hook-form';
 import {schema} from '../../utils/productCreationFromValidation';
 import {z} from 'zod';
-
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import {createProduct} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
@@ -65,81 +43,9 @@ type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
   'Devices'
 >;
-
-// type CameraScreenRouteProp = RouteProp<
-//   AuthenticatedStackParamList,
-//   'CameraScreen'
-// >;
-
 const CreateProduct = () => {
-  // Access user token for API authentication
   const userToken = useAuthStore(state => state.accessToken);
   console.log('Create Product user token', userToken);
-  // Uncomment below to access navigation params if using camera capture callback
-  // const route = useRoute<CameraScreenRouteProp>();
-  // const onCapture = route.params?.onCapture;
-
-  // --- CAMERA STATES & REFS (commented out): ---
-  // const [isSaving, setIsSaving] = useState(false);
-  // const [isSaved, setIsSaved] = useState(false);
-  // const [isCapturing, setIsCapturing] = useState(false);
-  // const [useFrontCam, setUseFrontCam] = useState(false);
-
-  // Toggle front/back camera
-  // const toggleCamera = () => setUseFrontCam(!useFrontCam);
-
-  // Get camera device info (front or back)
-  // const device = useCameraDevice(useFrontCam ? 'front' : 'back');
-
-  // Camera ref for triggering photo capture
-  // const camera = useRef<Camera>(null);
-
-  // Camera permissions hooks
-  // const { hasPermission, requestPermission } = useCameraPermission();
-
-  // Function to request camera permission on mount
-  // const handleCameraPermission = useCallback(async () => {
-  //   await requestPermission();
-  // }, [requestPermission]);
-
-  // Request permission on component mount
-  // useEffect(() => {
-  //   handleCameraPermission();
-  // }, [handleCameraPermission]);
-
-  // Opens device settings so user can enable camera permission manually
-  // const openSettings = async () => await Linking.openSettings();
-
-  // Capture photo handler triggered by button press
-  // const handleCaptureButton = () => {
-  //   setIsCapturing(true);
-  //   handleCapture();
-  // };
-
-  // Async function to capture photo, save it locally, and call onCapture callback
-  // const handleCapture = async () => {
-  //   setIsSaving(true);
-  //   setIsSaved(false);
-  //   setIsCapturing(false);
-  //   const photo = await camera.current?.takePhoto();
-  //   if (photo) {
-  //     await saveToDeviceStorage(file://${photo?.path});
-  //     setIsSaving(false);
-  //     setIsSaved(true);
-  //     if (onCapture) {
-  //       onCapture(photo);
-  //     }
-  //     navigation.goBack();
-  //   }
-  //   // Reset saving states after delay
-  //   setTimeout(() => {
-  //     setIsSaving(true);
-  //     setIsSaved(false);
-  //   }, 2500);
-  // };
-
-  // --- END CAMERA RELATED CODE ---
-
   type FormData = z.infer<typeof schema>;
 
   const {theme} = useTheme();
@@ -254,15 +160,6 @@ const CreateProduct = () => {
     setIsLoading(false);
   };
   const handleKeyboardDismiss = () => Keyboard.dismiss();
-
-  // Optional: show permission denied screen if camera permission not granted
-  // if (!hasPermission) {
-  //   return <PermissionNotGranted openSettings={openSettings} />;
-  // }
-  // Optional: show message if no camera devices found
-  // if (device == null) {
-  //   return <PermissionNotGranted text="No Devices Were Found" />;
-  // }
   useEffect(() => {
     console.log('Form Errors:', errors);
   }, [errors]);
@@ -472,33 +369,6 @@ const CreateProduct = () => {
           </Modal>
         </>
       </CustomContainer>
-
-      {/* Render map screen for location selection */}
-      {/* <MapScreen /> */}
-
-      {/* Uncomment below to add camera UI */}
-      {/*
-      <Camera
-        ref={camera}
-        style={styles.camera}
-        device={device}
-        isActive={true}
-        photo={true}
-      />
-      <Pressable style={styles.flip} onPress={toggleCamera}>
-        <CustomIcon type="sync-alt" />
-      </Pressable>
-      <TouchableOpacity
-        style={isCapturing ? styles.capturing : styles.capture}
-        onPress={handleCaptureButton}
-      />
-      <Pressable
-        style={styles.close}
-        onPress={() => navigation.navigate('Devices')}
-      >
-        <CustomIcon type="times-circle" />
-      </Pressable>
-      */}
     </View>
   );
 };
