@@ -15,6 +15,8 @@ import {
 import {RouteProp} from '@react-navigation/native';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {saveToDeviceStorage} from '../../screens/createProduct/saveToDevice';
+import useUserStore from '../../stores/profileStore/profileStore';
+
 type AuthenticatedStackParamList = {
   CameraScreen: {
     onCapture?: (photo: any) => void;
@@ -27,12 +29,10 @@ type CameraScreenRouteProp = RouteProp<
 >;
 
 export default function CameraScreen() {
+  const {updateProfileImage} = useUserStore();
   const route = useRoute<CameraScreenRouteProp>();
   const navigation = useNavigation();
   const onCapture = route.params?.onCapture;
-
-  const [isSaving, setIsSaving] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const [isCapturing, setIsCapturing] = useState(false);
   const [useFrontCam, setUseFrontCam] = useState(false);
 
@@ -59,26 +59,28 @@ export default function CameraScreen() {
 
   const handleCapture = async () => {
     try {
-      setIsSaving(true);
-      setIsSaved(false);
       setIsCapturing(false);
-
       const photo = await camera.current?.takePhoto();
 
       if (photo) {
-        await saveToDeviceStorage(`file://${photo.path}`);
-        setIsSaving(false);
-        setIsSaved(true);
-        if (onCapture) onCapture(photo);
+        const imagePath = photo.path.startsWith('file://')
+          ? photo.path
+          : `file://${photo.path}`;
+        console.log(imagePath);
+        await saveToDeviceStorage(imagePath);
+
+        if (onCapture) {
+          // Delegate handling to parent
+          onCapture(photo);
+        } else {
+          // No delegate? Handle here locally
+          updateProfileImage(imagePath);
+        }
+
         navigation.goBack();
       }
     } catch (error) {
       console.error('Capture Error:', error);
-    } finally {
-      setTimeout(() => {
-        setIsSaving(false);
-        setIsSaved(false);
-      }, 2500);
     }
   };
 
@@ -99,7 +101,7 @@ export default function CameraScreen() {
       </View>
     );
   }
-
+  const handleGoBack = () => navigation.goBack();
   return (
     <View style={styles.container}>
       <Camera
@@ -116,7 +118,7 @@ export default function CameraScreen() {
         style={isCapturing ? styles.capturing : styles.capture}
         onPress={handleCaptureButton}
       />
-      <Pressable style={styles.close}>
+      <Pressable style={styles.close} onPress={handleGoBack}>
         <CustomIcon type="times-circle" />
       </Pressable>
     </View>

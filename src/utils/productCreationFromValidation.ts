@@ -1,5 +1,8 @@
 import {z} from 'zod';
-
+const imageSchema = z.object({
+  uri: z.string().min(1, 'Image URL is required'),
+  _id: z.string().min(1, '_id is required'),
+});
 export const schema = z.object({
   title: z.string().trim().min(3, 'Title too short'),
   description: z.string().trim().min(5, 'Description too short'), // fixed typo
@@ -12,8 +15,5 @@ export const schema = z.object({
     longitude: z.number(),
     latitude: z.number(),
   }),
-  image: z.object({
-    uri: z.string().min(1, 'Image URL is required'),
-    _id: z.string().min(1, '_id is required'),
-  }),
+  images: z.array(imageSchema).min(1,'Image is required'),
 });

@@ -7,12 +7,14 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {AuthenticatedStackParamList} from '../../../navigation/stacks/authenticatedStack.tsx';
 import useUserStore from '../../../stores/profileStore/profileStore.tsx';
 import {pickImageFromGallery} from '../../../utils/imagePicker.ts';
+import {useImageStore} from '../../../stores/uploadStore/uploadStore.tsx';
 type innerCustomIconProp = {
   includeRemove: boolean;
   onSelectImage?: () => void;
 };
 
 const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
+  const {setImage} = useImageStore();
   const {theme} = useTheme();
   const {updateProfileImage} = useUserStore();
   const isAppDark = theme === 'dark';
@@ -22,10 +24,16 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
 
   const goToCamera = () => {
     navigation.navigate('CameraScreen', {
-      onCapture: async image => {
-        const x = image.path;
-        updateProfileImage(x);
-        console.log('Image path captured: ', x);
+      onCapture: async photo => {
+        const imagePath = photo.path.startsWith('file://')
+          ? photo.path
+          : `file://${photo.path}`;
+        const imageForForm = {
+          uri: imagePath,
+          _id: String(Math.random() * 101 + 1000),
+        };
+        setImage(imageForForm); // update Zustand image store
+        console.log('Image captured:', imagePath);
       },
     });
   };

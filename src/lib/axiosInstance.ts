@@ -261,7 +261,7 @@ const productDetails = async (credentials: productDetailCredentials) => {
 };
 
 const createProduct = async (credentials: createProductCredentials) => {
-  const {token, title, description, price, location, image} = credentials;
+  const {token, title, description, price, location, images} = credentials;
 
   try {
     const formData = new FormData();
@@ -271,18 +271,22 @@ const createProduct = async (credentials: createProductCredentials) => {
     formData.append('price', price.toString());
     formData.append('location', JSON.stringify(location));
 
-    if (image && image.uri) {
-      const uriParts = image.uri.split('.');
-      const fileType = uriParts[uriParts.length - 1];
-
-      formData.append('images', {
-        uri: image.uri,
-        name: `photo.${fileType}`,
-        type: `image/${fileType}`,
-      } as any);
-    } else {
-      throw new Error('No image URI provided');
+    if (images.length === 0) {
+      throw new Error('No images provided');
     }
+
+    images.forEach((image, index) => {
+      if (image.uri) {
+        const uriParts = image.uri.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+
+        formData.append('images', {
+          uri: image.uri,
+          name: `photo_${index}.${fileType}`,
+          type: `image/${fileType}`,
+        } as any);
+      }
+    });
 
     const {data} = await axiosInstance.post('/api/products', formData, {
       headers: {
@@ -301,11 +305,14 @@ const createProduct = async (credentials: createProductCredentials) => {
 
 const deleteProduct = async (credentials: deleteProductCredentials) => {
   try {
-    const {data} = await axiosInstance.delete(`/api/products/${credentials.id}`, {
-      headers: {
-        Authorization: `Bearer ${credentials.token}`,
+    const {data} = await axiosInstance.delete(
+      `/api/products/${credentials.id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${credentials.token}`,
+        },
       },
-    });
+    );
     return data;
   } catch (error: any) {
     return handleError(error, 'Product deletion failed', {

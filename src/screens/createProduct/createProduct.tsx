@@ -14,8 +14,7 @@ import {
 import {useEffect, useState} from 'react';
 import {styles} from './createProduct.style';
 import CustomButton from '../../components/atoms/customButton/customButton';
-import PermissionNotGranted from '../permissionNotGranted/permissionNotGranted';
-import {useNavigation, useRoute} from '@react-navigation/native';
+import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../../contexts/themeContext';
 import {AuthenticatedTabParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -38,6 +37,7 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker';
+import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
 
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
@@ -51,20 +51,16 @@ const CreateProduct = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const image = useImageStore(state => state.images);
-  const clearImages = useImageStore(state => state.clearImage);
+  const removeImage = useImageStore(state => state.removeImage);
+  const clearImages = useImageStore(state => state.clearImages);
   // Map center coordinates from store
   const center = useMapStore(state => state.center);
   const setImage = useImageStore(state => state.setImage);
-
-  useEffect(() => {
-    if (image) {
-      setImage(image);
-    }
-  }, [image, setImage]);
   const {
     control,
     handleSubmit,
     setValue,
+    getValues,
     reset,
     formState: {errors},
   } = useForm<FormData>({
@@ -78,16 +74,9 @@ const CreateProduct = () => {
         longitude: center[0],
         latitude: center[1],
       },
-      image: {uri: '', _id: ''},
+      images: [],
     },
   });
-
-  // Update form location if map center changes
-  useEffect(() => {
-    setValue('location.longitude', center[0]);
-    setValue('location.latitude', center[1]);
-    setValue('image', image!);
-  }, [center, image, setValue]);
 
   const [resultMessage, setResultMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -95,29 +84,54 @@ const CreateProduct = () => {
   const toggleModalVisibility = () => {
     setShowModal(prev => !prev);
   };
-  const navigation = useNavigation<UploadScreenNavigationProp>();
+  const navigation = useNavigation<
+    UploadScreenNavigationProp & AuthenticatedStackParamList
+  >();
+  useEffect(() => {
+    setValue('images', image);
+  }, [image, setValue]);
+
   const handleSelectImage = async () => {
     const result = await launchImageLibrary({mediaType: 'photo'});
+
     if (result.assets && result.assets.length > 0) {
       const selectedImage = result.assets[0];
+      if (!selectedImage.uri) {
+        setResultMessage('Selected image has no URI');
+        return;
+      }
 
-      console.log('Selected Image:', selectedImage);
-
-      // Manually assign a placeholder `_id` or wait for upload to assign a real one
-      const imageForForm = {
-        uri: selectedImage.uri || '',
-        _id: 'local-temp-id', // Or generate UUID if needed
+      const newImage = {
+        uri: selectedImage.uri,
+        _id: `${Date.now()}`,
       };
-      setValue('image', imageForForm, {shouldValidate: true}); // ✅ updates form state
+
+      // Update Zustand
+      setImage(newImage);
+
+      // Also update the form field
+      const currentImages = getValues('images') || [];
+      const updatedImages = [...currentImages, newImage];
+      setValue('images', updatedImages, {shouldValidate: true});
     }
   };
+  // Update form location if map center changes
+  useEffect(() => {
+    setValue('location.longitude', center[0]);
+    setValue('location.latitude', center[1]);
+
+    if (image && !Array.isArray(image)) {
+      setValue('images', [image]);
+    } else if (image) {
+      setValue('images', image);
+    }
+  }, [center, image, setValue]);
   // Submit handler for product creation form
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setResultMessage('');
-
-    if (!data.image || !data.image.uri) {
-      setResultMessage('Please select an image');
+    if (!data.images || data.images.length === 0) {
+      setResultMessage('Please select at least one image');
       setIsLoading(false);
       return;
     }
@@ -129,10 +143,7 @@ const CreateProduct = () => {
         description: data.description,
         price: Number(data.price),
         location: data.location,
-        image: {
-          uri: data.image.uri,
-          _id: data.image._id,
-        },
+        images: data.images,
       });
 
       if (result.success === true) {
@@ -145,7 +156,7 @@ const CreateProduct = () => {
             longitude: center[0],
             latitude: center[1],
           },
-          image: {uri: '', _id: ''}, // Reset form image here
+          images: [], // Reset form image here
         });
         clearImages(); // optionally clear Zustand if needed
         navigation.navigate('Devices');
@@ -167,7 +178,6 @@ const CreateProduct = () => {
     <View style={styles.container}>
       <CustomContainer>
         <>
-          <CustomTitle text="Create Product" />
           <View style={styles.form}>
             <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
               <KeyboardAvoidingView
@@ -286,34 +296,49 @@ const CreateProduct = () => {
                       contentContainerStyle={{marginTop: 10}}>
                       <Controller
                         control={control}
-                        name="image"
+                        name="images"
                         render={({field: {value}}) => {
-                          console.log('Image URI in controller:', value?.uri); // ✅ Should now show path
-
+                          console.log('Selected images:', value);
                           return (
-                            <ScrollView horizontal>
-                              {value?.uri ? (
-                                <Image
-                                  key={value.uri}
-                                  source={{uri: value.uri}}
-                                  style={{
-                                    width: 100,
-                                    height: 100,
-                                    borderRadius: 10,
-                                    marginRight: 10,
-                                  }}
-                                  resizeMode="cover"
-                                  onError={e =>
-                                    console.log(
-                                      'Image load error:',
-                                      e.nativeEvent.error,
-                                    )
-                                  }
-                                />
-                              ) : (
-                                <Text>No image</Text>
-                              )}
-                            </ScrollView>
+                            <TouchableWithoutFeedback
+                              onPress={handleKeyboardDismiss}>
+                              <KeyboardAvoidingView>
+                                <ScrollView horizontal style={{padding: 10}}>
+                                  {Array.isArray(value) && value.length > 0 ? (
+                                    value.map(img => (
+                                      <View key={img._id}>
+                                        <Pressable
+                                          onPress={() => removeImage(img._id)}>
+                                          <CustomIcon type="times-circle" />
+                                        </Pressable>
+                                        <Image
+                                          key={img._id}
+                                          source={{uri: img.uri}}
+                                          style={{
+                                            width: 75,
+                                            height: 75,
+                                            borderRadius: 10,
+                                            marginRight: 10,
+                                          }}
+                                          resizeMode="cover"
+                                          onError={e =>
+                                            console.log(
+                                              'Image load error:',
+                                              e.nativeEvent.error,
+                                            )
+                                          }
+                                        />
+                                      </View>
+                                    ))
+                                  ) : (
+                                    <Text
+                                      style={{fontFamily: 'Sansation-Bold'}}>
+                                      No image Yet
+                                    </Text>
+                                  )}
+                                </ScrollView>
+                              </KeyboardAvoidingView>
+                            </TouchableWithoutFeedback>
                           );
                         }}
                       />

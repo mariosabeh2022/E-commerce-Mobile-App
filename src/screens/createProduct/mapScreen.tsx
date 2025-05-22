@@ -20,7 +20,7 @@ export default function MapScreen({coordinates}: MapScreenProps) {
     <View style={styles.mainMapcontainer}>
       <View style={styles.mapContainer}>
         <MapLibreGL.MapView style={{flex: 1}} onPress={handleMapPress}>
-          <MapLibreGL.Camera centerCoordinate={center} zoomLevel={8} />
+          <MapLibreGL.Camera centerCoordinate={center} zoomLevel={7} />
           <MapLibreGL.PointAnnotation id="centerMarker" coordinate={center}>
             <View
               style={{

@@ -89,7 +89,7 @@ export default function AuthenticatedTabs() {
         }}
       />
       <Tab.Screen
-        name="Upload"
+        name="Create Product"
         component={CreateProduct}
         options={{
           headerTitleAlign: 'center',
