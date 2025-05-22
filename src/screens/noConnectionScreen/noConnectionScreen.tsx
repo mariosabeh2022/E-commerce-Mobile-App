@@ -9,9 +9,9 @@ export default function NoConnectionScreen({onRetry}: {onRetry: () => void}) {
   return (
     <View style={styles.container}>
       <LottieView
-        source={require('../../assets/animations/success_animation.json')}
+        source={require('../../assets/animations/no_connection_animation.json')}
         autoPlay
-        loop={false}
+        loop={true}
         style={styles.animation}
       />
       <CustomTitle text="Whoops!!" />
