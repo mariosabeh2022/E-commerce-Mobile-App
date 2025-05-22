@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -7,7 +7,7 @@ import {
   ScrollView,
   Pressable,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {styles} from './productListings.style';
 import {skeletonStyles} from '../../components/organismes/customSkeletonItem/customSkeletonItem.style';
@@ -29,12 +29,14 @@ type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
   'Products'
 >;
+type ProductScreenRouteProp = RouteProp<ProductsStackParamList, 'Products'>;
 
 // const renderCustomErrorMessage = () => (
 //   <CustomErrorMessage message="No items available" />
 // );
 
 const ProductListingsScreen = () => {
+  const route = useRoute<ProductScreenRouteProp>();
   const userToken = useAuthStore(state => state.accessToken);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'price'>('title');
@@ -120,6 +122,18 @@ const ProductListingsScreen = () => {
       </View>
     );
   };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (
+        route.params?.fromScreen === 'Edit Product' ||
+        route.params?.fromScreen === 'Details'
+      ) {
+        setSearch('');
+      }
+    });
+
+    return unsubscribe;
+  }, [navigation, route.params]);
 
   return (
     <CustomContainer>

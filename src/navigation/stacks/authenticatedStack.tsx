@@ -7,6 +7,7 @@ export type AuthenticatedStackParamList = {
   CameraScreen?: {
     onCapture?: (image: any) => void;
   };
+  EditProduct: {id: string};
 };
 
 const Stack = createNativeStackNavigator<AuthenticatedStackParamList>();

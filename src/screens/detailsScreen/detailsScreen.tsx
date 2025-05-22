@@ -7,6 +7,7 @@ import {
   Pressable,
   ActivityIndicator,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
@@ -22,10 +23,15 @@ import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import MapScreen from '../../screens/createProduct/mapScreen';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
+import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 
 type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 const DetailsScreen = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<ProductsStackParamList>>();
+  const editNavigation =
+    useNavigation<NativeStackNavigationProp<ProductsStackParamList>>();
   const insets = useSafeAreaInsets();
   const route = useRoute<DetailsScreenRouteProp>();
   const {id: itemId} = route.params;
@@ -96,10 +102,28 @@ const DetailsScreen = () => {
       return;
     } else {
       deleteProduct({token: userToken!, id: details?.data?._id});
-      navigation.goBack();
+      ToastAndroid.show('Product Deleted Successfully!', ToastAndroid.SHORT);
+
+      navigation.navigate('Products', {
+        fromScreen: 'Details',
+      });
     }
   };
-  if (fetchingDetails || fetchingProfile) return <ActivityIndicator />;
+  const handleEditNavigation = () => {
+    editNavigation.navigate('Edit Product', {id: itemId});
+  };
+
+  if (fetchingDetails || fetchingProfile) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator
+          size="large"
+          color={isAppDark ? darkBaseColor : lightBaseColor}
+        />
+      </View>
+    );
+  }
+
   return (
     <SafeAreaView style={isAppDark ? styles.darkSaveArea : styles.saveArea}>
       <ScrollView
@@ -148,7 +172,8 @@ const DetailsScreen = () => {
                   isAppDark
                     ? styles.darkButtonContainer
                     : styles.buttonContainer
-                }>
+                }
+                onPress={handleEditNavigation}>
                 <Text style={isAppDark ? styles.darkButton : styles.button}>
                   Edit Product
                 </Text>

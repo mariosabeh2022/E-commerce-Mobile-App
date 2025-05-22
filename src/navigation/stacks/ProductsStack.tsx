@@ -7,6 +7,7 @@ import {Pressable, Text} from 'react-native';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {ProductsStackParamList} from '../navigator/navigationTypes';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import EditProduct from '../../screens/editProduct/editProduct';
 
 const Stack = createNativeStackNavigator<ProductsStackParamList>();
 const queryClient = new QueryClient();
@@ -36,6 +37,17 @@ export default function ProductsStack() {
         <Stack.Screen
           name="Details"
           component={DetailsScreen}
+          options={{
+            headerTitleAlign: 'center',
+            headerRight: renderShareButton,
+            headerTitleStyle: {
+              fontFamily: 'Sansation-BoldItalic',
+            },
+          }}
+        />
+        <Stack.Screen
+          name="Edit Product"
+          component={EditProduct}
           options={{
             headerTitleAlign: 'center',
             headerRight: renderShareButton,

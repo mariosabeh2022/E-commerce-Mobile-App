@@ -15,7 +15,7 @@ import {
 import {useEffect, useState} from 'react';
 import {styles} from '../../styles/productForms';
 import CustomButton from '../../components/atoms/customButton/customButton';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {useTheme} from '../../contexts/themeContext';
 import {AuthenticatedTabParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -29,34 +29,39 @@ import {Controller, useForm} from 'react-hook-form';
 import {schema} from '../../utils/productCreationFromValidation';
 import {z} from 'zod';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
-import {createProduct} from '../../lib/axiosInstance';
+import {editProduct, productDetails} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
-import MapScreen from './mapScreen';
+import MapScreen from '../createProduct/mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
-import {useImageStore} from '../../stores/uploadStore/uploadStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
+import {useQuery} from '@tanstack/react-query';
+import {addFileProtocolToUris} from '../../utils/imagePrefix';
 
-type UploadScreenNavigationProp = NativeStackNavigationProp<
-  AuthenticatedTabParamList,
-  'Devices'
+type EditProductRouteProp = RouteProp<
+  AuthenticatedStackParamList,
+  'EditProduct'
 >;
-const CreateProduct = () => {
-  const userToken = useAuthStore(state => state.accessToken);
-  console.log('Create Product user token', userToken);
-  type FormData = z.infer<typeof schema>;
+type FormData = z.infer<typeof schema>;
 
+const EditProduct = () => {
+  const navigation =
+    useNavigation<NativeStackNavigationProp<AuthenticatedTabParamList>>();
+  const route = useRoute<EditProductRouteProp>();
+  const {id} = route.params;
+  const userToken = useAuthStore(state => state.accessToken);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
-  const image = useImageStore(state => state.images);
-  const removeImage = useImageStore(state => state.removeImage);
-  const clearImages = useImageStore(state => state.clearImages);
-  // Map center coordinates from store
   const center = useMapStore(state => state.center);
-  const setImage = useImageStore(state => state.setImage);
+
+  const [resultMessage, setResultMessage] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showModal, setShowModal] = useState(false);
+  const toggleModalVisibility = () => setShowModal(prev => !prev);
+
   const {
     control,
     handleSubmit,
@@ -79,58 +84,54 @@ const CreateProduct = () => {
     },
   });
 
-  const [resultMessage, setResultMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showModal, setShowModal] = useState(false);
-  const toggleModalVisibility = () => {
-    setShowModal(prev => !prev);
-  };
-  const navigation = useNavigation<
-    UploadScreenNavigationProp & AuthenticatedStackParamList
-  >();
+  const {data: details, isFetching} = useQuery({
+    queryKey: ['fetchDetails', id],
+    queryFn: () => productDetails({token: userToken!, id}),
+    enabled: !!userToken,
+  });
+
   useEffect(() => {
-    setValue('images', image);
-  }, [image, setValue]);
-
-  const handleSelectImage = async () => {
-    const result = await launchImageLibrary({mediaType: 'photo'});
-
-    if (result.assets && result.assets.length > 0) {
-      const selectedImage = result.assets[0];
-      if (!selectedImage.uri) {
-        setResultMessage('Selected image has no URI');
-        return;
-      }
-
-      const newImage = {
-        uri: selectedImage.uri,
-        _id: `${Date.now()}`,
-      };
-
-      // Update Zustand
-      setImage(newImage);
-
-      // Also update the form field
-      const currentImages = getValues('images') || [];
-      const updatedImages = [...currentImages, newImage];
-      setValue('images', updatedImages, {shouldValidate: true});
+    if (details) {
+      const {title, description, price, location, images} = details.data;
+      console.log(images);
+      const formattedImages = addFileProtocolToUris(images);
+      console.log('Format', formattedImages);
+      reset({
+        title,
+        description,
+        price,
+        location,
+        images: formattedImages,
+      });
     }
-  };
-  // Update form location if map center changes
+  }, [details, reset]);
+
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);
+  }, [center, setValue]);
 
-    if (image && !Array.isArray(image)) {
-      setValue('images', [image]);
-    } else if (image) {
-      setValue('images', image);
+  const handleSelectImage = async () => {
+    const result = await launchImageLibrary({mediaType: 'photo'});
+    const asset = result.assets?.[0];
+
+    if (asset?.uri) {
+      const selectedImage = {uri: asset.uri, _id: `${Date.now()}`};
+      const currentImages = getValues('images') || [];
+      setValue('images', [...currentImages, selectedImage], {
+        shouldValidate: true,
+      });
+    } else {
+      ToastAndroid.show('Selected image has no URI', ToastAndroid.SHORT);
     }
-  }, [center, image, setValue]);
-  // Submit handler for product creation form
+  };
+
+  const handleKeyboardDismiss = () => Keyboard.dismiss();
+
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setResultMessage('');
+
     if (!data.images || data.images.length === 0) {
       setResultMessage('Please select at least one image');
       setIsLoading(false);
@@ -138,8 +139,9 @@ const CreateProduct = () => {
     }
 
     try {
-      const result = await createProduct({
+      const result = await editProduct({
         token: userToken!,
+        id: id,
         title: data.title,
         description: data.description,
         price: Number(data.price),
@@ -147,35 +149,33 @@ const CreateProduct = () => {
         images: data.images,
       });
 
-      if (result.success === true) {
-        ToastAndroid.show('Product Created Successfully!', ToastAndroid.SHORT);
-        reset({
-          title: '',
-          description: '',
-          price: 1,
-          location: {
-            name: '',
-            longitude: center[0],
-            latitude: center[1],
-          },
-          images: [], // Reset form image here
+      if (result.success) {
+        ToastAndroid.show('Product Updated Successfully!', ToastAndroid.SHORT);
+        navigation.navigate('Devices', {
+          fromScreen: 'Edit Product',
         });
-        clearImages(); // optionally clear Zustand if needed
-        navigation.navigate('Devices');
       } else {
-        setResultMessage(result.message ?? 'Failed to create product');
+        setResultMessage(result.message ?? 'Failed to update product');
       }
     } catch (err) {
-      console.error('Product Creation:', err);
+      console.error('Product Update Error:', err);
       setResultMessage('An error occurred. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
-  const handleKeyboardDismiss = () => Keyboard.dismiss();
-  useEffect(() => {
-    console.log('Form Errors:', errors);
-  }, [errors]);
+
+  if (isFetching) {
+    return (
+      <View style={styles.container}>
+        <ActivityIndicator
+          size="large"
+          color={isAppDark ? darkBaseColor : lightBaseColor}
+        />
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <CustomContainer>
@@ -236,10 +236,6 @@ const CreateProduct = () => {
                           placeholder="Price"
                           value={value !== undefined ? value.toString() : ''}
                           onChangeText={text => {
-                            if (text === '') {
-                              onChange(0);
-                              return;
-                            }
                             const number = parseFloat(text);
                             if (!isNaN(number)) {
                               onChange(number);
@@ -254,6 +250,7 @@ const CreateProduct = () => {
                     )}
                   </>
                 </CustomView>
+
                 <CustomView>
                   <>
                     <Controller
@@ -274,14 +271,10 @@ const CreateProduct = () => {
                     )}
                   </>
                 </CustomView>
+
                 <CustomView>
                   <>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 10,
-                      }}>
+                    <View style={{flexDirection: 'row', gap: 10}}>
                       <Pressable onPress={toggleModalVisibility}>
                         <Icon
                           name="upload"
@@ -291,7 +284,6 @@ const CreateProduct = () => {
                       </Pressable>
                     </View>
 
-                    {/* Horizontal ScrollView for image preview (just 1 image for now) */}
                     <ScrollView
                       horizontal
                       showsHorizontalScrollIndicator={false}
@@ -299,49 +291,51 @@ const CreateProduct = () => {
                       <Controller
                         control={control}
                         name="images"
-                        render={({field: {value}}) => {
-                          console.log('Selected images:', value);
+                        render={({field}) => {
+                          const images = field.value || [];
+                          console.log(
+                            'Logging the images from the scorll view',
+                            images,
+                          );
                           return (
-                            <TouchableWithoutFeedback
-                              onPress={handleKeyboardDismiss}>
-                              <KeyboardAvoidingView>
-                                <ScrollView horizontal style={{padding: 10}}>
-                                  {Array.isArray(value) && value.length > 0 ? (
-                                    value.map(img => (
-                                      <View key={img._id}>
-                                        <Pressable
-                                          onPress={() => removeImage(img._id)}
-                                          style={{paddingLeft: 28}}>
-                                          <CustomIcon type="times-circle" />
-                                        </Pressable>
-                                        <Image
-                                          key={img._id}
-                                          source={{uri: img.uri}}
-                                          style={{
-                                            width: 75,
-                                            height: 75,
-                                            borderRadius: 10,
-                                            marginRight: 10,
-                                          }}
-                                          resizeMode="cover"
-                                          onError={e =>
-                                            console.log(
-                                              'Image load error:',
-                                              e.nativeEvent.error,
-                                            )
-                                          }
-                                        />
-                                      </View>
-                                    ))
-                                  ) : (
-                                    <Text
-                                      style={{fontFamily: 'Sansation-Bold'}}>
-                                      No image Yet
-                                    </Text>
-                                  )}
-                                </ScrollView>
-                              </KeyboardAvoidingView>
-                            </TouchableWithoutFeedback>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              {images.length > 0 ? (
+                                images.map(img => (
+                                  <View key={img._id} style={{marginRight: 10}}>
+                                    <Pressable
+                                      onPress={() => {
+                                        const updatedImages = images.filter(
+                                          i => i._id !== img._id,
+                                        );
+                                        setValue('images', updatedImages, {
+                                          shouldValidate: true,
+                                        });
+                                      }}
+                                      style={{paddingLeft: 28}}>
+                                      <CustomIcon type="times-circle" />
+                                    </Pressable>
+                                    <Image
+                                      source={{uri: img.uri}}
+                                      style={{
+                                        width: 75,
+                                        height: 75,
+                                        borderRadius: 10,
+                                        marginTop: 4,
+                                      }}
+                                      resizeMode="cover"
+                                    />
+                                  </View>
+                                ))
+                              ) : (
+                                <Text style={{fontFamily: 'Sansation-Bold'}}>
+                                  No image yet
+                                </Text>
+                              )}
+                            </View>
                           );
                         }}
                       />
@@ -357,7 +351,7 @@ const CreateProduct = () => {
                     />
                   ) : (
                     <Pressable onPress={handleSubmit(onSubmit)}>
-                      <CustomButton text="Create Product" />
+                      <CustomButton text="Edit Product" />
                     </Pressable>
                   )}
                 </CustomView>
@@ -371,8 +365,14 @@ const CreateProduct = () => {
             </TouchableWithoutFeedback>
           </View>
 
-          <MapScreen />
-          <Modal visible={showModal} animationType="slide" transparent={true}>
+          <MapScreen
+            coordinates={[
+              getValues().location.longitude,
+              getValues().location.latitude,
+            ]}
+          />
+
+          <Modal visible={showModal} animationType="slide" transparent>
             <View style={styles.mainModalContainer}>
               <Pressable
                 style={styles.upperOverlay}
@@ -385,13 +385,11 @@ const CreateProduct = () => {
                 <Pressable onPress={toggleModalVisibility}>
                   <CustomIcon type="times-circle" />
                 </Pressable>
-                <CustomTitle text="Profile Photo" />
-                <View>
-                  <CustomModalIcons
-                    includeRemove={false}
-                    onSelectImage={handleSelectImage}
-                  />
-                </View>
+                <CustomTitle text="Upload Photo" />
+                <CustomModalIcons
+                  includeRemove={false}
+                  onSelectImage={handleSelectImage}
+                />
               </View>
             </View>
           </Modal>
@@ -401,4 +399,4 @@ const CreateProduct = () => {
   );
 };
 
-export default CreateProduct;
+export default EditProduct;
