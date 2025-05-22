@@ -161,7 +161,7 @@ const CreateProduct = () => {
           images: [], // Reset form image here
         });
         clearImages(); // optionally clear Zustand if needed
-        navigation.navigate('Devices');
+        navigation.navigate('Devices', {fromScreen: 'Create Product'});
       } else {
         setResultMessage(result.message ?? 'Failed to create product');
       }
