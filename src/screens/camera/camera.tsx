@@ -70,10 +70,8 @@ export default function CameraScreen() {
         await saveToDeviceStorage(imagePath);
 
         if (onCapture) {
-          // Delegate handling to parent
           onCapture(photo);
         } else {
-          // No delegate? Handle here locally
           updateProfileImage(imagePath);
         }
 

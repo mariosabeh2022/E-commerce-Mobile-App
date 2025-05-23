@@ -1,4 +1,3 @@
-// useMapStore.ts
 import {create} from 'zustand';
 
 type MapState = {

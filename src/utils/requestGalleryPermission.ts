@@ -22,6 +22,6 @@ export const requestGalleryPermission = async () => {
       return false;
     }
   } else {
-    return true; // iOS handled by library
+    return true;
   }
 };

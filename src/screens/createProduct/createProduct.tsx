@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {styles} from '../../styles/productForms';
+import {createEditProductStyles} from '../../styles/createEditProduct.style';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import {useNavigation} from '@react-navigation/native';
 import {useTheme} from '../../contexts/themeContext';
@@ -31,7 +32,7 @@ import {z} from 'zod';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import {createProduct} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
-import MapScreen from './mapScreen';
+import MapScreen from '../mapScreen/mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
 import {useImageStore} from '../../stores/uploadStore/uploadStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
@@ -53,7 +54,6 @@ const CreateProduct = () => {
   const image = useImageStore(state => state.images);
   const removeImage = useImageStore(state => state.removeImage);
   const clearImages = useImageStore(state => state.clearImages);
-  // Map center coordinates from store
   const center = useMapStore(state => state.center);
   const setImage = useImageStore(state => state.setImage);
   const {
@@ -106,16 +106,14 @@ const CreateProduct = () => {
         _id: `${Date.now()}`,
       };
 
-      // Update Zustand
       setImage(newImage);
 
-      // Also update the form field
       const currentImages = getValues('images') || [];
       const updatedImages = [...currentImages, newImage];
       setValue('images', updatedImages, {shouldValidate: true});
     }
   };
-  // Update form location if map center changes
+
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);
@@ -126,7 +124,7 @@ const CreateProduct = () => {
       setValue('images', image);
     }
   }, [center, image, setValue]);
-  // Submit handler for product creation form
+
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setResultMessage('');
@@ -157,9 +155,9 @@ const CreateProduct = () => {
             longitude: center[0],
             latitude: center[1],
           },
-          images: [], // Reset form image here
+          images: [],
         });
-        clearImages(); // optionally clear Zustand if needed
+        clearImages();
         navigation.navigate('Devices', {fromScreen: 'Create Product'});
       } else {
         setResultMessage(result.message ?? 'Failed to create product');
@@ -273,12 +271,7 @@ const CreateProduct = () => {
                 </CustomView>
                 <CustomView>
                   <>
-                    <View
-                      style={{
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        gap: 10,
-                      }}>
+                    <View style={createEditProductStyles.uploadIconContainer}>
                       <Pressable onPress={toggleModalVisibility}>
                         <Icon
                           name="upload"
@@ -292,7 +285,9 @@ const CreateProduct = () => {
                     <ScrollView
                       horizontal
                       showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={{marginTop: 10}}>
+                      contentContainerStyle={
+                        createEditProductStyles.imagesScrollView
+                      }>
                       <Controller
                         control={control}
                         name="images"
@@ -301,24 +296,23 @@ const CreateProduct = () => {
                             <TouchableWithoutFeedback
                               onPress={handleKeyboardDismiss}>
                               <KeyboardAvoidingView>
-                                <ScrollView horizontal style={{padding: 10}}>
+                                <ScrollView
+                                  horizontal
+                                  style={createEditProductStyles.scroll}>
                                   {Array.isArray(value) && value.length > 0 ? (
                                     value.map(img => (
                                       <View key={img._id}>
                                         <Pressable
                                           onPress={() => removeImage(img._id)}
-                                          style={{paddingLeft: 28}}>
+                                          style={
+                                            createEditProductStyles.removeIcon
+                                          }>
                                           <CustomIcon type="times-circle" />
                                         </Pressable>
                                         <Image
                                           key={img._id}
                                           source={{uri: img.uri}}
-                                          style={{
-                                            width: 75,
-                                            height: 75,
-                                            borderRadius: 10,
-                                            marginRight: 10,
-                                          }}
+                                          style={createEditProductStyles.image}
                                           resizeMode="cover"
                                           onError={showToastErrorMessage}
                                         />
@@ -326,7 +320,7 @@ const CreateProduct = () => {
                                     ))
                                   ) : (
                                     <Text
-                                      style={{fontFamily: 'Sansation-Bold'}}>
+                                      style={createEditProductStyles.noImages}>
                                       No image Yet
                                     </Text>
                                   )}

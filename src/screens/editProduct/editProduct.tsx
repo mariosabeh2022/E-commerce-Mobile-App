@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import {useEffect, useState} from 'react';
 import {styles} from '../../styles/productForms';
+
 import CustomButton from '../../components/atoms/customButton/customButton';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {useTheme} from '../../contexts/themeContext';
@@ -31,7 +32,7 @@ import {z} from 'zod';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import {editProduct, productDetails} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
-import MapScreen from '../createProduct/mapScreen';
+import MapScreen from '../mapScreen/mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
@@ -40,6 +41,7 @@ import {launchImageLibrary} from 'react-native-image-picker';
 import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
 import {useQuery} from '@tanstack/react-query';
 import {addFileProtocolToUris} from '../../utils/imagePrefix';
+import {createEditProductStyles} from '../../styles/createEditProduct.style';
 
 type EditProductRouteProp = RouteProp<
   AuthenticatedStackParamList,
@@ -275,7 +277,7 @@ const EditProduct = () => {
 
                 <CustomView>
                   <>
-                    <View style={{flexDirection: 'row', gap: 10}}>
+                    <View style={createEditProductStyles.uploadIconContainer}>
                       <Pressable onPress={toggleModalVisibility}>
                         <Icon
                           name="upload"
@@ -288,7 +290,9 @@ const EditProduct = () => {
                     <ScrollView
                       horizontal
                       showsHorizontalScrollIndicator={false}
-                      contentContainerStyle={{marginTop: 10}}>
+                      contentContainerStyle={
+                        createEditProductStyles.imagesScrollView
+                      }>
                       <Controller
                         control={control}
                         name="images"
@@ -296,13 +300,14 @@ const EditProduct = () => {
                           const images = field.value || [];
                           return (
                             <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                              }}>
+                              style={createEditProductStyles.imagesContainer}>
                               {images.length > 0 ? (
                                 images.map(img => (
-                                  <View key={img._id} style={{marginRight: 10}}>
+                                  <View
+                                    key={img._id}
+                                    style={
+                                      createEditProductStyles.imageContainer
+                                    }>
                                     <Pressable
                                       onPress={() => {
                                         const updatedImages = images.filter(
@@ -312,23 +317,20 @@ const EditProduct = () => {
                                           shouldValidate: true,
                                         });
                                       }}
-                                      style={{paddingLeft: 28}}>
+                                      style={
+                                        createEditProductStyles.removeIcon
+                                      }>
                                       <CustomIcon type="times-circle" />
                                     </Pressable>
                                     <Image
                                       source={{uri: img.uri}}
-                                      style={{
-                                        width: 75,
-                                        height: 75,
-                                        borderRadius: 10,
-                                        marginTop: 4,
-                                      }}
+                                      style={createEditProductStyles.image}
                                       resizeMode="cover"
                                     />
                                   </View>
                                 ))
                               ) : (
-                                <Text style={{fontFamily: 'Sansation-Bold'}}>
+                                <Text style={createEditProductStyles.noImages}>
                                   No image yet
                                 </Text>
                               )}

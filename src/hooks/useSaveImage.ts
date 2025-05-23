@@ -2,12 +2,13 @@ import RNFS from 'react-native-fs';
 import {PermissionsAndroid, Platform, Alert} from 'react-native';
 
 const requestStoragePermission = async () => {
-  if (Platform.OS !== 'android') return true;
+  if (Platform.OS !== 'android') {
+    return true;
+  }
 
   const apiLevel = Platform.Version;
 
   if (apiLevel >= 33) {
-    // Android 13+
     const granted = await PermissionsAndroid.requestMultiple([
       PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
     ]);
@@ -16,10 +17,8 @@ const requestStoragePermission = async () => {
       PermissionsAndroid.RESULTS.GRANTED
     );
   } else if (apiLevel >= 29) {
-    // Android 10–12
-    return true; // Scoped storage handles access differently
+    return true;
   } else {
-    // Android 9 and below
     const granted = await PermissionsAndroid.request(
       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
     );

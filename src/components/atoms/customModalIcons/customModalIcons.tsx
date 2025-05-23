@@ -33,7 +33,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
           _id: String(Math.random() * 101 + 1000),
         };
         if (!includeRemove) {
-          setImage(imageForForm); // update Zustand image store
+          setImage(imageForForm);
         } else {
           updateProfileImage(imagePath);
         }
@@ -47,7 +47,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
 
   const handleGalleryPress = async () => {
     if (onSelectImage) {
-      onSelectImage(); // delegate to parent
+      onSelectImage();
       return;
     }
     const image = await pickImageFromGallery();

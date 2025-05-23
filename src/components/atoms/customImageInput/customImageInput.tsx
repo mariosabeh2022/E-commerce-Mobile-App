@@ -4,16 +4,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from '../../../contexts/themeContext';
 import ImagePicker from 'react-native-image-crop-picker';
 import {requestGalleryPermission} from '../../../utils/requestGalleryPermission';
-
-type ImageType = {
-  uri: string;
-  _id: number;
-};
-
-type CustomImageInputProps = {
-  images: ImageType[]; // Array of uploaded images
-  onImagesChange: (images: ImageType[]) => void;
-};
+import {styles} from './customImageInput.style';
+import {CustomImageInputProps} from './customImageInput.type';
 
 const CustomImageInput: React.FC<CustomImageInputProps> = ({
   images,
@@ -50,31 +42,13 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
       {/* Upload Button */}
       <TouchableOpacity
         onPress={handleImagePick}
-        style={{
-          width: 80,
-          height: 80,
-          backgroundColor: isAppDark ? '#333' : '#eee',
-          justifyContent: 'center',
-          alignItems: 'center',
-          borderRadius: 8,
-          marginBottom: 12,
-        }}>
+        style={isAppDark ? styles.darkIconContainer : styles.iconContainer}>
         <Icon name="add" size={30} color={isAppDark ? 'white' : 'black'} />
       </TouchableOpacity>
-      <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
+      <View style={styles.scrollViewContainer}>
         {images.map(img => (
           <ScrollView horizontal={true}>
-            <Image
-              key={img._id}
-              source={{uri: img.uri}}
-              style={{
-                width: 80,
-                height: 80,
-                marginRight: 8,
-                marginBottom: 8,
-                borderRadius: 8,
-              }}
-            />
+            <Image key={img._id} source={{uri: img.uri}} style={styles.image} />
           </ScrollView>
         ))}
       </View>

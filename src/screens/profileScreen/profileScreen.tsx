@@ -63,7 +63,6 @@ const ProfileScreen = () => {
         }
         setUser(result.data.user);
 
-        // Set profileImage URL from server with full URL prefix
         updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
         setVerified(result.data.user.isEmailVerified);
       } catch (err: any) {

@@ -32,8 +32,8 @@ export const styles = StyleSheet.create({
     backgroundColor: 'white',
     padding: 5,
     borderRadius: 20,
-    elevation: 2, // for Android shadow
-    shadowColor: '#000', // for iOS shadow
+    elevation: 2,
+    shadowColor: '#000',
     shadowOffset: {width: 0, height: 1},
     shadowOpacity: 0.3,
     shadowRadius: 1.41,
@@ -56,7 +56,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 75,
-    overflow: 'hidden', // optional, for clipping
+    overflow: 'hidden',
   },
 
   editingInput: {

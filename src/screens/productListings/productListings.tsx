@@ -18,7 +18,6 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
-// import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import {fetchProducts, searchProducts} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
@@ -30,10 +29,6 @@ type ProductScreenNavigationProp = NativeStackNavigationProp<
   'Products'
 >;
 type ProductScreenRouteProp = RouteProp<ProductsStackParamList, 'Products'>;
-
-// const renderCustomErrorMessage = () => (
-//   <CustomErrorMessage message="No items available" />
-// );
 
 const ProductListingsScreen = () => {
   const route = useRoute<ProductScreenRouteProp>();

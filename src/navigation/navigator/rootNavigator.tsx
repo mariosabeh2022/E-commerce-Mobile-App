@@ -33,7 +33,6 @@ export default function RootNavigator() {
     const state = await NetInfo.fetch();
     clearInterval(interval);
 
-    // Ensure the meter fills to 100%
     Animated.timing(progress, {
       toValue: 1,
       duration: 300,

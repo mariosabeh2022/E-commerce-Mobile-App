@@ -24,7 +24,7 @@ import {
 } from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
-import MapScreen from '../../screens/createProduct/mapScreen';
+import MapScreen from '../mapScreen/mapScreen';
 import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
