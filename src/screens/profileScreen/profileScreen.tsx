@@ -31,10 +31,11 @@ import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
 import useUserStore from '../../stores/profileStore/profileStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import { API_URL } from '../../config/index';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
   const loggedInUserToken = useAuthStore(state => state.accessToken);
-  const {user, setUser} = useUserStore();
+  const {user, setUser, updateProfileImage} = useUserStore();
   const profilePicture = user.profileImage;
   console.log("this user's token is:", loggedInUserToken);
   const {theme} = useTheme();
@@ -61,6 +62,7 @@ const ProfileScreen = () => {
           console.log('Unauthorized user');
         }
         setUser(result.data.user);
+        updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
         setVerified(result.data.user.isEmailVerified);
       } catch (err: any) {
         console.log(err.message || 'Failed to load profile');
@@ -69,7 +71,7 @@ const ProfileScreen = () => {
     };
 
     getProfile();
-  }, [userToken, setUser]);
+  }, [userToken, setUser,updateProfileImage]);
 
   const creationDate = new Date(user.createdAt);
   const year = creationDate.getFullYear();
@@ -163,7 +165,7 @@ const ProfileScreen = () => {
           {user.profileImage ? (
             <Image
               source={{
-                uri: `file://${user.profileImage}`,
+                uri: user.profileImage,
               }}
               style={styles.profileImage}
               resizeMode="contain"
