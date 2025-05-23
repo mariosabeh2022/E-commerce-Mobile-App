@@ -165,7 +165,6 @@ const CreateProduct = () => {
         setResultMessage(result.message ?? 'Failed to create product');
       }
     } catch (err) {
-      console.error('Product Creation:', err);
       setResultMessage('An error occurred. Please try again.');
     }
 

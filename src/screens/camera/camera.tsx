@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   Linking,
   StyleSheet,
+  ToastAndroid,
 } from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/native';
 import {
@@ -79,7 +80,7 @@ export default function CameraScreen() {
         navigation.goBack();
       }
     } catch (error) {
-      console.error('Capture Error:', error);
+      ToastAndroid.show('Capture Error', ToastAndroid.SHORT);
     }
   };
 

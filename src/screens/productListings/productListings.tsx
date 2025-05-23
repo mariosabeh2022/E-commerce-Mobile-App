@@ -60,7 +60,7 @@ const ProductListingsScreen = () => {
     refetch: refetchAll,
   } = useInfiniteQuery({
     queryKey: ['products', {sortBy, order}],
-    queryFn: ({pageParam}) =>
+    queryFn: ({pageParam = 1}) =>
       fetchProducts({
         token: userToken!,
         page: pageParam,
@@ -69,8 +69,11 @@ const ProductListingsScreen = () => {
       }),
     initialPageParam: 1,
     getNextPageParam: lastPage => {
-      const currentPage = lastPage.pagination.currentPage;
-      const totalPages = lastPage.pagination.totalPages;
+      if (!lastPage || !lastPage.pagination) {
+        return undefined;
+      }
+
+      const {currentPage, totalPages} = lastPage.pagination;
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
     enabled: !!userToken,

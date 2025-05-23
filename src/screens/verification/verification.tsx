@@ -6,6 +6,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ToastAndroid,
 } from 'react-native';
 import SixDigitInput from './sixDigitInput';
 import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
@@ -76,7 +77,7 @@ const VerificationScreen = ({route, navigation}: Props) => {
       setValue('email', '');
       setValue('otp', '');
     } catch (err) {
-      console.error('Login error:', err);
+      ToastAndroid.show('Verification Error', ToastAndroid.SHORT);
     }
     setIsLoading(false);
     setSubmittable(true);

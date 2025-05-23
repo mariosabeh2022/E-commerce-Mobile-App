@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   Keyboard,
   TouchableWithoutFeedback,
+  ToastAndroid,
 } from 'react-native';
 import {darkBaseColor, lightBaseColor, styles} from '../../styles/formStyles';
 import {schema} from '../../utils/signUpFormValidation';
@@ -84,7 +85,7 @@ const SignUpScreen = () => {
       setValue('email', '');
       setValue('password', '');
     } catch (err) {
-      console.error('SignUp error:', err);
+      ToastAndroid.show('SignUp Server Error', ToastAndroid.SHORT);
     }
     setIsLoading(false);
   };

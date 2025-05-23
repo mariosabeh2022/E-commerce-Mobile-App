@@ -1,4 +1,4 @@
-import {PermissionsAndroid, Platform} from 'react-native';
+import {PermissionsAndroid, Platform, ToastAndroid} from 'react-native';
 import ImagePicker from 'react-native-image-crop-picker';
 
 export const requestGalleryPermission = async (): Promise<boolean> => {
@@ -19,7 +19,7 @@ export const requestGalleryPermission = async (): Promise<boolean> => {
 
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err) {
-      console.warn(err);
+      ToastAndroid.show('Permissions Not Granted', ToastAndroid.SHORT);
       return false;
     }
   } else {

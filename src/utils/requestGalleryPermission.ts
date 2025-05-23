@@ -1,4 +1,4 @@
-import {PermissionsAndroid, Platform} from 'react-native';
+import {PermissionsAndroid, Platform, ToastAndroid} from 'react-native';
 
 export const requestGalleryPermission = async () => {
   if (Platform.OS === 'android') {
@@ -18,7 +18,7 @@ export const requestGalleryPermission = async () => {
 
       return granted === PermissionsAndroid.RESULTS.GRANTED;
     } catch (err) {
-      console.warn(err);
+      ToastAndroid.show('Permissions Not Granted', ToastAndroid.SHORT);
       return false;
     }
   } else {

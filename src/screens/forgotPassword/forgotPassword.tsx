@@ -7,6 +7,7 @@ import {
   KeyboardAvoidingView,
   TouchableWithoutFeedback,
   Keyboard,
+  ToastAndroid,
 } from 'react-native';
 import {schema} from '../../utils/resetPasswordFormValidation';
 import {z} from 'zod';
@@ -74,7 +75,7 @@ const ForgotPasswordScreen = () => {
         setResultMessage(result.message);
       }
     } catch (err) {
-      console.error('Login error:', err);
+      ToastAndroid.show('Login Error', ToastAndroid.SHORT);
     }
     setIsLoading(false);
     setResultMessage('');

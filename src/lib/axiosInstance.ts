@@ -16,6 +16,7 @@ import {
   editProductCredentials,
   resetPasswordCredentials,
 } from './interfaceTypes';
+import {ToastAndroid} from 'react-native';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
 const API_URL = Config.API_URL;
@@ -45,7 +46,7 @@ axiosInstance.interceptors.response.use(
         await new Promise(resolve => setTimeout(resolve, 1000));
         return axiosInstance(originalRequest);
       } else {
-        console.error('Max retry attempts reached for FLARE error.');
+        ToastAndroid.show('Server Error', ToastAndroid.SHORT);
       }
     }
     return Promise.reject(error);
@@ -59,7 +60,7 @@ const handleError = (
 ) => {
   const status = error.response?.status;
   const message = customMessages[status!] || fallbackMessage;
-  console.error('API Error:', error.response?.data || error);
+  ToastAndroid.show('Server Error', ToastAndroid.SHORT);
   return {
     success: false,
     code: status,
@@ -185,7 +186,7 @@ const updateProfile = async ({
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Failed To Update Profile',
     };
   }
 };
@@ -211,7 +212,7 @@ const fetchProducts = async (credentials: fetchProductsCredentials) => {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Failed To Load Products',
     };
   }
 };
@@ -231,7 +232,7 @@ const searchProducts = async (credentials: searchProductsCredentials) => {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Failed To Filter Products',
     };
   }
 };
@@ -248,7 +249,7 @@ const productDetails = async (credentials: productDetailCredentials) => {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Failed To Fetch Details',
     };
   }
 };
@@ -293,7 +294,7 @@ const createProduct = async (credentials: createProductCredentials) => {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Server Error, Try Again',
     };
   }
 };
@@ -342,7 +343,7 @@ const editProduct = async (credentials: editProductCredentials) => {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Failed To Edit, Try Again',
     };
   }
 };
@@ -362,7 +363,7 @@ const deleteProduct = async (credentials: deleteProductCredentials) => {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Unknown error',
+      message: error?.response?.data?.message || 'Failed To delete',
     };
   }
 };

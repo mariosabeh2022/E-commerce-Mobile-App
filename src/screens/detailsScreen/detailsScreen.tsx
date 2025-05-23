@@ -146,8 +146,7 @@ const DetailsScreen = () => {
             fromScreen: 'Details',
           });
         } catch (error) {
-          console.error('Error deleting product:', error);
-          ToastAndroid.show('Failed to delete product', ToastAndroid.SHORT);
+          ToastAndroid.show('Failed To Delete Product', ToastAndroid.SHORT);
         }
       });
     }

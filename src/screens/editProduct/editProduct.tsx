@@ -156,7 +156,10 @@ const EditProduct = () => {
         setResultMessage(result.message ?? 'Failed to update product');
       }
     } catch (err) {
-      console.error('Product Update Error:', err);
+      ToastAndroid.show(
+        'A server error occurred. Please try again.',
+        ToastAndroid.SHORT,
+      );
       setResultMessage('An error occurred. Please try again.');
     } finally {
       setIsLoading(false);
