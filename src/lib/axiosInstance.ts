@@ -17,7 +17,6 @@ import {
   editProductCredentials,
   resetPasswordCredentials,
 } from './interfaceTypes';
-import useAuthStore from '../stores/authStore/authStore';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
 const API_URL = Config.API_URL;
@@ -53,13 +52,6 @@ axiosInstance.interceptors.response.use(
       } else {
         console.error('Max retry attempts reached for FLARE error.');
       }
-    }
-    if (
-      error?.response?.status === UNAUTHORIZED ||
-      error?.response?.status === NOT_FOUND
-    ) {
-      const clearTokens = useAuthStore(state => state.clearToken);
-      clearTokens();
     }
     return Promise.reject(error);
   },
