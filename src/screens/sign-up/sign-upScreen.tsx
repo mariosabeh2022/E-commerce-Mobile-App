@@ -66,7 +66,6 @@ const SignUpScreen = () => {
   });
 
   const onSubmit = async (data: FormData) => {
-    console.log('submitting');
     setIsLoading(true);
     try {
       const result = await signup({

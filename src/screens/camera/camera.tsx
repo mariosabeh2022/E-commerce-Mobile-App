@@ -66,7 +66,6 @@ export default function CameraScreen() {
         const imagePath = photo.path.startsWith('file://')
           ? photo.path
           : `file://${photo.path}`;
-        console.log(imagePath);
         await saveToDeviceStorage(imagePath);
 
         if (onCapture) {

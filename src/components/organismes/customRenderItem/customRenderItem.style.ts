@@ -1,5 +1,5 @@
 import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-import { darkBaseColor, lightBaseColor } from '../../../styles/formStyles';
+import {darkBaseColor, lightBaseColor} from '../../../styles/formStyles';
 const baseContainer: ViewStyle = {
   borderRadius: 20,
   padding: 10,
@@ -11,6 +11,8 @@ const basePrice: ViewStyle & TextStyle = {
   fontFamily: 'Sansation-Bold',
 };
 const baseItem: ViewStyle & TextStyle = {
+  flex: 1,
+  flexWrap: 'wrap',
   fontSize: 15,
   paddingTop: 5,
   fontFamily: 'Sansation-BoldItalic',
@@ -32,7 +34,8 @@ export const styles = StyleSheet.create({
   },
   infoContainer: {
     padding: 10,
-    backgroundColor:'lightgray',
+    width: '50%',
+    backgroundColor: 'lightgray',
     borderRadius: 20,
   },
   image: {

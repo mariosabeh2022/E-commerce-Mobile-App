@@ -30,7 +30,6 @@ export const requestGalleryPermission = async (): Promise<boolean> => {
 export const pickImageFromGallery = async () => {
   const hasPermission = await requestGalleryPermission();
   if (!hasPermission) {
-    console.log('Gallery permission denied');
     return null;
   }
 
@@ -45,7 +44,6 @@ export const pickImageFromGallery = async () => {
       _id: `${Math.floor(Math.random() * 9000) + 1000}`,
     };
   } catch (error) {
-    console.log('Image picker error:', error);
     return null;
   }
 };

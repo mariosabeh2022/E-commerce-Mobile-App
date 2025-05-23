@@ -46,7 +46,6 @@ type UploadScreenNavigationProp = NativeStackNavigationProp<
 >;
 const CreateProduct = () => {
   const userToken = useAuthStore(state => state.accessToken);
-  console.log('Create Product user token', userToken);
   type FormData = z.infer<typeof schema>;
 
   const {theme} = useTheme();
@@ -173,9 +172,8 @@ const CreateProduct = () => {
     setIsLoading(false);
   };
   const handleKeyboardDismiss = () => Keyboard.dismiss();
-  useEffect(() => {
-    console.log('Form Errors:', errors);
-  }, [errors]);
+  const showToastErrorMessage = () =>
+    ToastAndroid.show('Image Load Error', ToastAndroid.SHORT);
   return (
     <View style={styles.container}>
       <CustomContainer>
@@ -300,7 +298,6 @@ const CreateProduct = () => {
                         control={control}
                         name="images"
                         render={({field: {value}}) => {
-                          console.log('Selected images:', value);
                           return (
                             <TouchableWithoutFeedback
                               onPress={handleKeyboardDismiss}>
@@ -324,12 +321,7 @@ const CreateProduct = () => {
                                             marginRight: 10,
                                           }}
                                           resizeMode="cover"
-                                          onError={e =>
-                                            console.log(
-                                              'Image load error:',
-                                              e.nativeEvent.error,
-                                            )
-                                          }
+                                          onError={showToastErrorMessage}
                                         />
                                       </View>
                                     ))

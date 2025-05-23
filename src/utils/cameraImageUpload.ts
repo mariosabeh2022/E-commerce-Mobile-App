@@ -30,7 +30,6 @@ export const requestCameraPermission = async (): Promise<boolean> => {
 export const pickImageFromCamera = async () => {
   const hasPermission = await requestCameraPermission();
   if (!hasPermission) {
-    console.log('Camera permission denied');
     return null;
   }
 
@@ -45,7 +44,6 @@ export const pickImageFromCamera = async () => {
       _id: `${Math.floor(Math.random() * 9000) + 1000}`,
     };
   } catch (error) {
-    console.log('Camera picker error:', error);
     return null;
   }
 };

@@ -69,15 +69,13 @@ const ProductListingsScreen = () => {
       }),
     initialPageParam: 1,
     getNextPageParam: lastPage => {
-      console.log('This was the last page', lastPage);
-      const currentPage = lastPage.pagination.currentPage; // from your API
-      const totalPages = lastPage.pagination.totalPages; // from your API
+      const currentPage = lastPage.pagination.currentPage;
+      const totalPages = lastPage.pagination.totalPages;
       return currentPage < totalPages ? currentPage + 1 : undefined;
     },
     enabled: !!userToken,
   });
   const flatData = responseData?.pages.flatMap(page => page.data) ?? [];
-  console.log(flatData);
   const {
     data: filteredData,
     isFetching: isFetchingSearch,

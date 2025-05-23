@@ -93,9 +93,7 @@ const EditProduct = () => {
   useEffect(() => {
     if (details) {
       const {title, description, price, location, images} = details.data;
-      console.log(images);
       const formattedImages = addFileProtocolToUris(images);
-      console.log('Format', formattedImages);
       reset({
         title,
         description,
@@ -293,10 +291,6 @@ const EditProduct = () => {
                         name="images"
                         render={({field}) => {
                           const images = field.value || [];
-                          console.log(
-                            'Logging the images from the scorll view',
-                            images,
-                          );
                           return (
                             <View
                               style={{

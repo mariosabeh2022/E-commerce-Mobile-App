@@ -7,7 +7,6 @@ import {
   LoginCredentials,
   reVerificationCredentials,
   fetchProfileCredentials,
-  updateProfileCredentials,
   RefreshCredentials,
   fetchProductsCredentials,
   searchProductsCredentials,
@@ -43,10 +42,6 @@ axiosInstance.interceptors.response.use(
 
       if (originalRequest._retryCount < MAX_RETRIES) {
         originalRequest._retryCount += 1;
-
-        console.log(
-          `Retrying request due to FLARE error. Attempt ${originalRequest._retryCount}`,
-        );
         await new Promise(resolve => setTimeout(resolve, 1000));
         return axiosInstance(originalRequest);
       } else {
@@ -104,7 +99,6 @@ const resetPassword = async (credentials: resetPasswordCredentials) => {
 
 const refreshTokenFn = async (credentials: RefreshCredentials) => {
   try {
-    console.log('Token refresh fired');
     const {data} = await axiosInstance.post(
       '/api/auth/refresh-token',
       credentials,
@@ -172,53 +166,27 @@ const fetchProfile = async ({token}: fetchProfileCredentials) => {
   }
 };
 
-const getMimeType = (uri: string): string => {
-  const extension = uri.split('.').pop()?.toLowerCase();
-  switch (extension) {
-    case 'jpg':
-    case 'jpeg':
-      return 'image/jpeg';
-    case 'png':
-      return 'image/png';
-    case 'gif':
-      return 'image/gif';
-    default:
-      return 'application/octet-stream';
-  }
-};
-
-const updateProfile = async (credentials: updateProfileCredentials) => {
-  const {token, firstName, lastName, image} = credentials;
-
+const updateProfile = async ({
+  token,
+  formData,
+}: {
+  token: string;
+  formData: FormData;
+}) => {
   try {
-    const profileFormData = new FormData();
-
-    profileFormData.append('firstName', firstName);
-    profileFormData.append('lastName', lastName);
-
-    if (image) {
-      const mimeType = getMimeType(image);
-      profileFormData.append('profileImage', {
-        uri: image,
-        type: mimeType,
-      } as any);
-    }
-    const {data} = await axiosInstance.put(
-      '/api/user/profile',
-      profileFormData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
+    const {data} = await axiosInstance.put('/api/user/profile', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
       },
-    );
-
-    return data;
-  } catch (error: any) {
-    return handleError(error, 'Update profile failed', {
-      [FLARE]: 'Server error',
     });
+    return {success: true, data};
+  } catch (error: any) {
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 
@@ -238,15 +206,13 @@ const fetchProducts = async (credentials: fetchProductsCredentials) => {
         order: queryParams.order ?? 'desc',
       },
     });
-    console.log('Query Params:', {
-      ...queryParams,
-      token,
-    });
     return data;
   } catch (error: any) {
-    return handleError(error, 'Products fetching failed', {
-      [FLARE]: 'Server error',
-    });
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 
@@ -262,9 +228,11 @@ const searchProducts = async (credentials: searchProductsCredentials) => {
     });
     return data;
   } catch (error: any) {
-    return handleError(error, 'Products search failed', {
-      [FLARE]: 'Server error',
-    });
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 
@@ -277,9 +245,11 @@ const productDetails = async (credentials: productDetailCredentials) => {
     });
     return data;
   } catch (error: any) {
-    return handleError(error, 'Product details fetch failed', {
-      [FLARE]: 'Server error',
-    });
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 
@@ -320,9 +290,11 @@ const createProduct = async (credentials: createProductCredentials) => {
 
     return data;
   } catch (error: any) {
-    return handleError(error, 'Creation attempt failed', {
-      [FLARE]: 'Server error',
-    });
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 
@@ -367,9 +339,11 @@ const editProduct = async (credentials: editProductCredentials) => {
 
     return data;
   } catch (error: any) {
-    return handleError(error, 'Update attempt failed', {
-      [FLARE]: 'Server error',
-    });
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 
@@ -385,9 +359,11 @@ const deleteProduct = async (credentials: deleteProductCredentials) => {
     );
     return data;
   } catch (error: any) {
-    return handleError(error, 'Product deletion failed', {
-      [FLARE]: 'Server error',
-    });
+    return {
+      success: false,
+      status: error?.response?.status,
+      message: error?.response?.data?.message || 'Unknown error',
+    };
   }
 };
 export {

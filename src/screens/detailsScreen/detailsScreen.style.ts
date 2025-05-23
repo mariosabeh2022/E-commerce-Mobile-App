@@ -21,16 +21,22 @@ const baseTitle: TextStyle = {
   fontFamily: 'Sansation-Bold',
   paddingBottom: 4,
   textDecorationLine: 'underline',
+  marginBottom: 10,
 };
 const baseSpec: TextStyle = {
   fontSize: 25,
   fontFamily: 'Sansation-Bold',
   paddingBottom: 4,
+  marginBottom: 10,
 };
 const basePrice: TextStyle = {
   fontSize: 25,
   fontFamily: 'Sansation-BoldItalic',
   textDecorationLine: 'underline',
+  textAlign: 'right',
+  alignSelf: 'stretch',
+  marginTop: 10,
+  marginBottom: 20,
 };
 export const styles = StyleSheet.create({
   saveArea: {
@@ -62,6 +68,9 @@ export const styles = StyleSheet.create({
   desc: {
     fontFamily: 'Sansation-Bold',
     margin: 5,
+    textAlign: 'center',
+    alignSelf: 'stretch',
+    marginBottom: 10,
   },
   price: {
     ...basePrice,

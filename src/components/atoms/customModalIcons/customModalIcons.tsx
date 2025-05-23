@@ -37,7 +37,6 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
         } else {
           updateProfileImage(imagePath);
         }
-        console.log('Image captured:', imagePath);
       },
     });
   };
@@ -54,7 +53,6 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
     const image = await pickImageFromGallery();
     if (image) {
       updateProfileImage(image.uri);
-      console.log('Selected from gallery:', image);
     }
   };
 

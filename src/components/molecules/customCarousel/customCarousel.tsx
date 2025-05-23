@@ -9,6 +9,7 @@ import {
   Text,
   TouchableWithoutFeedback,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import {styles} from './customCarousel.style';
 import {useTheme} from '../../../contexts/themeContext';
@@ -37,7 +38,7 @@ const ImageCarousel = ({images}: customCarouselProps) => {
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Download cancelled'),
+          onPress: () => ToastAndroid.show('Download Cancled!', ToastAndroid.SHORT),
           style: 'cancel',
         },
         {

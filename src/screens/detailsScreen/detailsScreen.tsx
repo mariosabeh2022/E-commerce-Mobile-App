@@ -68,7 +68,6 @@ const DetailsScreen = () => {
   const userIsCreator = details?.data?.user?._id === userData?.data?.user?.id;
   const longitude = details?.data?.location?.longitude;
   const latitude = details?.data?.location?.latitude;
-  console.log(longitude, latitude);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = useCallback(() => {
@@ -82,7 +81,6 @@ const DetailsScreen = () => {
   useEffect(() => {
     fadeIn();
   }, [fadeIn]);
-  console.log(details);
   const creationDate = new Date(details?.data?.createdAt);
   const creationYear = creationDate.getFullYear();
   const cm = creationDate.getMonth() + 1;
@@ -115,6 +113,8 @@ const DetailsScreen = () => {
         Alert.alert('Error', 'Unable to open mail app');
       });
   };
+  const showToastMessage = () =>
+    ToastAndroid.show('Delete Cancled', ToastAndroid.SHORT);
   const showConfirmation = (onConfirm: () => void) => {
     Alert.alert(
       'Delete Product',
@@ -122,7 +122,7 @@ const DetailsScreen = () => {
       [
         {
           text: 'Cancel',
-          onPress: () => console.log('Delete cancelled'),
+          onPress: showToastMessage,
           style: 'cancel',
         },
         {
@@ -141,10 +141,7 @@ const DetailsScreen = () => {
       showConfirmation(async () => {
         try {
           await deleteProduct({token: userToken!, id: details?.data?._id});
-          ToastAndroid.show(
-            'Product Deleted Successfully',
-            ToastAndroid.SHORT,
-          );
+          ToastAndroid.show('Product Deleted Successfully', ToastAndroid.SHORT);
           navigation.navigate('Products', {
             fromScreen: 'Details',
           });
@@ -185,7 +182,7 @@ const DetailsScreen = () => {
               {details?.data?.title}
             </Text>
             <Text style={isAppDark ? styles.darkSpec : styles.spec}>
-              Specifications
+              Specifications:
             </Text>
             <Text style={styles.desc}>{details?.data?.description}</Text>
             <Text style={isAppDark ? styles.darkPrice : styles.price}>
@@ -195,7 +192,9 @@ const DetailsScreen = () => {
               <CustomErrorMessage message="Product Owner:" />{' '}
               <TouchableOpacity
                 onPress={() => openGmail(details?.data?.user.email)}>
-                <CustomLink text={details?.data?.user.email} />
+                <Text style={isAppDark ? styles.darkPrice : styles.price}>
+                  <CustomLink text={details?.data?.user.email} />
+                </Text>
               </TouchableOpacity>
             </Text>
             <Text style={isAppDark ? styles.darkSpec : styles.spec}>

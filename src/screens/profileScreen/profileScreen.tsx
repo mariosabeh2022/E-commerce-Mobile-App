@@ -31,7 +31,7 @@ import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
 import useUserStore from '../../stores/profileStore/profileStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
-import { API_URL } from '../../config/index';
+import {API_URL} from '../../config/index';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
   const loggedInUserToken = useAuthStore(state => state.accessToken);
@@ -62,6 +62,8 @@ const ProfileScreen = () => {
           console.log('Unauthorized user');
         }
         setUser(result.data.user);
+
+        // Set profileImage URL from server with full URL prefix
         updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
         setVerified(result.data.user.isEmailVerified);
       } catch (err: any) {
@@ -71,7 +73,7 @@ const ProfileScreen = () => {
     };
 
     getProfile();
-  }, [userToken, setUser,updateProfileImage]);
+  }, [userToken, setUser, updateProfileImage]);
 
   const creationDate = new Date(user.createdAt);
   const year = creationDate.getFullYear();
@@ -86,58 +88,68 @@ const ProfileScreen = () => {
   const {
     control,
     handleSubmit,
+    reset,
     formState: {errors},
-    // reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      userName: user.firstName + ' ' + user.lastName,
-      profileImage: '',
-    },
   });
-  // useEffect(() => {
-  //   if (user.firstName && user.lastName) {
-  //     reset({
-  //       userName: `${user.firstName} ${user.lastName}`,
-  //       profileImage: profilePicture ?? '',
-  //     });
-  //   }
-  // }, [user, reset, profilePicture]);
   const handleEditing = () => {
+    reset({
+      userName: `${user.firstName} ${user.lastName}`,
+      profileImage: profilePicture ?? '',
+    });
     setIsEditing(true);
   };
+
   const onSubmit = async (formData: FormData) => {
     setSaveLoading(true);
     const {firstName, lastName} = validateInput(formData.userName);
 
-    // console.log('Profile screen user image: ...', profilePicture);
     try {
-      let result = await updateProfile({
+      const formDataToSend = new FormData();
+      formDataToSend.append('firstName', firstName);
+      formDataToSend.append('lastName', lastName);
+
+      if (
+        profilePicture &&
+        typeof profilePicture === 'string' &&
+        profilePicture.startsWith('file://')
+      ) {
+        const uriParts = profilePicture.split('.');
+        const fileType = uriParts[uriParts.length - 1];
+
+        formDataToSend.append('profileImage', {
+          uri: profilePicture,
+          name: `profile.${fileType}`,
+          type: `image/${fileType}`,
+        } as any);
+      }
+
+      const response = await updateProfile({
         token: userToken,
-        firstName: firstName,
-        lastName: lastName,
-        image: profilePicture,
+        formData: formDataToSend,
       });
-      if (result.success === true) {
+
+      if (response.success && response.data?.user) {
+        const updatedUser = response.data.user;
         setUser({
           ...user,
-          firstName,
-          lastName,
-          profileImage: result.data?.user?.profileImage ?? user.profileImage,
+          firstName: updatedUser.firstName,
+          lastName: updatedUser.lastName,
+          profileImage: updatedUser.profileImage?.url
+            ? API_URL + updatedUser.profileImage.url
+            : user.profileImage,
         });
-        console.log(result.data.user);
+        ToastAndroid.show('Profile updated successfully!', ToastAndroid.SHORT);
         setIsEditing(false);
-      }
-      if (result.status === FLARE || result.status === NOT_FOUND) {
-        result = await fetchProfile({token: userToken});
-      }
-      if (result.status === NOT_VERIFIED) {
-        console.log('Unauthorized user');
+      } else {
+        throw new Error(response.message || 'Failed to update profile');
       }
     } catch (error) {
-      console.log(error);
+      ToastAndroid.show('Failed to update profile', ToastAndroid.SHORT);
+    } finally {
+      setSaveLoading(false);
     }
-    setSaveLoading(false);
   };
   const toggleModalVisibility = () => {
     setShowModal(prev => !prev);
@@ -163,13 +175,19 @@ const ProfileScreen = () => {
       <View>
         <View style={styles.profileImage}>
           {user.profileImage ? (
-            <Image
-              source={{
-                uri: user.profileImage,
-              }}
-              style={styles.profileImage}
-              resizeMode="contain"
-            />
+            user.profileImage.startsWith('file://') ? (
+              <Image
+                source={{uri: user.profileImage}}
+                style={styles.profileImage}
+                resizeMode="contain"
+              />
+            ) : (
+              <Image
+                source={{uri: user.profileImage}}
+                style={styles.profileImage}
+                resizeMode="contain"
+              />
+            )
           ) : (
             <Icon name="user" size={100} color="gray" />
           )}

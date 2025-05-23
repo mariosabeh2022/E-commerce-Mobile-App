@@ -37,7 +37,11 @@ export interface updateProfileCredentials {
   token: string;
   firstName: string;
   lastName: string;
-  image?: string;
+  profileImage?: {
+    uri: string;
+    name?: string;
+    type?: string;
+  };
 }
 
 export interface fetchProductsCredentials {

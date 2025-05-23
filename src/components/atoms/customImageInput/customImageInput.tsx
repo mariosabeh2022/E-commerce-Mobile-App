@@ -41,7 +41,6 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
       };
 
       onImagesChange([...images, newImage]);
-      console.log('Selected image:', newImage);
     } catch (error) {
       console.log('Image picker error:', error);
     }
