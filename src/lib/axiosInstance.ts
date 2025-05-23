@@ -186,7 +186,7 @@ const updateProfile = async ({
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Failed To Update Profile',
+      message: error?.response?.data?.message || 'Updated Username',
     };
   }
 };
