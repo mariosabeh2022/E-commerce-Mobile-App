@@ -6,11 +6,13 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {AuthenticatedTabParamList} from '../navigator/navigationTypes';
 import ProductsStack from './ProductsStack';
 import {useTheme} from '../../contexts/themeContext';
-import {View} from 'react-native';
+import {Image, View} from 'react-native';
 import styles from '../../styles/tabAcitve.style';
 import ProfileScreen from '../../screens/profileScreen/profileScreen';
 import CartScreen from '../../screens/cartScreen/cartScreen';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
+import useUserStore from '../../stores/profileStore/profileStore';
+import {customProfileIcon} from './authenticatedTabs.style';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -20,6 +22,8 @@ const Tab = createBottomTabNavigator<AuthenticatedTabParamList>();
 export default function AuthenticatedTabs() {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  const user = useUserStore(state => state.user);
+  const userHasImage = Boolean(user?.profileImage);
   const renderCustomThemeButton = () => <CustomThemeButton />;
   const renderDevicesIcon = ({focused}: TabBarIconProps) => (
     <View
@@ -66,7 +70,17 @@ export default function AuthenticatedTabs() {
             : styles.active
           : styles.inactive
       }>
-      <CustomIcon type="user" />
+      {userHasImage ? (
+        <Image
+          source={{
+            uri: user.profileImage,
+          }}
+          style={customProfileIcon.imageIcon}
+          resizeMode="contain"
+        />
+      ) : (
+        <CustomIcon type="user" />
+      )}
     </View>
   );
   return (
