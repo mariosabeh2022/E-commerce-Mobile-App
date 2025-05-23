@@ -4,6 +4,10 @@ export interface LoginCredentials {
   token_expires_in?: string;
 }
 
+export interface resetPasswordCredentials {
+  email: string;
+}
+
 export interface RefreshCredentials {
   refreshToken: string;
   token_expires_in?: string;

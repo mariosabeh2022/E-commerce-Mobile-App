@@ -5,7 +5,8 @@ import LoginScreen from '../../screens/login/loginScreen';
 import SignUpScreen from '../../screens/sign-up/sign-upScreen';
 import VerificationScreen from '../../screens/verification/verification';
 import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
-import { UnauthenticatedStackParamList } from 'navigation/navigator/navigationTypes';
+import {UnauthenticatedStackParamList} from 'navigation/navigator/navigationTypes';
+import ForgotPasswordScreen from '../../screens/forgotPassword/forgotPassword';
 
 const Stack = createNativeStackNavigator<UnauthenticatedStackParamList>();
 
@@ -49,6 +50,17 @@ export default function UnauthenticatedStack() {
       <Stack.Screen
         name="Verification"
         component={VerificationScreen}
+        options={{
+          headerTitleAlign: 'center',
+          headerRight: renderCustomThemeButton,
+          headerTitleStyle: {
+            fontFamily: 'Sansation-BoldItalic',
+          },
+        }}
+      />
+      <Stack.Screen
+        name="Forgot Password"
+        component={ForgotPasswordScreen}
         options={{
           headerTitleAlign: 'center',
           headerRight: renderCustomThemeButton,

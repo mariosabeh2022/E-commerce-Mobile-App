@@ -32,7 +32,11 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
           uri: imagePath,
           _id: String(Math.random() * 101 + 1000),
         };
-        setImage(imageForForm); // update Zustand image store
+        if (!includeRemove) {
+          setImage(imageForForm); // update Zustand image store
+        } else {
+          updateProfileImage(imagePath);
+        }
         console.log('Image captured:', imagePath);
       },
     });

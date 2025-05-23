@@ -1,9 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {ActivityIndicator, Pressable, Text, View, Image} from 'react-native';
+import {
+  ActivityIndicator,
+  Pressable,
+  Text,
+  View,
+  Image,
+  ToastAndroid,
+} from 'react-native';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import {styles} from './profileScreenstyle';
-import {fetchProfile, updateProfile} from '../../lib/axiosInstance';
+import {
+  fetchProfile,
+  refreshTokenFn,
+  updateProfile,
+} from '../../lib/axiosInstance';
 import {errorCodes} from '../../lib/errorCodes';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import CustomButton from '../../components/atoms/customButton/customButton';
@@ -14,19 +25,17 @@ import CustomInput from '../../components/atoms/customInput/customInput';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {schema} from '../../utils/editFormTypeValidation';
-import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {validateInput} from '../../utils/editFormValidation';
 import {Modal} from 'react-native';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import CustomModalIcons from '../../components/atoms/customModalIcons/customModalIcons';
 import useUserStore from '../../stores/profileStore/profileStore';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
   const loggedInUserToken = useAuthStore(state => state.accessToken);
   const {user, setUser} = useUserStore();
-  const profilePicture = user.profileImage?.substring(
-    user.profileImage.lastIndexOf('/') + 1,
-  );
+  const profilePicture = user.profileImage;
   console.log("this user's token is:", loggedInUserToken);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -38,6 +47,7 @@ const ProfileScreen = () => {
   const [saveLoad, setSaveLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const userToken = useAuthStore(state => state.accessToken!);
+  const refreshToken = useAuthStore(state => state.refreshToken!);
   const clearToken = useAuthStore(state => state.clearToken);
   useEffect(() => {
     const getProfile = async () => {
@@ -75,22 +85,22 @@ const ProfileScreen = () => {
     control,
     handleSubmit,
     formState: {errors},
-    reset,
+    // reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      userName: '',
+      userName: user.firstName + ' ' + user.lastName,
       profileImage: '',
     },
   });
-  useEffect(() => {
-    if (user.firstName && user.lastName) {
-      reset({
-        userName: `${user.firstName} ${user.lastName}`,
-        profileImage: profilePicture ?? '',
-      });
-    }
-  }, [user, reset, profilePicture]);
+  // useEffect(() => {
+  //   if (user.firstName && user.lastName) {
+  //     reset({
+  //       userName: `${user.firstName} ${user.lastName}`,
+  //       profileImage: profilePicture ?? '',
+  //     });
+  //   }
+  // }, [user, reset, profilePicture]);
   const handleEditing = () => {
     setIsEditing(true);
   };
@@ -98,7 +108,7 @@ const ProfileScreen = () => {
     setSaveLoading(true);
     const {firstName, lastName} = validateInput(formData.userName);
 
-    console.log('Profile screen user image: ...', profilePicture);
+    // console.log('Profile screen user image: ...', profilePicture);
     try {
       let result = await updateProfile({
         token: userToken,
@@ -129,6 +139,12 @@ const ProfileScreen = () => {
   };
   const toggleModalVisibility = () => {
     setShowModal(prev => !prev);
+  };
+  const handleRefreshToken = async () => {
+    const result = await refreshTokenFn({refreshToken: refreshToken});
+    if (result) {
+      ToastAndroid.show('Token Refreshed Successfully!', ToastAndroid.SHORT);
+    }
   };
   if (!user || fetchingUserLoad) {
     return (
@@ -223,6 +239,12 @@ const ProfileScreen = () => {
           <CustomErrorMessage message="Logout" />
         </Pressable>
       </View>
+      <Pressable style={infos} onPress={handleRefreshToken}>
+        <Text style={infos}>
+          Refresh Token: {'   '}
+          <CustomIcon type="redo" />
+        </Text>
+      </Pressable>
       <Modal visible={showModal} animationType="slide" transparent={true}>
         <View style={styles.mainModalContainer}>
           <Pressable
@@ -238,7 +260,7 @@ const ProfileScreen = () => {
             </Pressable>
             <CustomTitle text="Profile Photo" />
             <View>
-              <CustomModalIcons includeRemove={true}/>
+              <CustomModalIcons includeRemove={true} />
             </View>
           </View>
         </View>

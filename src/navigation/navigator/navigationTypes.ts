@@ -3,6 +3,7 @@ export type UnauthenticatedStackParamList = {
   Login: undefined;
   SignUp: undefined;
   Verification: {email: string};
+  'Forgot Password': undefined;
 };
 
 export type ProductsStackParamList = {

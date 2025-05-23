@@ -15,6 +15,7 @@ import {
   createProductCredentials,
   deleteProductCredentials,
   editProductCredentials,
+  resetPasswordCredentials,
 } from './interfaceTypes';
 
 const {FLARE, UNAUTHORIZED, NOT_FOUND, NOT_VERIFIED, EXISTS} = errorCodes;
@@ -88,9 +89,29 @@ const login = async (credentials: LoginCredentials) => {
   }
 };
 
-const refreshToken = async (credentials: RefreshCredentials) => {
+const resetPassword = async (credentials: resetPasswordCredentials) => {
   try {
-    const {data} = await axiosInstance.post('/auth/refresh-token', credentials);
+    const {data} = await axiosInstance.post(
+      '/api/auth/forgot-password',
+      credentials,
+    );
+    return data;
+  } catch (error: any) {
+    return handleError(error, 'Reset password failed', {
+      [NOT_VERIFIED]: 'You must verify your account first',
+      [NOT_FOUND]: 'User not found',
+      [FLARE]: 'Server error',
+    });
+  }
+};
+
+const refreshTokenFn = async (credentials: RefreshCredentials) => {
+  try {
+    console.log('Token refresh fired');
+    const {data} = await axiosInstance.post(
+      '/api/auth/refresh-token',
+      credentials,
+    );
     return data;
   } catch (error: any) {
     return handleError(error, 'Token refresh failed', {
@@ -170,27 +191,31 @@ const getMimeType = (uri: string): string => {
 };
 
 const updateProfile = async (credentials: updateProfileCredentials) => {
-  try {
-    const {token, firstName, lastName, image} = credentials;
+  const {token, firstName, lastName, image} = credentials;
 
-    const formData = new FormData();
-    formData.append('firstName', firstName);
-    formData.append('lastName', lastName);
+  try {
+    const profileFormData = new FormData();
+
+    profileFormData.append('firstName', firstName);
+    profileFormData.append('lastName', lastName);
+
     if (image) {
       const mimeType = getMimeType(image);
-      const filename = image.split('/').pop() || 'profile-image';
-      formData.append('profileImage', {
+      profileFormData.append('profileImage', {
         uri: image,
-        name: filename,
         type: mimeType,
       } as any);
     }
-    const {data} = await axiosInstance.put('/api/user/profile', formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
+    const {data} = await axiosInstance.put(
+      '/api/user/profile',
+      profileFormData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
       },
-    });
+    );
 
     return data;
   } catch (error: any) {
@@ -332,12 +357,16 @@ const editProduct = async (credentials: editProductCredentials) => {
       }
     });
 
-    const {data} = await axiosInstance.put(`/api/products/${credentials.id}`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'Content-Type': 'multipart/form-data',
+    const {data} = await axiosInstance.put(
+      `/api/products/${credentials.id}`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data',
+        },
       },
-    });
+    );
 
     return data;
   } catch (error: any) {
@@ -372,11 +401,12 @@ export {
   reVerification,
   fetchProfile,
   updateProfile,
-  refreshToken,
+  refreshTokenFn,
   fetchProducts,
   searchProducts,
   productDetails,
   createProduct,
   deleteProduct,
   editProduct,
+  resetPassword,
 };
