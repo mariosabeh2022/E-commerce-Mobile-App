@@ -101,18 +101,6 @@ const DetailsScreen = () => {
     `${updateYear}-${updateMonth}-${updateDay}` !== formattedCreationDate
       ? `${updateYear}-${updateMonth}-${updateDay}`
       : 'No updates yet';
-  const handleDeleteProduct = () => {
-    if (!userIsCreator) {
-      return;
-    } else {
-      deleteProduct({token: userToken!, id: details?.data?._id});
-      ToastAndroid.show('Product Deleted Successfully!', ToastAndroid.SHORT);
-
-      navigation.navigate('Products', {
-        fromScreen: 'Details',
-      });
-    }
-  };
   const openGmail = (email: string) => {
     const gmailUrl = `googlegmail://co?to=${email}`;
     Linking.canOpenURL(gmailUrl)
@@ -126,6 +114,46 @@ const DetailsScreen = () => {
       .catch(() => {
         Alert.alert('Error', 'Unable to open mail app');
       });
+  };
+  const showConfirmation = (onConfirm: () => void) => {
+    Alert.alert(
+      'Delete Product',
+      'Are you sure you want to delete this product?',
+      [
+        {
+          text: 'Cancel',
+          onPress: () => console.log('Delete cancelled'),
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: onConfirm,
+        },
+      ],
+      {cancelable: true},
+    );
+  };
+
+  const handleDeleteProduct = async () => {
+    if (!userIsCreator) {
+      return;
+    } else {
+      showConfirmation(async () => {
+        try {
+          await deleteProduct({token: userToken!, id: details?.data?._id});
+          ToastAndroid.show(
+            'Product Deleted Successfully',
+            ToastAndroid.SHORT,
+          );
+          navigation.navigate('Products', {
+            fromScreen: 'Details',
+          });
+        } catch (error) {
+          console.error('Error deleting product:', error);
+          ToastAndroid.show('Failed to delete product', ToastAndroid.SHORT);
+        }
+      });
+    }
   };
   const handleEditNavigation = () => {
     editNavigation.navigate('Edit Product', {id: itemId});
@@ -177,13 +205,7 @@ const DetailsScreen = () => {
               Updated AT : {formattedUpdateDate}
             </Text>
           </View>
-          <View
-            style={{
-              borderColor: 'red',
-              borderWidth: 2,
-              width: '100%',
-              height: '15%',
-            }}>
+          <View style={styles.mapContainer}>
             <MapScreen coordinates={[longitude, latitude]} />
           </View>
           {userIsCreator && (

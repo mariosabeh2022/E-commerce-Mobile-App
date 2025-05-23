@@ -119,4 +119,10 @@ export const styles = StyleSheet.create({
     fontSize: 16,
     color: '#223a66',
   },
+  mapContainer: {
+    borderColor: 'red',
+    borderWidth: 2,
+    width: '100%',
+    height: '15%',
+  },
 });
