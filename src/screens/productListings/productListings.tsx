@@ -10,7 +10,6 @@ import {
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {styles} from './productListings.style';
-import {skeletonStyles} from '../../components/organismes/customSkeletonItem/customSkeletonItem.style';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import CustomRenderItem from '../../components/organismes/customRenderItem/customRenderItem';
@@ -20,11 +19,12 @@ import CustomPressable from '../../components/molecules/customPressable/customPr
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 // import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
-import {useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
 import {fetchProducts, searchProducts} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomButton from '../../components/atoms/customButton/customButton';
-
+import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
+import CustomSkeletonItem from '../../components/organismes/customSkeletonItem/customSeketonItem';
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
   'Products'
@@ -52,20 +52,32 @@ const ProductListingsScreen = () => {
   };
   const {
     data: responseData,
+    fetchNextPage,
+    hasNextPage,
     isFetching: isFetchingAll,
+    isFetchingNextPage,
     isRefetching: isRefetchingAll,
     refetch: refetchAll,
-  } = useQuery({
+  } = useInfiniteQuery({
     queryKey: ['products', {sortBy, order}],
-    queryFn: () =>
+    queryFn: ({pageParam}) =>
       fetchProducts({
         token: userToken!,
+        page: pageParam,
         sortBy,
         order,
       }),
+    initialPageParam: 1,
+    getNextPageParam: lastPage => {
+      console.log('This was the last page', lastPage);
+      const currentPage = lastPage.pagination.currentPage; // from your API
+      const totalPages = lastPage.pagination.totalPages; // from your API
+      return currentPage < totalPages ? currentPage + 1 : undefined;
+    },
     enabled: !!userToken,
   });
-
+  const flatData = responseData?.pages.flatMap(page => page.data) ?? [];
+  console.log(flatData);
   const {
     data: filteredData,
     isFetching: isFetchingSearch,
@@ -95,33 +107,6 @@ const ProductListingsScreen = () => {
   };
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
-
-  const customSkeletonItem = () => {
-    return (
-      <View
-        style={
-          isAppDark ? skeletonStyles.darkContainer : skeletonStyles.container
-        }>
-        <View style={skeletonStyles.innerContainer}>
-          <View style={skeletonStyles.image} />
-          <View style={skeletonStyles.infoContainer}>
-            <View style={skeletonStyles.item}>
-              <View style={skeletonStyles.textLine} />
-            </View>
-            <View style={skeletonStyles.price}>
-              <View style={skeletonStyles.textLineShort} />
-            </View>
-            <View style={skeletonStyles.item}>
-              <View style={skeletonStyles.textLine} />
-            </View>
-            <View style={skeletonStyles.price}>
-              <View style={skeletonStyles.textLineShort} />
-            </View>
-          </View>
-        </View>
-      </View>
-    );
-  };
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (
@@ -169,17 +154,29 @@ const ProductListingsScreen = () => {
           </>
         </CustomView>
         <FlatList
-          data={showSearchResults ? filteredData?.data : responseData?.data}
+          data={showSearchResults ? filteredData?.data : flatData}
           keyExtractor={item => item._id.toString()}
           renderItem={({item}) =>
             (showSearchResults ? isFetchingSearch : isFetchingAll) ||
-            !responseData
-              ? customSkeletonItem()
-              : renderItem({item})
+            !responseData ? (
+              <CustomSkeletonItem />
+            ) : (
+              renderItem({item})
+            )
           }
           onRefresh={showSearchResults ? refetchSearch : refetchAll}
           refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
-          ListEmptyComponent={customSkeletonItem}
+          onEndReached={() => {
+            if (!showSearchResults && hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.7}
+          ListEmptyComponent={
+            !isFetchingAll && flatData.length === 0
+              ? CustomErrorMessage
+              : CustomSkeletonItem
+          }
           ListHeaderComponent={
             <Text
               style={
