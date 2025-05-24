@@ -13,7 +13,12 @@ const Stack = createNativeStackNavigator<UnauthenticatedStackParamList>();
 export default function UnauthenticatedStack() {
   const renderCustomThemeButton = () => <CustomThemeButton />;
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator
+      initialRouteName="Home"
+      screenOptions={{
+        headerShown: false,
+        animation: 'flip',
+      }}>
       <Stack.Screen
         name="Home"
         component={HomenScreen}
