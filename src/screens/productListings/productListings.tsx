@@ -64,6 +64,9 @@ const ProductListingsScreen = () => {
         order,
       }),
     getNextPageParam: lastPage => {
+      if (!lastPage?.pagination) {
+        return undefined;
+      }
       const currentPage = lastPage.pagination.currentPage;
       const totalPages = lastPage.pagination.totalPages;
       return currentPage < totalPages ? currentPage + 1 : undefined;
