@@ -154,7 +154,9 @@ const ProductListingsScreen = () => {
           </>
         </CustomView>
         {isFetchingAll && !responseData ? (
-          <CustomSkeletonItem />
+          <View style={styles.emptyListContainer}>
+            <CustomSkeletonItem />
+          </View>
         ) : (
           <FlatList
             data={
