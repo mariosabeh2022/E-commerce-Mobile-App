@@ -77,23 +77,26 @@ export const styles = StyleSheet.create({
   },
   rowBack: {
     alignItems: 'center',
-    backgroundColor: '#ff4d4d',
+    backgroundColor: 'red',
     flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    paddingRight: 20,
+    paddingRight: 15,
     borderRadius: 10,
-    marginHorizontal: 10,
     marginVertical: 5,
   },
+
   deleteButton: {
+    width: 75,
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    width: 75,
+    backgroundColor: 'red',
+    borderRadius: 10,
   },
+
   deleteText: {
-    color: '#fff',
+    color: 'white',
     fontWeight: 'bold',
   },
 });

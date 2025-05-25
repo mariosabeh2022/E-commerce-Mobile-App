@@ -235,7 +235,7 @@ const DetailsScreen = () => {
               </Pressable>
             </>
           )}
-          <Pressable
+          <TouchableOpacity
             style={
               isAppDark ? styles.darkButtonContainer : styles.buttonContainer
             }
@@ -243,7 +243,7 @@ const DetailsScreen = () => {
             <Text style={isAppDark ? styles.darkButton : styles.button}>
               Add To Cart
             </Text>
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

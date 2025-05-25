@@ -73,9 +73,11 @@ const ProductListingsScreen = () => {
     },
     enabled: !!userToken,
   });
-  const flatData = responseData?.pages.flatMap(page => page.data) ?? [];
+  const flatData = responseData?.pages?.flatMap(page => page.data) ?? [];
   const deduplicatedFlatData = Array.from(
-    new Map(flatData.map(item => [item._id, item])).values(),
+    new Map(
+      flatData.filter(item => item && item._id).map(item => [item._id, item]),
+    ).values(),
   );
   const {
     data: filteredData,
@@ -151,54 +153,66 @@ const ProductListingsScreen = () => {
             </CustomPressable>
           </>
         </CustomView>
-        <FlatList
-          data={
-            showSearchResults && Array.isArray(filteredData?.data)
-              ? filteredData.data
-              : deduplicatedFlatData
-          }
-          keyExtractor={(item, index) => {
-            if (item?._id) {
-              return item._id.toString();
+        {isFetchingAll && !responseData ? (
+          <CustomSkeletonItem />
+        ) : (
+          <FlatList
+            data={
+              showSearchResults && Array.isArray(filteredData?.data)
+                ? filteredData.data
+                : deduplicatedFlatData
             }
-            return `fallback-${index}`; // safer fallback than random
-          }}
-          renderItem={({item}) => {
-            if (!item || !item._id) {
-              return null;
+            keyExtractor={(item, index) => {
+              if (item?._id) {
+                return item._id.toString();
+              }
+              return `fallback-${index}`; // safer fallback than random
+            }}
+            renderItem={({item}) => {
+              if (!item || !item._id) {
+                return null;
+              }
+              return renderItem({item});
+            }}
+            onRefresh={showSearchResults ? refetchSearch : refetchAll}
+            refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
+            onEndReached={() => {
+              if (!showSearchResults && hasNextPage && !isFetchingNextPage) {
+                fetchNextPage();
+              }
+            }}
+            onEndReachedThreshold={0.7}
+            ListEmptyComponent={
+              !isFetchingAll && flatData.length === 0 ? (
+                CustomErrorMessage
+              ) : (
+                <View style={styles.emptyListContainer}>
+                  <CustomSkeletonItem />
+                </View>
+              )
             }
-            return renderItem({item});
-          }}
-          onRefresh={showSearchResults ? refetchSearch : refetchAll}
-          refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
-          onEndReached={() => {
-            if (!showSearchResults && hasNextPage && !isFetchingNextPage) {
-              fetchNextPage();
+            ListHeaderComponent={
+              <Text
+                style={
+                  isAppDark
+                    ? styles.darkHeaderComponent
+                    : styles.headerComponent
+                }>
+                Available Items
+              </Text>
             }
-          }}
-          onEndReachedThreshold={0.7}
-          ListEmptyComponent={
-            !isFetchingAll && flatData.length === 0
-              ? CustomErrorMessage
-              : CustomSkeletonItem
-          }
-          ListHeaderComponent={
-            <Text
-              style={
-                isAppDark ? styles.darkHeaderComponent : styles.headerComponent
-              }>
-              Available Items
-            </Text>
-          }
-          ListFooterComponent={
-            <Text
-              style={
-                isAppDark ? styles.darkFooterComponent : styles.footerComponent
-              }>
-              ---------------
-            </Text>
-          }
-        />
+            ListFooterComponent={
+              <Text
+                style={
+                  isAppDark
+                    ? styles.darkFooterComponent
+                    : styles.footerComponent
+                }>
+                ---------------
+              </Text>
+            }
+          />
+        )}
       </>
     </CustomContainer>
   );

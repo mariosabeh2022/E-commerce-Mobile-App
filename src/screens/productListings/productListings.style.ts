@@ -29,6 +29,9 @@ export const styles = StyleSheet.create({
     gap: 5,
     justifyContent: 'space-around',
   },
+  emptyListContainer:{
+    padding:15,
+  },
   skeletonItem: {
     ...baseSkeletonComponent,
     backgroundColor: 'gray',
