@@ -37,7 +37,10 @@ axiosInstance.interceptors.response.use(
   res => res,
   async (error: AxiosError) => {
     const originalRequest: any = error.config;
-
+    const status = error?.response?.status;
+    if (status === UNAUTHORIZED) {
+      ToastAndroid.show('Incorrect Credentials', ToastAndroid.SHORT);
+    }
     if (error?.response?.status === FLARE) {
       originalRequest._retryCount = originalRequest._retryCount || 0;
 

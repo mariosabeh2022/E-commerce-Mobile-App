@@ -29,9 +29,11 @@ import {SafeAreaView, useSafeAreaInsets} from 'react-native-safe-area-context';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import CustomLink from '../../components/atoms/customLink/customLink';
+import useCartStore from '../../stores/cartStore/cartStore';
 
 type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 const DetailsScreen = () => {
+  const addProduct = useCartStore(state => state.addProduct);
   const navigation =
     useNavigation<NativeStackNavigationProp<ProductsStackParamList>>();
   const editNavigation =
@@ -66,8 +68,8 @@ const DetailsScreen = () => {
     enabled: !!userToken,
   });
   const userIsCreator = details?.data?.user?._id === userData?.data?.user?.id;
-  const longitude = details?.data?.location?.longitude;
-  const latitude = details?.data?.location?.latitude;
+  const longitude = details?.data?.location?.longitude || 35.49548;
+  const latitude = details?.data?.location?.latitude || 33.88863;
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   const fadeIn = useCallback(() => {
@@ -154,7 +156,10 @@ const DetailsScreen = () => {
   const handleEditNavigation = () => {
     editNavigation.navigate('Edit Product', {id: itemId});
   };
-
+  const handleAddToCart = () => {
+    addProduct(details.data);
+    ToastAndroid.show('Added To Your Cart!', ToastAndroid.SHORT);
+  };
   if (fetchingDetails || fetchingProfile) {
     return (
       <View style={styles.container}>
@@ -233,7 +238,8 @@ const DetailsScreen = () => {
           <Pressable
             style={
               isAppDark ? styles.darkButtonContainer : styles.buttonContainer
-            }>
+            }
+            onPress={handleAddToCart}>
             <Text style={isAppDark ? styles.darkButton : styles.button}>
               Add To Cart
             </Text>

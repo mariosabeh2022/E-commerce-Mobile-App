@@ -34,10 +34,8 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {API_URL} from '../../config/index';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
-  const loggedInUserToken = useAuthStore(state => state.accessToken);
   const {user, setUser, updateProfileImage} = useUserStore();
   const profilePicture = user.profileImage;
-  console.log("this user's token is:", loggedInUserToken);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const infos = isAppDark ? styles.darkInfo : styles.info;

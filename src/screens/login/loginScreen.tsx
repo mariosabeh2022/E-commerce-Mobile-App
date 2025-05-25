@@ -28,16 +28,23 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-import {login, reVerification} from '../../lib/axiosInstance';
+import {fetchProfile, login, reVerification} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import {errorCodes} from '../../lib/errorCodes';
+import useCartStore from '../../stores/cartStore/cartStore';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'
 >;
 const LoginScreen = () => {
   const {UNAUTHORIZED, NOT_FOUND, FLARE, NOT_VERIFIED} = errorCodes;
+  //Login Token function
   const setTokens = useAuthStore(state => state.setTokens);
+  //Cart User Token function
+  const setCartUserId = useCartStore(state => state.setCartUserId);
+  //Cart User Token
+  const cartUserId = useCartStore(state => state.cartUserId);
+  const clearProducts = useCartStore(state => state.clearProducts);
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
@@ -78,7 +85,16 @@ const LoginScreen = () => {
         password: data.password,
       });
       if (result.success === true) {
+        const fetchedUser = await fetchProfile({
+          token: result.data.accessToken,
+        });
+        if (fetchedUser.data) {
+          if (cartUserId !== fetchedUser.data.user.id) {
+            clearProducts();
+          }
+        }
         setTokens(result.data.accessToken, result.data.refreshToken);
+        setCartUserId(fetchedUser.data.user.id);
       } else if (result.code === UNAUTHORIZED) {
         setValue('email', '');
         setValue('password', '');

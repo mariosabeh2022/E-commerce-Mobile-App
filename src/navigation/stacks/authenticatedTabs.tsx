@@ -13,6 +13,7 @@ import CartScreen from '../../screens/cartScreen/cartScreen';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import useUserStore from '../../stores/profileStore/profileStore';
 import {customProfileIcon} from './authenticatedTabs.style';
+import useCartStore from '../../stores/cartStore/cartStore';
 
 type TabBarIconProps = {
   focused: boolean;
@@ -24,6 +25,8 @@ export default function AuthenticatedTabs() {
   const isAppDark = theme === 'dark';
   const user = useUserStore(state => state.user);
   const userHasImage = Boolean(user?.profileImage);
+  const products = useCartStore(state => state.products);
+  const productsCount = products.length;
   const renderCustomThemeButton = () => <CustomThemeButton />;
   const renderDevicesIcon = ({focused}: TabBarIconProps) => (
     <View
@@ -128,7 +131,7 @@ export default function AuthenticatedTabs() {
           headerTitleAlign: 'center',
           headerRight: renderCustomThemeButton,
           tabBarIcon: renderShoppingIcon,
-          tabBarBadge: '0',
+          tabBarBadge: productsCount > 0 ? productsCount : 0,
           tabBarBadgeStyle: {
             backgroundColor: isAppDark ? 'black' : 'white',
             color: isAppDark ? lightBaseColor : darkBaseColor,

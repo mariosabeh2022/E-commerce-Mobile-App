@@ -74,9 +74,11 @@ const ProductListingsScreen = () => {
     enabled: !!userToken,
   });
   const flatData = responseData?.pages.flatMap(page => page.data) ?? [];
+  const deduplicatedFlatData = Array.from(
+    new Map(flatData.map(item => [item._id, item])).values(),
+  );
   const {
     data: filteredData,
-    isFetching: isFetchingSearch,
     isRefetching: isRefetchingSeach,
     refetch: refetchSearch,
   } = useQuery({
@@ -150,16 +152,23 @@ const ProductListingsScreen = () => {
           </>
         </CustomView>
         <FlatList
-          data={showSearchResults ? filteredData?.data : flatData}
-          keyExtractor={item => item._id.toString()}
-          renderItem={({item}) =>
-            (showSearchResults ? isFetchingSearch : isFetchingAll) ||
-            !responseData ? (
-              <CustomSkeletonItem />
-            ) : (
-              renderItem({item})
-            )
+          data={
+            showSearchResults && Array.isArray(filteredData?.data)
+              ? filteredData.data
+              : deduplicatedFlatData
           }
+          keyExtractor={(item, index) => {
+            if (item?._id) {
+              return item._id.toString();
+            }
+            return `fallback-${index}`; // safer fallback than random
+          }}
+          renderItem={({item}) => {
+            if (!item || !item._id) {
+              return null;
+            }
+            return renderItem({item});
+          }}
           onRefresh={showSearchResults ? refetchSearch : refetchAll}
           refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
           onEndReached={() => {
