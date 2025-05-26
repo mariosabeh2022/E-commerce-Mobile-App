@@ -1,8 +1,9 @@
-import {View, Image, Text} from 'react-native';
+import {View, Image, Text, Pressable, Share} from 'react-native';
 import {styles} from './customRenderItem.style';
 import {customRenderItemProps} from './customRenderItem.type';
 import {useTheme} from '../../../contexts/themeContext';
 import {API_URL} from '../../../config/index';
+import CustomIcon from '../../../components/atoms/customIcon/customIcon';
 const CustomRenderItem = ({item}: customRenderItemProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -17,6 +18,17 @@ const CustomRenderItem = ({item}: customRenderItemProps) => {
           <Text style={isAppDark ? styles.darkItem : styles.item}>
             {item.title}
           </Text>
+          <Pressable
+            onPress={() => {
+              const url = `ecommerceMobileApp://details/${item._id}`;
+              Share.share({
+                message: `Check out this product: ${url}`,
+              });
+            }}
+            style={styles.inlineShareButton}>
+            <CustomIcon type="share-alt" />
+          </Pressable>
+
           <Text style={isAppDark ? styles.darkPrice : styles.price}>
             {item.price}$
           </Text>

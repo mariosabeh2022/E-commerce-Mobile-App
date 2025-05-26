@@ -53,6 +53,10 @@ export const styles = StyleSheet.create({
     ...baseItem,
     color: darkBaseColor,
   },
+  inlineShareButton: {
+    alignItems: 'flex-end',
+    paddingVertical: 1,
+  },
   price: {
     ...basePrice,
     color: 'white',
