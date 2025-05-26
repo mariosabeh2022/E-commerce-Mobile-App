@@ -22,6 +22,7 @@ const baseDeleteBackground: ViewStyle = {
   alignItems: 'flex-end',
   paddingRight: 20,
   borderRadius: 20,
+  height: '94%',
 };
 export const styles = StyleSheet.create({
   container: {
