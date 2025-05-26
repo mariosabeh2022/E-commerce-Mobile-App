@@ -11,6 +11,7 @@ import {
   Linking,
   Alert,
   TouchableOpacity,
+  Share,
 } from 'react-native';
 import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
@@ -30,6 +31,7 @@ import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import CustomLink from '../../components/atoms/customLink/customLink';
 import useCartStore from '../../stores/cartStore/cartStore';
+import CustomIcon from '../../components/atoms/customIcon/customIcon';
 
 type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 const DetailsScreen = () => {
@@ -160,6 +162,27 @@ const DetailsScreen = () => {
     addProduct(details.data);
     ToastAndroid.show('Added To Your Cart!', ToastAndroid.SHORT);
   };
+  const renderShareButton = useCallback(
+    () => (
+      <Pressable
+        onPress={() => {
+          const url = `ecommerceMobileApp://details/${itemId}`;
+          Share.share({
+            message: `Check out this product: ${url}`,
+          });
+        }}>
+        <Text>
+          <CustomIcon type="share-alt" />
+        </Text>
+      </Pressable>
+    ),
+    [itemId],
+  );
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: renderShareButton,
+    });
+  }, [navigation, renderShareButton, itemId]);
   if (fetchingDetails || fetchingProfile) {
     return (
       <View style={styles.container}>

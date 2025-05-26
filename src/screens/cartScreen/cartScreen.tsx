@@ -12,7 +12,6 @@ const CartScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const products = useCartStore(state => state.products);
-  console.log(products);
 
   const totalPrice = products.reduce((sum, item) => {
     return sum + item.count * item.price;

@@ -23,3 +23,18 @@ export type UploadStackParamList = {
   UploadHome: undefined;
   CameraScreen: undefined;
 };
+export type AuthenticatedStackParamList = {
+  Tabs: undefined;
+  CameraScreen?: {onCapture?: (image: any) => void};
+  'Edit Product': {id: string};
+};
+export type RootStackParamList = {
+  // Authenticated routes
+  Tabs: undefined;
+  CameraScreen?: {onCapture?: (image: any) => void};
+  'Edit Product': {id: string};
+
+  // Add unauthenticated routes if needed
+  Home?: undefined;
+  Login?: undefined;
+};

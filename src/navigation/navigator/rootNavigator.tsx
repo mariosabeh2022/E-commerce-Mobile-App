@@ -12,7 +12,7 @@ import AuthenticatedStack from '../stacks/authenticatedStack';
 import NetInfo from '@react-native-community/netinfo';
 import {Animated, Easing} from 'react-native';
 import NoConnectionScreen from '../../screens/noConnectionScreen/noConnectionScreen';
-
+import {linking} from '../linking';
 export default function RootNavigator() {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -21,6 +21,7 @@ export default function RootNavigator() {
   const [connectionError, setConnectionError] = useState(false);
   const progress = useRef(new Animated.Value(0)).current;
   const progressValue = useRef(0);
+
   const checkConnection = useCallback(async () => {
     setConnectionError(false);
     progress.setValue(0);
@@ -58,9 +59,11 @@ export default function RootNavigator() {
   if (loading) {
     return <SplashScreen progress={progress} />;
   }
-
   return (
-    <NavigationContainer theme={isAppDark ? DarkTheme : DefaultTheme}>
+    <NavigationContainer
+      theme={isAppDark ? DarkTheme : DefaultTheme}
+      linking={linking}
+      fallback={<SplashScreen progress={progress} />}>
       {accessToken ? <AuthenticatedStack /> : <UnauthenticatedStack />}
     </NavigationContainer>
   );
