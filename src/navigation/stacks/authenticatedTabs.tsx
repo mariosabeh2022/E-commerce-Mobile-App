@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback, useEffect} from 'react';
 import CustomThemeButton from '../../components/atoms/customThemeButton/customThemeButton';
 import CreateProduct from '../../screens/createProduct/createProduct';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
@@ -14,7 +14,6 @@ import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import useUserStore from '../../stores/profileStore/profileStore';
 import {customProfileIcon} from './authenticatedTabs.style';
 import useCartStore from '../../stores/cartStore/cartStore';
-
 type TabBarIconProps = {
   focused: boolean;
 };
@@ -28,63 +27,81 @@ export default function AuthenticatedTabs() {
   const products = useCartStore(state => state.products);
   const productsCount = products.length;
   const renderCustomThemeButton = () => <CustomThemeButton />;
-  const renderDevicesIcon = ({focused}: TabBarIconProps) => (
-    <View
-      style={
-        focused
-          ? isAppDark
-            ? styles.darkActive
-            : styles.active
-          : styles.inactive
-      }>
-      <CustomIcon type="mobile" />
-    </View>
+  const setUser = useUserStore(state => state.setUser);
+  useEffect(() => {
+    if (user) {
+      setUser(user);
+    }
+  }, [user, setUser]);
+  const renderDevicesIcon = useCallback(
+    ({focused}: TabBarIconProps) => (
+      <View
+        style={
+          focused
+            ? isAppDark
+              ? styles.darkActive
+              : styles.active
+            : styles.inactive
+        }>
+        <CustomIcon type="mobile" />
+      </View>
+    ),
+    [isAppDark],
   );
-  const renderUploadIcon = ({focused}: TabBarIconProps) => (
-    <View
-      style={
-        focused
-          ? isAppDark
-            ? styles.darkActive
-            : styles.active
-          : styles.inactive
-      }>
-      <CustomIcon type="plus" />
-    </View>
+  const renderUploadIcon = useCallback(
+    ({focused}: TabBarIconProps) => (
+      <View
+        style={
+          focused
+            ? isAppDark
+              ? styles.darkActive
+              : styles.active
+            : styles.inactive
+        }>
+        <CustomIcon type="plus" />
+      </View>
+    ),
+    [isAppDark],
   );
-  const renderShoppingIcon = ({focused}: TabBarIconProps) => (
-    <View
-      style={
-        focused
-          ? isAppDark
-            ? styles.darkActive
-            : styles.active
-          : styles.inactive
-      }>
-      <CustomIcon type="shopping-cart" />
-    </View>
+  const renderShoppingIcon = useCallback(
+    ({focused}: TabBarIconProps) => (
+      <View
+        style={
+          focused
+            ? isAppDark
+              ? styles.darkActive
+              : styles.active
+            : styles.inactive
+        }>
+        <CustomIcon type="shopping-cart" />
+      </View>
+    ),
+    [isAppDark],
   );
-  const renderProfileIcon = ({focused}: TabBarIconProps) => (
-    <View
-      style={
-        focused
-          ? isAppDark
-            ? styles.darkActive
-            : styles.active
-          : styles.inactive
-      }>
-      {userHasImage ? (
-        <Image
-          source={{
-            uri: user.profileImage,
-          }}
-          style={customProfileIcon.imageIcon}
-          resizeMode="contain"
-        />
-      ) : (
-        <CustomIcon type="user" />
-      )}
-    </View>
+  const renderProfileIcon = useCallback(
+    ({focused}: TabBarIconProps) => (
+      <View
+        style={
+          focused
+            ? isAppDark
+              ? styles.darkActive
+              : styles.active
+            : styles.inactive
+        }>
+        {userHasImage ? (
+          <Image
+            source={{
+              uri: user.profileImage,
+            }}
+            style={customProfileIcon.imageIcon}
+            resizeMode="contain"
+          />
+        ) : (
+          <CustomIcon type="user" />
+        )}
+      </View>
+    ),
+    [isAppDark, userHasImage, user?.profileImage],
   );
   return (
     <Tab.Navigator

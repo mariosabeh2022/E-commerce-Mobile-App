@@ -3,7 +3,6 @@ import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
 const baseContainer: ViewStyle = {
   borderRadius: 20,
   padding: 10,
-  marginBottom: 10,
 };
 
 const baseText: ViewStyle & TextStyle = {
@@ -17,25 +16,27 @@ export const skeletonStyles = StyleSheet.create({
     ...baseContainer,
     backgroundColor: 'gray',
     borderColor: 'gray',
+    flexDirection: 'column',
   },
   darkContainer: {
     ...baseContainer,
     backgroundColor: 'darkgray',
     borderColor: 'darkgray',
+    flexDirection: 'column',
   },
   innerContainer: {
-    flex: 1,
     flexDirection: 'row',
+    marginBottom: 16,
+    alignItems: 'center',
   },
   infoContainer: {
-    padding: 10,
-    justifyContent: 'center',
     flex: 1,
+    paddingLeft: 10,
+    justifyContent: 'center',
   },
   image: {
-    width: 135,
-    height: 135,
-    marginRight: 10,
+    width: 100,
+    height: 100,
     backgroundColor: 'lightgray',
     borderRadius: 10,
   },

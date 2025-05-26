@@ -29,7 +29,13 @@ export const styles = StyleSheet.create({
     gap: 5,
     justifyContent: 'space-around',
   },
-  emptyListContainer: {padding: 16, flexShrink: 1},
+  emptyListContainer: {
+    padding: 16,
+    marginTop: '65%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    maxHeight: '30%',
+  },
   skeletonItem: {
     ...baseSkeletonComponent,
     backgroundColor: 'gray',

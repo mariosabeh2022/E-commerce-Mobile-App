@@ -193,10 +193,10 @@ const DetailsScreen = () => {
               Price: {details?.data?.price}$
             </Text>
             <Text style={isAppDark ? styles.darkTitle : styles.title}>
-              <CustomErrorMessage message="Product Owner:" />{' '}
+              <CustomErrorMessage message="Owner:" />{' '}
               <TouchableOpacity
                 onPress={() => openGmail(details?.data?.user.email)}>
-                <Text style={isAppDark ? styles.darkPrice : styles.price}>
+                <Text>
                   <CustomLink text={details?.data?.user.email} />
                 </Text>
               </TouchableOpacity>

@@ -155,6 +155,12 @@ const ProductListingsScreen = () => {
         </CustomView>
         {isFetchingAll && !responseData ? (
           <View style={styles.emptyListContainer}>
+            <Text
+              style={
+                isAppDark ? styles.darkHeaderComponent : styles.headerComponent
+              }>
+              Available Items
+            </Text>
             <CustomSkeletonItem />
           </View>
         ) : (
