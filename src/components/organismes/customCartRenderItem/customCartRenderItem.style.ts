@@ -16,6 +16,13 @@ const baseItem: ViewStyle & TextStyle = {
   fontFamily: 'Sansation-BoldItalic',
   alignItems: 'center',
 };
+const baseDeleteBackground: ViewStyle = {
+  ...StyleSheet.absoluteFillObject,
+  justifyContent: 'center',
+  alignItems: 'flex-end',
+  paddingRight: 20,
+  borderRadius: 20,
+};
 export const styles = StyleSheet.create({
   container: {
     ...baseContainer,
@@ -41,7 +48,7 @@ export const styles = StyleSheet.create({
   },
   rightCount: {
     alignSelf: 'flex-end',
-    backgroundColor: 'gray',
+    backgroundColor: 'darkgray',
     alignItems: 'center',
     borderRadius: 20,
     width: '30%',
@@ -75,28 +82,22 @@ export const styles = StyleSheet.create({
   darkPrice: {
     ...basePrice,
   },
-  rowBack: {
-    alignItems: 'center',
-    backgroundColor: 'red',
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingRight: 15,
+  swipeContainer: {
+    overflow: 'hidden',
     borderRadius: 10,
-    marginVertical: 5,
+    marginBottom: 10,
   },
-
-  deleteButton: {
-    width: 75,
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'red',
-    borderRadius: 10,
+  deleteBackground: {
+    ...baseDeleteBackground,
+    backgroundColor: lightBaseColor,
   },
-
+  darkDeleteBackground: {
+    ...baseDeleteBackground,
+    backgroundColor: darkBaseColor,
+  },
   deleteText: {
-    color: 'white',
+    color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });
