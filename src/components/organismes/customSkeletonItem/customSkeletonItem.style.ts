@@ -1,72 +1,56 @@
-import {StyleSheet, TextStyle, ViewStyle} from 'react-native';
-
-const baseContainer: ViewStyle = {
-  borderRadius: 20,
-  padding: 10,
-};
-
-const baseText: ViewStyle & TextStyle = {
-  fontSize: 15,
-  paddingTop: 5,
-  borderRadius: 4,
-};
-
-export const skeletonStyles = StyleSheet.create({
+import {StyleSheet} from 'react-native';
+export const styles = StyleSheet.create({
   container: {
-    ...baseContainer,
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
     backgroundColor: 'gray',
     borderColor: 'gray',
-    flexDirection: 'column',
   },
   darkContainer: {
-    ...baseContainer,
+    borderRadius: 20,
+    padding: 10,
+    marginBottom: 10,
     backgroundColor: 'darkgray',
     borderColor: 'darkgray',
-    flexDirection: 'column',
   },
   innerContainer: {
+    flex: 1,
     flexDirection: 'row',
-    marginBottom: 16,
-    alignItems: 'center',
   },
   infoContainer: {
-    flex: 1,
-    paddingLeft: 10,
-    justifyContent: 'center',
-  },
-  image: {
-    width: 100,
-    height: 100,
+    padding: 10,
+    width: '50%',
     backgroundColor: 'lightgray',
+    borderRadius: 20,
+    justifyContent: 'space-around',
+  },
+  imageSkeleton: {
+    width: 135,
+    height: 135,
+    marginRight: 10,
     borderRadius: 10,
-  },
-  item: {
-    ...baseText,
-    height: 20,
-    backgroundColor: 'lightgray',
-    marginBottom: 5,
-    width: '90%',
-  },
-  price: {
-    ...baseText,
-    height: 20,
-    backgroundColor: 'lightgray',
-    marginBottom: 5,
-    width: '70%',
-    paddingTop: 8,
-  },
-  textLine: {
-    height: 16,
-    backgroundColor: 'lightgray',
-    borderRadius: 4,
-    marginBottom: 8,
-    width: '100%',
+    backgroundColor: '#e0e0e0',
   },
   textLineShort: {
-    height: 16,
+    width: '80%',
+    height: 15,
     borderRadius: 4,
-    backgroundColor: 'lightgray',
-    marginBottom: 8,
-    width: '100%',
+    backgroundColor: '#e0e0e0',
+    marginBottom: 10,
+  },
+  textLineMedium: {
+    width: '60%',
+    height: 15,
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0',
+    marginBottom: 10,
+  },
+  textLineTiny: {
+    width: '40%',
+    height: 12,
+    borderRadius: 4,
+    backgroundColor: '#e0e0e0',
+    marginBottom: 10,
   },
 });

@@ -161,7 +161,9 @@ const ProductListingsScreen = () => {
               }>
               Available Items
             </Text>
-            <CustomSkeletonItem />
+            {[...Array(3)].map((_, index) => (
+              <CustomSkeletonItem key={`skeleton-${index}`} />
+            ))}
           </View>
         ) : (
           <FlatList
@@ -174,7 +176,7 @@ const ProductListingsScreen = () => {
               if (item?._id) {
                 return item._id.toString();
               }
-              return `fallback-${index}`; // safer fallback than random
+              return `fallback-${index}`;
             }}
             renderItem={({item}) => {
               if (!item || !item._id) {
@@ -195,7 +197,9 @@ const ProductListingsScreen = () => {
                 CustomErrorMessage
               ) : (
                 <View style={styles.emptyListContainer}>
-                  <CustomSkeletonItem />
+                  {[...Array(3)].map((_, index) => (
+                    <CustomSkeletonItem key={`empty-skeleton-${index}`} />
+                  ))}
                 </View>
               )
             }
@@ -210,14 +214,16 @@ const ProductListingsScreen = () => {
               </Text>
             }
             ListFooterComponent={
-              <Text
-                style={
-                  isAppDark
-                    ? styles.darkFooterComponent
-                    : styles.footerComponent
-                }>
-                ---------------
-              </Text>
+              isFetchingAll && !responseData ? (
+                <Text
+                  style={
+                    isAppDark
+                      ? styles.darkFooterComponent
+                      : styles.footerComponent
+                  }>
+                  ---------------
+                </Text>
+              ) : null
             }
           />
         )}

@@ -1,37 +1,22 @@
+import React from 'react';
 import {View} from 'react-native';
 import {useTheme} from '../../../contexts/themeContext';
-import {skeletonStyles} from './customSkeletonItem.style';
-
+import {styles} from './customSkeletonItem.style';
 const CustomSkeletonItem = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
 
-  const dummyArray = Array.from({length: 5}, (_, i) => i); // 5 items
-
   return (
-    <View
-      style={
-        isAppDark ? skeletonStyles.darkContainer : skeletonStyles.container
-      }>
-      {dummyArray.map((_, index) => (
-        <View key={index} style={skeletonStyles.innerContainer}>
-          <View style={skeletonStyles.image} />
-          <View style={skeletonStyles.infoContainer}>
-            <View style={skeletonStyles.item}>
-              <View style={skeletonStyles.textLine} />
-            </View>
-            <View style={skeletonStyles.price}>
-              <View style={skeletonStyles.textLineShort} />
-            </View>
-            <View style={skeletonStyles.item}>
-              <View style={skeletonStyles.textLine} />
-            </View>
-            <View style={skeletonStyles.price}>
-              <View style={skeletonStyles.textLineShort} />
-            </View>
-          </View>
+    <View style={isAppDark ? styles.darkContainer : styles.container}>
+      <View style={styles.innerContainer}>
+        <View style={styles.imageSkeleton} />
+        <View style={styles.infoContainer}>
+          <View style={styles.textLineShort} />
+          <View style={styles.textLineTiny} />
+          <View style={styles.textLineMedium} />
+          <View style={styles.textLineTiny} />
         </View>
-      ))}
+      </View>
     </View>
   );
 };

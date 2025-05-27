@@ -31,7 +31,7 @@ export const styles = StyleSheet.create({
   },
   emptyListContainer: {
     padding: 16,
-    marginTop: '65%',
+    marginTop: '50%',
     alignItems: 'center',
     justifyContent: 'center',
     maxHeight: '30%',
