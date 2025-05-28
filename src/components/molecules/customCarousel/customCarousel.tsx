@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useCallback, useEffect, useRef, useState} from 'react';
 import {
   View,
   FlatList,
@@ -38,7 +38,8 @@ const ImageCarousel = ({images}: customCarouselProps) => {
       [
         {
           text: 'Cancel',
-          onPress: () => ToastAndroid.show('Download Cancled!', ToastAndroid.SHORT),
+          onPress: () =>
+            ToastAndroid.show('Download Cancled!', ToastAndroid.SHORT),
           style: 'cancel',
         },
         {
@@ -49,26 +50,29 @@ const ImageCarousel = ({images}: customCarouselProps) => {
       {cancelable: true},
     );
   };
-  const handlePictureDownload = (path: string) => {
+  const handlePictureDownload = useCallback((path: string) => {
     return () => showConfirmation(() => downloadImage(API_URL + path));
-  };
-  const renderItem = ({item}: ListRenderItemInfo<ImageItem>) => (
-    <TouchableWithoutFeedback onLongPress={handlePictureDownload(item.uri)}>
-      <View style={styles.imageContainer}>
-        <Image
-          key={item._id}
-          source={{uri: API_URL + item.uri}}
-          style={styles.image}
-        />
-      </View>
-    </TouchableWithoutFeedback>
+  }, []);
+  const renderItem = useCallback(
+    ({item}: ListRenderItemInfo<ImageItem>) => (
+      <TouchableWithoutFeedback onLongPress={handlePictureDownload(item.uri)}>
+        <View style={styles.imageContainer}>
+          <Image
+            key={item._id}
+            source={{uri: API_URL + item.uri}}
+            style={styles.image}
+          />
+        </View>
+      </TouchableWithoutFeedback>
+    ),
+    [handlePictureDownload],
   );
 
-  const handleScroll = (event: any) => {
+  const handleMomentumScrollEnd  = useCallback((event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const index = Math.floor(contentOffsetX / width);
     setCurrentIndex(index);
-  };
+  }, []);
 
   return (
     <View>
@@ -80,7 +84,7 @@ const ImageCarousel = ({images}: customCarouselProps) => {
           horizontal
           showsHorizontalScrollIndicator={false}
           pagingEnabled
-          onScroll={handleScroll}
+          onMomentumScrollEnd={handleMomentumScrollEnd}
           initialNumToRender={1}
           windowSize={5}
         />

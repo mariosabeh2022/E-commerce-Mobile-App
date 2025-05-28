@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import {View, Image, TouchableOpacity, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from '../../../contexts/themeContext';
@@ -14,7 +14,7 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
 
-  const handleImagePick = async () => {
+  const handleImagePick = useCallback(async () => {
     const hasPermission = await requestGalleryPermission();
     if (!hasPermission) {
       console.log('Gallery permission denied');
@@ -36,21 +36,20 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
     } catch (error) {
       console.log('Image picker error:', error);
     }
-  };
+  }, [images, onImagesChange]);
   return (
     <View>
-      {/* Upload Button */}
       <TouchableOpacity
         onPress={handleImagePick}
         style={isAppDark ? styles.darkIconContainer : styles.iconContainer}>
         <Icon name="add" size={30} color={isAppDark ? 'white' : 'black'} />
       </TouchableOpacity>
       <View style={styles.scrollViewContainer}>
-        {images.map(img => (
-          <ScrollView horizontal={true}>
+        <ScrollView horizontal={true}>
+          {images.map(img => (
             <Image key={img._id} source={{uri: img.uri}} style={styles.image} />
-          </ScrollView>
-        ))}
+          ))}
+        </ScrollView>
       </View>
     </View>
   );

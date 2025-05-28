@@ -35,7 +35,7 @@ export const styles = StyleSheet.create({
   infoContainer: {
     padding: 10,
     width: '50%',
-    backgroundColor: 'lightgray',
+    backgroundColor: '#999999',
     borderRadius: 20,
   },
   image: {

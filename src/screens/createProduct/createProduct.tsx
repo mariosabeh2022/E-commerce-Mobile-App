@@ -83,7 +83,7 @@ const CreateProduct = () => {
   const [showModal, setShowModal] = useState(false);
   const toggleModalVisibility = useCallback(() => {
     setShowModal(prev => !prev);
-  },[]);
+  }, []);
   const navigation = useNavigation<
     UploadScreenNavigationProp & AuthenticatedStackParamList
   >();
@@ -107,14 +107,14 @@ const CreateProduct = () => {
 
       const currentImages = getValues('images') || [];
       const updatedImages = [...currentImages, newImage];
-      setValue('images', updatedImages, {shouldValidate: true});
+      setValue('images', updatedImages.slice(0, 5), {shouldValidate: true});
     }
   };
 
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);
-    setValue('images', Array.isArray(image) ? image : [image]);
+    setValue('images', Array.isArray(image) ? image.slice(0, 5) : [image]);
   }, [center, image, setValue]);
 
   const onSubmit = async (data: FormData) => {
@@ -133,7 +133,7 @@ const CreateProduct = () => {
         description: data.description,
         price: Number(data.price),
         location: data.location,
-        images: data.images,
+        images: data.images.slice(0,5),
       });
 
       if (result.success === true) {

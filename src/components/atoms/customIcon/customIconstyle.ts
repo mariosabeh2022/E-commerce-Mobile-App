@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
   },
   darkCustomIcon: {
     ...baseCustomIcon,
-    color: 'gray',
+    color: 'lightgray',
   },
   sun: {
     color: '#FFDB58',

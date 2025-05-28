@@ -79,7 +79,6 @@ const VerificationScreen = ({route, navigation}: Props) => {
         } else if (result.code === 400) {
           setErrorMessage(result.message || 'Verification failed');
         }
-        setValue('email', '');
         setValue('otp', '');
       } catch (err) {
         ToastAndroid.show('Verification Error', ToastAndroid.SHORT);
@@ -123,7 +122,15 @@ const VerificationScreen = ({route, navigation}: Props) => {
                     control={control}
                     name="otp"
                     render={({field: {value, onChange}}) => (
-                      <SixDigitInput value={value} onChange={onChange} />
+                      <SixDigitInput
+                        value={value}
+                        onChange={val => {
+                          onChange(val);
+                          if (errorMessage) {
+                            setErrorMessage('');
+                          }
+                        }}
+                      />
                     )}
                   />
                   {!!errorMessage && (

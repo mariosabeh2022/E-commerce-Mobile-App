@@ -1,4 +1,4 @@
-import React, {useCallback, useRef} from 'react';
+import React, {useCallback, useMemo, useRef} from 'react';
 import {
   View,
   Image,
@@ -27,7 +27,13 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
   );
 
   const translateX = useRef(new Animated.Value(0)).current;
-
+  const animatedStyle = useMemo(
+    () => [
+      {transform: [{translateX}]},
+      isAppDark ? styles.darkContainer : styles.container,
+    ],
+    [translateX, isAppDark],
+  );
   const panResponder = useRef(
     PanResponder.create({
       onMoveShouldSetPanResponder: (_, gestureState) =>
@@ -64,12 +70,7 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
           <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>
       </View>
-      <Animated.View
-        {...panResponder.panHandlers}
-        style={[
-          {transform: [{translateX}]},
-          isAppDark ? styles.darkContainer : styles.container,
-        ]}>
+      <Animated.View {...panResponder.panHandlers} style={animatedStyle}>
         <View style={styles.innerContainer}>
           <Image
             source={{uri: API_URL + item.images[0].url}}

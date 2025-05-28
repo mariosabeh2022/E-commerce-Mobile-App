@@ -8,6 +8,7 @@ import {AuthenticatedStackParamList} from '../../../navigation/stacks/authentica
 import useUserStore from '../../../stores/profileStore/profileStore.tsx';
 import {pickImageFromGallery} from '../../../utils/imagePicker.ts';
 import {useImageStore} from '../../../stores/uploadStore/uploadStore.tsx';
+import {useCallback, useMemo} from 'react';
 type innerCustomIconProp = {
   includeRemove: boolean;
   onSelectImage?: () => void;
@@ -19,10 +20,15 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
   const {updateProfileImage} = useUserStore();
   const isAppDark = theme === 'dark';
   const borderColor = isAppDark ? 'darkgray' : 'black';
+  const iconWrapperStyle = useMemo(
+    () => [styles.iconWrapper, {borderColor}],
+    [borderColor],
+  );
+
   const navigation =
     useNavigation<NativeStackNavigationProp<AuthenticatedStackParamList>>();
 
-  const goToCamera = () => {
+  const goToCamera = useCallback(() => {
     navigation.navigate('CameraScreen', {
       onCapture: async photo => {
         const imagePath = photo.path.startsWith('file://')
@@ -39,7 +45,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
         }
       },
     });
-  };
+  }, [navigation, setImage, includeRemove, updateProfileImage]);
 
   const handleRemoveProfile = () => {
     updateProfileImage('');
@@ -59,9 +65,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
   return (
     <View style={styles.mainContainer}>
       <View style={styles.middleContainer}>
-        <TouchableOpacity
-          style={[styles.iconWrapper, {borderColor}]}
-          onPress={goToCamera}>
+        <TouchableOpacity style={iconWrapperStyle} onPress={goToCamera}>
           <Icon
             name="camera"
             style={
@@ -74,9 +78,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
       </View>
 
       <View style={styles.middleContainer}>
-        <TouchableOpacity
-          style={[styles.iconWrapper, {borderColor}]}
-          onPress={handleGalleryPress}>
+        <TouchableOpacity style={iconWrapperStyle} onPress={handleGalleryPress}>
           <Icon
             name="image"
             style={
@@ -91,7 +93,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
       {includeRemove && (
         <View style={styles.middleContainer}>
           <TouchableOpacity
-            style={[styles.iconWrapper, {borderColor}]}
+            style={iconWrapperStyle}
             onPress={handleRemoveProfile}>
             <Icon
               name="minus-circle"

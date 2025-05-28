@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {Animated, TouchableOpacity} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {styles} from './customThemeButton.style';
@@ -10,8 +10,7 @@ export default function GradientSwitch() {
   const isAppDark = theme === 'dark';
 
   const initialTranslateX = isAppDark ? 24 : 0;
-  const [translateX] = useState(new Animated.Value(initialTranslateX));
-
+  const translateX = useRef(new Animated.Value(initialTranslateX)).current;
   useEffect(() => {
     const toValue = isAppDark ? 24 : 0;
     Animated.timing(translateX, {
@@ -21,7 +20,7 @@ export default function GradientSwitch() {
     }).start();
   }, [isAppDark, translateX]);
 
-  const gradientColors = ['#00ff40', '#318555', '#223a66'];
+  const gradientColors = useMemo(() => ['#00ff40', '#318555', '#223a66'], []);
 
   return (
     <TouchableOpacity onPress={toggleTheme} activeOpacity={0.8}>

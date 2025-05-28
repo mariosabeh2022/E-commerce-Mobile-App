@@ -28,12 +28,11 @@ const CustomRenderItem = ({item}: customRenderItemProps) => {
           <Text style={isAppDark ? styles.darkItem : styles.item}>
             {item.title}
           </Text>
-          <Pressable
-            onPress={handleShare(item._id)}
-            style={styles.inlineShareButton}>
-            <CustomIcon type="share-alt" />
-          </Pressable>
-
+          <View style={styles.inlineShareButton}>
+            <Pressable onPress={handleShare(item._id)}>
+              <CustomIcon type="share-alt" />
+            </Pressable>
+          </View>
           <Text style={isAppDark ? styles.darkPrice : styles.price}>
             {item.price}$
           </Text>
