@@ -7,6 +7,12 @@ import CustomIcon from '../../../components/atoms/customIcon/customIcon';
 const CustomRenderItem = ({item}: customRenderItemProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  const handleShare = (id: string) => () => {
+    const url = `ecommerceMobileApp://details/${id}`;
+    Share.share({
+      message: `Check out this product: ${url}`,
+    });
+  };
   return (
     <View style={isAppDark ? styles.darkContainer : styles.container}>
       <View style={styles.innerContainer}>
@@ -19,12 +25,7 @@ const CustomRenderItem = ({item}: customRenderItemProps) => {
             {item.title}
           </Text>
           <Pressable
-            onPress={() => {
-              const url = `ecommerceMobileApp://details/${item._id}`;
-              Share.share({
-                message: `Check out this product: ${url}`,
-              });
-            }}
+            onPress={handleShare(item._id)}
             style={styles.inlineShareButton}>
             <CustomIcon type="share-alt" />
           </Pressable>

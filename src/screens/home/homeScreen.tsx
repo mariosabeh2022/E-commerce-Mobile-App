@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Text, View, Pressable} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
@@ -12,18 +12,13 @@ type HomeScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Home'
 >;
-const HomenScreen = () => {
+const HomeScreen = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const navigation = useNavigation<HomeScreenNavigationProp>();
-  const handleSignUpNavigation = useCallback(
-    () => navigation.navigate('SignUp'),
-    [navigation],
-  );
-  const handleLoginNavigation = useCallback(
-    () => navigation.navigate('Login'),
-    [navigation],
-  );
+  const handleSignUpNavigation = () => navigation.navigate('SignUp');
+  const handleLoginNavigation = () => navigation.navigate('Login');
+
   return (
     <View style={styles.outerContainer}>
       <WavyHeader />
@@ -58,4 +53,4 @@ const HomenScreen = () => {
   );
 };
 
-export default HomenScreen;
+export default HomeScreen;

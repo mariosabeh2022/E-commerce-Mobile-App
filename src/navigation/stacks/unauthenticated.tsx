@@ -1,6 +1,6 @@
 import React from 'react';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import HomenScreen from '../../screens/home/homeScreen';
+import HomeScreen from '../../screens/home/homeScreen';
 import LoginScreen from '../../screens/login/loginScreen';
 import SignUpScreen from '../../screens/sign-up/sign-upScreen';
 import VerificationScreen from '../../screens/verification/verification';
@@ -21,7 +21,7 @@ export default function UnauthenticatedStack() {
       }}>
       <Stack.Screen
         name="Home"
-        component={HomenScreen}
+        component={HomeScreen}
         options={{
           headerTitleAlign: 'center',
           headerRight: renderCustomThemeButton,

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import {View, Text} from 'react-native';
 import Svg, {Path} from 'react-native-svg';
 import {styles} from './wavyHeader.style';
@@ -38,4 +38,4 @@ const WavyHeader = () => {
     </View>
   );
 };
-export default WavyHeader;
+export default memo(WavyHeader);

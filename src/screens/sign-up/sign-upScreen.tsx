@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Pressable,
@@ -29,6 +29,7 @@ import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigati
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
 import {signup} from '../../lib/axiosInstance';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
@@ -89,25 +90,8 @@ const SignUpScreen = () => {
     }
     setIsLoading(false);
   };
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  useEffect(() => {
-    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
-    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      handleKeyboardIsVisible,
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      handleKeyboardIsNotVisible,
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const isKeyboardVisible = useKeyboardVisibility();
   return (
     <CustomContainer>
       <>

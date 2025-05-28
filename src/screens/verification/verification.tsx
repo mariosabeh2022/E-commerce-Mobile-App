@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Pressable,
@@ -26,6 +26,7 @@ import CustomInput from '../../components/atoms/customInput/customInput';
 import {RouteProp} from '@react-navigation/native';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 
 type VerificationRouteProp = RouteProp<
   UnauthenticatedStackParamList,
@@ -49,58 +50,46 @@ const VerificationScreen = ({route, navigation}: Props) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const [isLoading, setIsLoading] = useState(false);
-  const [submittable, setSubmittable] = useState(true);
-  const [resultMessage, setResultMessage] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
   type FormData = z.infer<typeof schema>;
 
   const {control, handleSubmit, setValue} = useForm<FormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: '',
+      email: Email,
       otp: '',
     },
   });
 
-  const handleVerify = async (data: FormData) => {
-    setIsLoading(true);
-    setSubmittable(false);
-    try {
-      const result = await verification({
-        email: data.email.trim().toLowerCase(),
-        otp: data.otp,
-      });
-      if (result.success === true) {
-        navigation.navigate('Login');
-      } else if (result.code === 400) {
-        setResultMessage(result.message);
-      }
-      setValue('email', '');
-      setValue('otp', '');
-    } catch (err) {
-      ToastAndroid.show('Verification Error', ToastAndroid.SHORT);
-    }
-    setIsLoading(false);
-    setSubmittable(true);
-  };
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
-
   useEffect(() => {
-    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
-    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      handleKeyboardIsVisible,
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      handleKeyboardIsNotVisible,
-    );
+    setValue('email', Email);
+  }, [Email, setValue]);
 
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const handleVerify = useCallback(
+    async (data: FormData) => {
+      setIsLoading(true);
+      setErrorMessage('');
+      try {
+        const result = await verification({
+          email: data.email.trim().toLowerCase(),
+          otp: data.otp,
+        });
+        if (result.success === true) {
+          navigation.navigate('Login');
+        } else if (result.code === 400) {
+          setErrorMessage(result.message || 'Verification failed');
+        }
+        setValue('email', '');
+        setValue('otp', '');
+      } catch (err) {
+        ToastAndroid.show('Verification Error', ToastAndroid.SHORT);
+      }
+      setIsLoading(false);
+    },
+    [navigation, setValue],
+  );
+
+  const isKeyboardVisible = useKeyboardVisibility();
   useEffect(() => {
     setValue('email', Email);
   }, [Email, setValue]);
@@ -137,12 +126,8 @@ const VerificationScreen = ({route, navigation}: Props) => {
                       <SixDigitInput value={value} onChange={onChange} />
                     )}
                   />
-                  {!submittable ? (
-                    <CustomErrorMessage message="Incorrect Verification Code" />
-                  ) : resultMessage ? (
-                    <CustomErrorMessage message={resultMessage} />
-                  ) : (
-                    ''
+                  {!!errorMessage && (
+                    <CustomErrorMessage message={errorMessage} />
                   )}
                 </>
               </CustomView>

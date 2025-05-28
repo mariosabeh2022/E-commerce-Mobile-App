@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -32,6 +32,7 @@ import {fetchProfile, login, reVerification} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import {errorCodes} from '../../lib/errorCodes';
 import useCartStore from '../../stores/cartStore/cartStore';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'
@@ -115,25 +116,8 @@ const LoginScreen = () => {
     setIsLoading(false);
     setSubmittable(false);
   };
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
 
-  useEffect(() => {
-    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
-    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      handleKeyboardIsVisible,
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      handleKeyboardIsNotVisible,
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
+  const isKeyboardVisible = useKeyboardVisibility();
   const handleVerificationRedirection = async () => {
     setIsLoading(true);
     const Email = getValues('email');

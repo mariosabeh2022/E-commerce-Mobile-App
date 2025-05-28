@@ -60,9 +60,11 @@ const ProfileScreen = () => {
           console.log('Unauthorized user');
         }
         setUser(result.data.user);
-
+        if (result.data.user.isEmailVerified) {
+          setVerified(true);
+        }
         updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
-        setVerified(result.data.user.isEmailVerified);
+        console.log(result.data.user.isEmailVerified);
       } catch (err: any) {
         console.log(err.message || 'Failed to load profile');
       }

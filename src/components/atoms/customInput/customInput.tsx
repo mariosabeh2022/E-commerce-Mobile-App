@@ -23,7 +23,7 @@ const CustomInput = ({
       }
       style={[
         isAppDark ? styles.darkInput : styles.input,
-        keyboardType === 'default' && {paddingRight: 45},
+        secureEntry && {paddingRight: 45},
       ]}
       autoCapitalize={autoCapitalize}
       secureTextEntry={secureEntry}

@@ -162,15 +162,15 @@ const DetailsScreen = () => {
     addProduct(details.data);
     ToastAndroid.show('Added To Your Cart!', ToastAndroid.SHORT);
   };
+  const handleShare = (id: string) => () => {
+    const url = `ecommerceMobileApp://details/${id}`;
+    Share.share({
+      message: `Check out this product: ${url}`,
+    });
+  };
   const renderShareButton = useCallback(
     () => (
-      <Pressable
-        onPress={() => {
-          const url = `ecommerceMobileApp://details/${itemId}`;
-          Share.share({
-            message: `Check out this product: ${url}`,
-          });
-        }}>
+      <Pressable onPress={handleShare(itemId)}>
         <Text>
           <CustomIcon type="share-alt" />
         </Text>
