@@ -64,7 +64,6 @@ const ProfileScreen = () => {
           setVerified(true);
         }
         updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
-        console.log(result.data.user.isEmailVerified);
       } catch (err: any) {
         console.log(err.message || 'Failed to load profile');
       }

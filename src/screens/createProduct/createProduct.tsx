@@ -133,7 +133,7 @@ const CreateProduct = () => {
         description: data.description,
         price: Number(data.price),
         location: data.location,
-        images: data.images.slice(0,5),
+        images: data.images.slice(0, 5),
       });
 
       if (result.success === true) {
@@ -163,6 +163,7 @@ const CreateProduct = () => {
   const handleKeyboardDismiss = () => Keyboard.dismiss();
   const showToastErrorMessage = () =>
     ToastAndroid.show('Image Load Error', ToastAndroid.SHORT);
+  const handleRemoveImage = (id: string) => () => removeImage(id);
   return (
     <View style={styles.container}>
       <CustomContainer>
@@ -294,7 +295,7 @@ const CreateProduct = () => {
                                     value.map(img => (
                                       <View key={img._id}>
                                         <Pressable
-                                          onPress={() => removeImage(img._id)}
+                                          onPress={handleRemoveImage(img._id)}
                                           style={
                                             createEditProductStyles.removeIcon
                                           }>

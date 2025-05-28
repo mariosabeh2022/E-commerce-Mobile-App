@@ -42,12 +42,20 @@ import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticated
 import {useQuery} from '@tanstack/react-query';
 import {addFileProtocolToUris} from '../../utils/imagePrefix';
 import {createEditProductStyles} from '../../styles/createEditProduct.style';
+import {useImageStore} from '../../stores/uploadStore/uploadStore';
 
 type EditProductRouteProp = RouteProp<
   AuthenticatedStackParamList,
   'EditProduct'
 >;
 type FormData = z.infer<typeof schema>;
+
+type image = {
+  id?: number;
+  _id?: string;
+  uri: string;
+  url?: string;
+};
 
 const EditProduct = () => {
   const navigation =
@@ -58,12 +66,16 @@ const EditProduct = () => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const center = useMapStore(state => state.center);
-
+  const image = useImageStore(state => state.images);
   const [resultMessage, setResultMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const toggleModalVisibility = () => setShowModal(prev => !prev);
-
+  const [combinedImages, setCombinedImages] = useState<image[]>([]);
+  const removeImage = useImageStore(state => state.removeImage);
+  const [removedImageIds, setRemovedImageIds] = useState<Set<string>>(
+    new Set(),
+  );
   const {
     control,
     handleSubmit,
@@ -91,20 +103,36 @@ const EditProduct = () => {
     queryFn: () => productDetails({token: userToken!, id}),
     enabled: !!userToken,
   });
-
+  function normalizeImages(images: image[]): {uri: string; _id: string}[] {
+    return images.map(item => ({
+      uri: item.url ?? item.uri,
+      _id: item._id ?? `${Date.now()}-${Math.random()}`,
+    }));
+  }
   useEffect(() => {
     if (details) {
       const {title, description, price, location, images} = details.data;
-      const formattedImages = addFileProtocolToUris(images);
+
+      const formattedImages = addFileProtocolToUris(images).filter(
+        img => !removedImageIds.has(img._id),
+      ); // exclude removed images here
+
+      const updatedLocalImages = normalizeImages(image).filter(
+        img => !removedImageIds.has(img._id),
+      ); // exclude removed local images too if needed
+
+      const allImages = [...formattedImages, ...updatedLocalImages];
+      setCombinedImages(allImages);
+
       reset({
         title,
         description,
         price,
         location,
-        images: formattedImages,
+        images: allImages,
       });
     }
-  }, [details, reset]);
+  }, [details, reset, image, removedImageIds]);
 
   useEffect(() => {
     setValue('location.longitude', center[0]);
@@ -118,7 +146,7 @@ const EditProduct = () => {
     if (asset?.uri) {
       const selectedImage = {uri: asset.uri, _id: `${Date.now()}`};
       const currentImages = getValues('images') || [];
-      setValue('images', [...currentImages, selectedImage], {
+      setValue('images', [...currentImages, selectedImage].slice(0, 5), {
         shouldValidate: true,
       });
     } else {
@@ -127,7 +155,30 @@ const EditProduct = () => {
   };
 
   const handleKeyboardDismiss = () => Keyboard.dismiss();
+  const showToastErrorMessage = () =>
+    ToastAndroid.show('Image Load Error', ToastAndroid.SHORT);
+  const handleRemoveImage = (_id: string) => () => {
+    // Add to removed images set
+    setRemovedImageIds(prev => new Set(prev).add(_id));
 
+    // Remove from store
+    const removedImg = combinedImages.find(img => img._id === _id);
+    if (removedImg) {
+      removeImage(removedImg.uri); // assuming removeImage expects uri
+    }
+
+    // Update local combinedImages and form state immediately for UX
+    const updatedImages = combinedImages.filter(img => img._id !== _id);
+    setCombinedImages(updatedImages);
+    setValue(
+      'images',
+      updatedImages.map(img => ({
+        uri: img.uri,
+        _id: img._id ?? `${Date.now()}-${Math.random()}`,
+      })),
+      {shouldValidate: true},
+    );
+  };
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     setResultMessage('');
@@ -296,45 +347,42 @@ const EditProduct = () => {
                       <Controller
                         control={control}
                         name="images"
-                        render={({field}) => {
-                          const images = field.value || [];
+                        render={({field: {value}}) => {
                           return (
-                            <View
-                              style={createEditProductStyles.imagesContainer}>
-                              {images.length > 0 ? (
-                                images.map(img => (
-                                  <View
-                                    key={img._id}
-                                    style={
-                                      createEditProductStyles.imageContainer
-                                    }>
-                                    <Pressable
-                                      onPress={() => {
-                                        const updatedImages = images.filter(
-                                          i => i._id !== img._id,
-                                        );
-                                        setValue('images', updatedImages, {
-                                          shouldValidate: true,
-                                        });
-                                      }}
-                                      style={
-                                        createEditProductStyles.removeIcon
-                                      }>
-                                      <CustomIcon type="times-circle" />
-                                    </Pressable>
-                                    <Image
-                                      source={{uri: img.uri}}
-                                      style={createEditProductStyles.image}
-                                      resizeMode="cover"
-                                    />
-                                  </View>
-                                ))
-                              ) : (
-                                <Text style={createEditProductStyles.noImages}>
-                                  No image yet
-                                </Text>
-                              )}
-                            </View>
+                            <TouchableWithoutFeedback
+                              onPress={handleKeyboardDismiss}>
+                              <KeyboardAvoidingView>
+                                <ScrollView
+                                  horizontal
+                                  style={createEditProductStyles.scroll}>
+                                  {Array.isArray(value) && value.length > 0 ? (
+                                    value.map(img => (
+                                      <View key={img._id}>
+                                        <Pressable
+                                          onPress={handleRemoveImage(img._id)}
+                                          style={
+                                            createEditProductStyles.removeIcon
+                                          }>
+                                          <CustomIcon type="times-circle" />
+                                        </Pressable>
+                                        <Image
+                                          key={img._id}
+                                          source={{uri: img.uri}}
+                                          style={createEditProductStyles.image}
+                                          resizeMode="cover"
+                                          onError={showToastErrorMessage}
+                                        />
+                                      </View>
+                                    ))
+                                  ) : (
+                                    <Text
+                                      style={createEditProductStyles.noImages}>
+                                      No image Yet
+                                    </Text>
+                                  )}
+                                </ScrollView>
+                              </KeyboardAvoidingView>
+                            </TouchableWithoutFeedback>
                           );
                         }}
                       />

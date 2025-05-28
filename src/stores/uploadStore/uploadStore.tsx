@@ -5,7 +5,7 @@ type ImageType = {
   _id: string;
 };
 
-type ImageStore = {
+export type ImageStore = {
   images: ImageType[];
   setImage: (image: ImageType) => void;
   removeImage: (uri: string) => void;
