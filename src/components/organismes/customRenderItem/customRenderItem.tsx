@@ -4,15 +4,19 @@ import {customRenderItemProps} from './customRenderItem.type';
 import {useTheme} from '../../../contexts/themeContext';
 import {API_URL} from '../../../config/index';
 import CustomIcon from '../../../components/atoms/customIcon/customIcon';
+import {useCallback} from 'react';
 const CustomRenderItem = ({item}: customRenderItemProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
-  const handleShare = (id: string) => () => {
-    const url = `ecommerceMobileApp://details/${id}`;
-    Share.share({
-      message: `Check out this product: ${url}`,
-    });
-  };
+  const handleShare = useCallback(
+    (id: string) => () => {
+      const url = `ecommerceMobileApp://details/${id}`;
+      Share.share({
+        message: `Check out this product: ${url}`,
+      });
+    },
+    [],
+  );
   return (
     <View style={isAppDark ? styles.darkContainer : styles.container}>
       <View style={styles.innerContainer}>

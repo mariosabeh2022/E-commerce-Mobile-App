@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {memo} from 'react';
 import {View} from 'react-native';
 import {useTheme} from '../../../contexts/themeContext';
 import {styles} from './customSkeletonItem.style';
@@ -21,4 +21,4 @@ const CustomSkeletonItem = () => {
   );
 };
 
-export default CustomSkeletonItem;
+export default memo(CustomSkeletonItem);

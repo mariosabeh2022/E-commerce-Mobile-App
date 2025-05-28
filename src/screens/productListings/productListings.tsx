@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -36,15 +36,15 @@ const ProductListingsScreen = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'price'>('title');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
-  const toggleAlphaSort = () => {
+  const toggleAlphaSort = useCallback(() => {
     setSortBy('title');
     setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-  };
+  }, []);
 
-  const togglePriceSort = () => {
+  const togglePriceSort = useCallback(() => {
     setSortBy('price');
     setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-  };
+  }, []);
   const {
     data: responseData,
     fetchNextPage,
@@ -193,7 +193,7 @@ const ProductListingsScreen = () => {
             }}
             onEndReachedThreshold={0.7}
             ListEmptyComponent={
-              !isFetchingAll && flatData.length === 0 ? (
+              !isFetchingAll &&  search.length >= 3 ? (
                 CustomErrorMessage
               ) : (
                 <View style={styles.emptyListContainer}>

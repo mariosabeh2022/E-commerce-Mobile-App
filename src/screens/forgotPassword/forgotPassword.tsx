@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState} from 'react';
+import React, {useCallback,  useState} from 'react';
 import {
   View,
   Text,
@@ -29,6 +29,7 @@ import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
 import {resetPassword} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import {errorCodes} from '../../lib/errorCodes';
+import { useKeyboardVisibility } from '../../hooks/useKeyboardVisibility';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'
@@ -57,7 +58,7 @@ const ForgotPasswordScreen = () => {
 
   const handleKeyboardDismiss = () => Keyboard.dismiss();
 
-  const handleLogin = async (data: FormData) => {
+  const handleResetPassword = async (data: FormData) => {
     setIsLoading(true);
     try {
       const result = await resetPassword({
@@ -80,25 +81,8 @@ const ForgotPasswordScreen = () => {
     setIsLoading(false);
     setResultMessage('');
   };
-  const [isKeyboardVisible, setIsKeyboardVisible] = useState(false);
+  const isKeyboardVisible = useKeyboardVisibility();
 
-  useEffect(() => {
-    const handleKeyboardIsVisible = () => setIsKeyboardVisible(true);
-    const handleKeyboardIsNotVisible = () => () => setIsKeyboardVisible(false);
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      handleKeyboardIsVisible,
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      handleKeyboardIsNotVisible,
-    );
-
-    return () => {
-      keyboardDidShowListener.remove();
-      keyboardDidHideListener.remove();
-    };
-  }, []);
   return (
     <CustomContainer>
       <>
@@ -131,7 +115,7 @@ const ForgotPasswordScreen = () => {
                     color={isAppDark ? darkBaseColor : lightBaseColor}
                   />
                 ) : (
-                  <Pressable onPress={handleSubmit(handleLogin)}>
+                  <Pressable onPress={handleSubmit(handleResetPassword)}>
                     <CustomButton text="Reset" />
                   </Pressable>
                 )}

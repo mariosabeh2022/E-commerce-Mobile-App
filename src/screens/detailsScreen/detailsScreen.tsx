@@ -38,8 +38,6 @@ const DetailsScreen = () => {
   const addProduct = useCartStore(state => state.addProduct);
   const navigation =
     useNavigation<NativeStackNavigationProp<ProductsStackParamList>>();
-  const editNavigation =
-    useNavigation<NativeStackNavigationProp<ProductsStackParamList>>();
   const insets = useSafeAreaInsets();
   const route = useRoute<DetailsScreenRouteProp>();
   const {id: itemId} = route.params;
@@ -85,24 +83,24 @@ const DetailsScreen = () => {
   useEffect(() => {
     fadeIn();
   }, [fadeIn]);
-  const creationDate = new Date(details?.data?.createdAt);
-  const creationYear = creationDate.getFullYear();
-  const cm = creationDate.getMonth() + 1;
-  const creationMonth = cm < 10 ? '0' + cm : String(cm);
-  const cd = creationDate.getDate();
-  const creationDay = cd < 10 ? '0' + cd : String(cd);
-  const formattedCreationDate = `${creationYear}-${creationMonth}-${creationDay}`;
+  const formatDate = (dateString?: string) => {
+    if (!dateString) {
+      return '';
+    }
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
 
-  const updateDate = new Date(details?.data?.createdAt);
-  const updateYear = updateDate.getFullYear();
-  const um = creationDate.getMonth() + 1;
-  const updateMonth = um < 10 ? '0' + um : String(um);
-  const ud = creationDate.getDate();
-  const updateDay = ud < 10 ? '0' + ud : String(ud);
-  const formattedUpdateDate =
-    `${updateYear}-${updateMonth}-${updateDay}` !== formattedCreationDate
-      ? `${updateYear}-${updateMonth}-${updateDay}`
+  const formattedCreationDate = formatDate(details?.data?.createdAt);
+  const formattedUpdateDate = (() => {
+    const formattedUpdate = formatDate(details?.data?.updatedAt);
+    return formattedUpdate && formattedUpdate !== formattedCreationDate
+      ? formattedUpdate
       : 'No updates yet';
+  })();
   const openGmail = (email: string) => {
     const gmailUrl = `googlegmail://co?to=${email}`;
     Linking.canOpenURL(gmailUrl)
@@ -118,7 +116,7 @@ const DetailsScreen = () => {
       });
   };
   const showToastMessage = () =>
-    ToastAndroid.show('Delete Cancled', ToastAndroid.SHORT);
+    ToastAndroid.show('Delete Canceled', ToastAndroid.SHORT);
   const showConfirmation = (onConfirm: () => void) => {
     Alert.alert(
       'Delete Product',
@@ -141,27 +139,26 @@ const DetailsScreen = () => {
   const handleDeleteProduct = async () => {
     if (!userIsCreator) {
       return;
-    } else {
-      showConfirmation(async () => {
-        try {
-          await deleteProduct({token: userToken!, id: details?.data?._id});
-          ToastAndroid.show('Product Deleted Successfully', ToastAndroid.SHORT);
-          navigation.navigate('Products', {
-            fromScreen: 'Details',
-          });
-        } catch (error) {
-          ToastAndroid.show('Failed To Delete Product', ToastAndroid.SHORT);
-        }
-      });
     }
+    showConfirmation(async () => {
+      try {
+        await deleteProduct({token: userToken!, id: details?.data?._id});
+        ToastAndroid.show('Product Deleted Successfully', ToastAndroid.SHORT);
+        navigation.navigate('Products', {
+          fromScreen: 'Details',
+        });
+      } catch (error) {
+        ToastAndroid.show('Failed To Delete Product', ToastAndroid.SHORT);
+      }
+    });
   };
   const handleEditNavigation = () => {
-    editNavigation.navigate('Edit Product', {id: itemId});
+    navigation.navigate('Edit Product', {id: itemId});
   };
-  const handleAddToCart = () => {
+  const handleAddToCart = useCallback(() => {
     addProduct(details.data);
     ToastAndroid.show('Added To Your Cart!', ToastAndroid.SHORT);
-  };
+  }, [details.data, addProduct]);
   const handleShare = (id: string) => () => {
     const url = `ecommerceMobileApp://details/${id}`;
     Share.share({
@@ -182,7 +179,13 @@ const DetailsScreen = () => {
     navigation.setOptions({
       headerRight: renderShareButton,
     });
-  }, [navigation, renderShareButton, itemId]);
+  }, [navigation, renderShareButton]);
+
+  const handleContact = useCallback(
+    () => openGmail(details?.data?.user.email),
+    [details?.data?.user.email],
+  );
+
   if (fetchingDetails || fetchingProfile) {
     return (
       <View style={styles.container}>
@@ -193,7 +196,6 @@ const DetailsScreen = () => {
       </View>
     );
   }
-
   return (
     <SafeAreaView style={isAppDark ? styles.darkSaveArea : styles.saveArea}>
       <ScrollView
@@ -217,8 +219,7 @@ const DetailsScreen = () => {
             </Text>
             <Text style={isAppDark ? styles.darkTitle : styles.title}>
               <CustomErrorMessage message="Owner:" />{' '}
-              <TouchableOpacity
-                onPress={() => openGmail(details?.data?.user.email)}>
+              <TouchableOpacity onPress={handleContact}>
                 <Text>
                   <CustomLink text={details?.data?.user.email} />
                 </Text>
