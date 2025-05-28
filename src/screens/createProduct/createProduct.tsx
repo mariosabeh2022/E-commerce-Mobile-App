@@ -12,7 +12,7 @@ import {
   ScrollView,
   ToastAndroid,
 } from 'react-native';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {styles} from '../../styles/productForms';
 import {createEditProductStyles} from '../../styles/createEditProduct.style';
 import CustomButton from '../../components/atoms/customButton/customButton';
@@ -81,15 +81,12 @@ const CreateProduct = () => {
   const [resultMessage, setResultMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const toggleModalVisibility = () => {
+  const toggleModalVisibility = useCallback(() => {
     setShowModal(prev => !prev);
-  };
+  },[]);
   const navigation = useNavigation<
     UploadScreenNavigationProp & AuthenticatedStackParamList
   >();
-  useEffect(() => {
-    setValue('images', image);
-  }, [image, setValue]);
 
   const handleSelectImage = async () => {
     const result = await launchImageLibrary({mediaType: 'photo'});
@@ -117,12 +114,7 @@ const CreateProduct = () => {
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);
-
-    if (image && !Array.isArray(image)) {
-      setValue('images', [image]);
-    } else if (image) {
-      setValue('images', image);
-    }
+    setValue('images', Array.isArray(image) ? image : [image]);
   }, [center, image, setValue]);
 
   const onSubmit = async (data: FormData) => {
@@ -281,7 +273,6 @@ const CreateProduct = () => {
                       </Pressable>
                     </View>
 
-                    {/* Horizontal ScrollView for image preview (just 1 image for now) */}
                     <ScrollView
                       horizontal
                       showsHorizontalScrollIndicator={false}

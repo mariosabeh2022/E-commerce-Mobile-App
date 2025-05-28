@@ -155,10 +155,10 @@ const DetailsScreen = () => {
   const handleEditNavigation = () => {
     navigation.navigate('Edit Product', {id: itemId});
   };
-  const handleAddToCart = useCallback(() => {
+  const handleAddToCart = () => {
     addProduct(details.data);
     ToastAndroid.show('Added To Your Cart!', ToastAndroid.SHORT);
-  }, [details.data, addProduct]);
+  };
   const handleShare = (id: string) => () => {
     const url = `ecommerceMobileApp://details/${id}`;
     Share.share({

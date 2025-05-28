@@ -4,7 +4,6 @@ import {
   Pressable,
   TouchableOpacity,
   Linking,
-  StyleSheet,
   ToastAndroid,
 } from 'react-native';
 import {useRoute, useNavigation} from '@react-navigation/native';
@@ -17,6 +16,8 @@ import {RouteProp} from '@react-navigation/native';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {saveToDeviceStorage} from '../../screens/createProduct/saveToDevice';
 import useUserStore from '../../stores/profileStore/profileStore';
+import {styles} from './camera.style';
+import PermissionNotGranted from '../PermissionNotGranted/PermissionNotGranted';
 
 type AuthenticatedStackParamList = {
   CameraScreen: {
@@ -37,7 +38,7 @@ export default function CameraScreen() {
   const [isCapturing, setIsCapturing] = useState(false);
   const [useFrontCam, setUseFrontCam] = useState(false);
 
-  const toggleCamera = () => setUseFrontCam(prev => !prev);
+  const toggleCamera = useCallback(() => setUseFrontCam(prev => !prev), []);
   const device = useCameraDevice(useFrontCam ? 'front' : 'back');
   const camera = useRef<Camera>(null);
 
@@ -52,11 +53,6 @@ export default function CameraScreen() {
   }, [handleCameraPermission]);
 
   const openSettings = async () => await Linking.openSettings();
-
-  const handleCaptureButton = () => {
-    setIsCapturing(true);
-    handleCapture();
-  };
 
   const handleCapture = async () => {
     try {
@@ -83,13 +79,7 @@ export default function CameraScreen() {
   };
 
   if (!hasPermission) {
-    return (
-      <View style={styles.permissionDenied}>
-        <Pressable onPress={openSettings}>
-          <CustomIcon type="exclamation-triangle" />
-        </Pressable>
-      </View>
-    );
+    return <PermissionNotGranted openSettings={openSettings}/>;
   }
 
   if (device == null) {
@@ -114,7 +104,7 @@ export default function CameraScreen() {
       </Pressable>
       <TouchableOpacity
         style={isCapturing ? styles.capturing : styles.capture}
-        onPress={handleCaptureButton}
+        onPress={handleCapture}
       />
       <Pressable style={styles.close} onPress={handleGoBack}>
         <CustomIcon type="times-circle" />
@@ -122,43 +112,3 @@ export default function CameraScreen() {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {flex: 1},
-  camera: {flex: 1},
-  flip: {
-    position: 'absolute',
-    top: 40,
-    right: 20,
-    zIndex: 1,
-  },
-  capture: {
-    position: 'absolute',
-    bottom: 40,
-    alignSelf: 'center',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#fff',
-  },
-  capturing: {
-    position: 'absolute',
-    bottom: 40,
-    alignSelf: 'center',
-    width: 70,
-    height: 70,
-    borderRadius: 35,
-    backgroundColor: '#ccc',
-  },
-  close: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 1,
-  },
-  permissionDenied: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});

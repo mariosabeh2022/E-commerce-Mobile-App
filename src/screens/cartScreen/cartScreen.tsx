@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {FlatList, Text, View} from 'react-native';
 import {styles} from './cartScreen.style';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
@@ -17,13 +17,9 @@ const CartScreen = () => {
     return sum + item.count * item.price;
   }, 0);
 
-  const renderItem = ({item}: {item: any}) => {
-    return (
-      <View>
-        <CustomCartRenderItem item={item} />
-      </View>
-    );
-  };
+  const renderItem = useCallback(({item}: {item: any}) => {
+    return <CustomCartRenderItem item={item} />;
+  }, []);
   return (
     <View style={isAppDark ? styles.darkContainer : styles.container}>
       <CustomTitle text="Your Items" />

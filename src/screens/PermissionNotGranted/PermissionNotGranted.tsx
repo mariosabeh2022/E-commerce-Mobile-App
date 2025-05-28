@@ -1,5 +1,5 @@
 import React from 'react';
-import {styles} from './permissionNotGranted.style';
+import {styles} from './PermissionNotGranted.style';
 import {useTheme} from '../../contexts/themeContext';
 import {Pressable, Text, View} from 'react-native';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';

@@ -1,4 +1,4 @@
-import React, {useRef} from 'react';
+import React, {useCallback, useRef} from 'react';
 import {
   View,
   Image,
@@ -21,7 +21,10 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   const removeProduct = useCartStore(state => state.removeProduct);
-  const handleDelete = () => removeProduct(item._id);
+  const handleDelete = useCallback(
+    () => removeProduct(item._id),
+    [removeProduct, item._id],
+  );
 
   const translateX = useRef(new Animated.Value(0)).current;
 

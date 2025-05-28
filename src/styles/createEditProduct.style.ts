@@ -26,6 +26,7 @@ export const createEditProductStyles = StyleSheet.create({
     height: 75,
     borderRadius: 10,
     marginTop: 4,
+    marginRight: 5,
   },
   noImages: {fontFamily: 'Sansation-Bold'},
 });
