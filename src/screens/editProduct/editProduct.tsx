@@ -12,7 +12,7 @@ import {
   ScrollView,
   ToastAndroid,
 } from 'react-native';
-import {useEffect, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import {styles} from '../../styles/productForms';
 
 import CustomButton from '../../components/atoms/customButton/customButton';
@@ -70,7 +70,10 @@ const EditProduct = () => {
   const [resultMessage, setResultMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const toggleModalVisibility = () => setShowModal(prev => !prev);
+  const toggleModalVisibility = useCallback(
+    () => setShowModal(prev => !prev),
+    [],
+  );
   const [combinedImages, setCombinedImages] = useState<image[]>([]);
   const removeImage = useImageStore(state => state.removeImage);
   const setImage = useImageStore(state => state.setImage);
