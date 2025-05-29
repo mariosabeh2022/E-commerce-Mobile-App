@@ -89,6 +89,15 @@ const CreateProduct = () => {
   >();
 
   const handleSelectImage = async () => {
+    const currentImagesInForm = getValues('images') || [];
+
+    if (currentImagesInForm.length >= 5) {
+      ToastAndroid.show(
+        'You can only upload up to 5 images.',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
     const result = await launchImageLibrary({mediaType: 'photo'});
 
     if (result.assets && result.assets.length > 0) {

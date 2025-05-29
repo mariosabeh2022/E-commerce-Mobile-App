@@ -73,6 +73,8 @@ const EditProduct = () => {
   const toggleModalVisibility = () => setShowModal(prev => !prev);
   const [combinedImages, setCombinedImages] = useState<image[]>([]);
   const removeImage = useImageStore(state => state.removeImage);
+  const setImage = useImageStore(state => state.setImage);
+
   const [removedImageIds, setRemovedImageIds] = useState<Set<string>>(
     new Set(),
   );
@@ -106,22 +108,24 @@ const EditProduct = () => {
   function normalizeImages(images: image[]): {uri: string; _id: string}[] {
     return images.map(item => ({
       uri: item.url ?? item.uri,
-      _id: item._id ?? `${Date.now()}-${Math.random()}`,
+      _id: item._id!, // assume _id exists and is stable
     }));
   }
   useEffect(() => {
-    if (details) {
+    if (details?.data) {
       const {title, description, price, location, images} = details.data;
 
+      // Filter out images that have been marked for removal
       const formattedImages = addFileProtocolToUris(images).filter(
-        img => !removedImageIds.has(img._id),
-      ); // exclude removed images here
+        img => !removedImageIds.has(img._id!),
+      );
 
+      // Filter out local images that have been marked for removal
       const updatedLocalImages = normalizeImages(image).filter(
         img => !removedImageIds.has(img._id),
-      ); // exclude removed local images too if needed
+      );
 
-      const allImages = [...formattedImages, ...updatedLocalImages];
+      const allImages = [...formattedImages, ...updatedLocalImages].slice(0, 5);
       setCombinedImages(allImages);
 
       reset({
@@ -140,32 +144,50 @@ const EditProduct = () => {
   }, [center, setValue]);
 
   const handleSelectImage = async () => {
-    const result = await launchImageLibrary({mediaType: 'photo'});
-    const asset = result.assets?.[0];
+    const currentImagesInForm = getValues('images') || [];
 
-    if (asset?.uri) {
-      const selectedImage = {uri: asset.uri, _id: `${Date.now()}`};
+    if (currentImagesInForm.length >= 5) {
+      ToastAndroid.show(
+        'You can only upload up to 5 images.',
+        ToastAndroid.SHORT,
+      );
+      return;
+    }
+    const result = await launchImageLibrary({mediaType: 'photo'});
+
+    if (result.assets && result.assets.length > 0) {
+      const selectedImage = result.assets[0];
+      if (!selectedImage.uri) {
+        setResultMessage('Selected image has no URI');
+        return;
+      }
+
+      const newImage = {
+        uri: selectedImage.uri,
+        _id: `${Date.now()}`,
+      };
+
+      setImage(newImage);
+
       const currentImages = getValues('images') || [];
-      setValue('images', [...currentImages, selectedImage].slice(0, 5), {
-        shouldValidate: true,
-      });
-    } else {
-      ToastAndroid.show('Selected image has no URI', ToastAndroid.SHORT);
+      const updatedImages = [...currentImages, newImage];
+      setValue('images', updatedImages.slice(0, 5), {shouldValidate: true});
     }
   };
-
   const handleKeyboardDismiss = () => Keyboard.dismiss();
   const showToastErrorMessage = () =>
     ToastAndroid.show('Image Load Error', ToastAndroid.SHORT);
-  const handleRemoveImage = (_id: string) => () => {
-    // Add to removed images set
-    setRemovedImageIds(prev => new Set(prev).add(_id));
 
-    // Remove from store
+  const handleRemoveImage = (_id: string) => () => {
+    // If the image being removed has an _id (meaning it's from the original product details),
+    // add it to the removedImageIds set.
     const removedImg = combinedImages.find(img => img._id === _id);
-    if (removedImg) {
-      removeImage(removedImg.uri); // assuming removeImage expects uri
+    if (removedImg && removedImg._id) {
+      setRemovedImageIds(prevIds => new Set(prevIds).add(removedImg._id!));
     }
+
+    // Remove from the local image store if it's a newly added image
+    removeImage(_id);
 
     // Update local combinedImages and form state immediately for UX
     const updatedImages = combinedImages.filter(img => img._id !== _id);
@@ -359,7 +381,7 @@ const EditProduct = () => {
                                     value.map(img => (
                                       <View key={img._id}>
                                         <Pressable
-                                          onPress={handleRemoveImage(img._id)}
+                                          onPress={handleRemoveImage(img._id!)} // Ensure _id is passed
                                           style={
                                             createEditProductStyles.removeIcon
                                           }>
