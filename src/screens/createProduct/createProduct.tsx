@@ -40,7 +40,7 @@ import CustomModalIcons from '../../components/atoms/customModalIcons/customModa
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
-
+import notifee from '@notifee/react-native';
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
   'Devices'
@@ -146,7 +146,23 @@ const CreateProduct = () => {
       });
 
       if (result.success === true) {
+        console.log(result);
         ToastAndroid.show('Product Created Successfully!', ToastAndroid.SHORT);
+        await notifee.displayNotification({
+          title: 'Product Created',
+          body: 'Tap to view your product details.',
+          android: {
+            channelId: 'default',
+            smallIcon: 'ic_stat_notify',
+            pressAction: {
+              id: 'default',
+            },
+          },
+          data: {
+            type: 'product',
+            productId: result.data._id,
+          },
+        });
         reset({
           title: '',
           description: '',
@@ -173,6 +189,7 @@ const CreateProduct = () => {
   const showToastErrorMessage = () =>
     ToastAndroid.show('Image Load Error', ToastAndroid.SHORT);
   const handleRemoveImage = (id: string) => () => removeImage(id);
+
   return (
     <View style={styles.container}>
       <CustomContainer>
