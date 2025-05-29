@@ -149,18 +149,16 @@ const CreateProduct = () => {
         console.log(result);
         ToastAndroid.show('Product Created Successfully!', ToastAndroid.SHORT);
         await notifee.displayNotification({
-          title: 'Product Created',
-          body: 'Tap to view your product details.',
+          title: `Check Out This New ${result.data.title}`,
+          body: `Only For "${result.data.price}"$`,
           android: {
             channelId: 'default',
-            smallIcon: 'ic_stat_notify',
             pressAction: {
               id: 'default',
             },
           },
           data: {
-            type: 'product',
-            productId: result.data._id,
+            _id: result.data._id,
           },
         });
         reset({
