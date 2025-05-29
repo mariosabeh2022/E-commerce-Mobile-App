@@ -1,7 +1,7 @@
 type Product = {
   _id: string;
-  description:string;
-  price:number;
+  description: string;
+  price: number;
   count: number;
 };
 
@@ -11,5 +11,6 @@ export type Store = {
   setCartUserId: (cartUserId: string) => void;
   addProduct: (product: Product) => void;
   removeProduct: (id: string) => void;
+  decreaseProductCount: (id: string) => void;
   clearProducts: () => void;
 };

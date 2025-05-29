@@ -96,6 +96,12 @@ export const styles = StyleSheet.create({
     ...baseDeleteBackground,
     backgroundColor: darkBaseColor,
   },
+  decreaseContainer: {
+    position: 'absolute',
+    left: 20,
+    justifyContent: 'center',
+    height: '100%',
+  },
   deleteText: {
     color: '#fff',
     fontWeight: 'bold',

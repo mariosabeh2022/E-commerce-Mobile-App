@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useRef} from 'react';
+import React, {useCallback, useMemo} from 'react';
 import {
   View,
   Image,
@@ -20,13 +20,16 @@ const SWIPE_THRESHOLD = -0.25 * SCREEN_WIDTH;
 const CustomRenderItem = ({item}: customCartRenderItemProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  const decreaseProductCount = useCartStore(
+    state => state.decreaseProductCount,
+  );
   const removeProduct = useCartStore(state => state.removeProduct);
   const handleDelete = useCallback(
     () => removeProduct(item._id),
     [removeProduct, item._id],
   );
 
-  const translateX = useRef(new Animated.Value(0)).current;
+  const translateX = useMemo(() => new Animated.Value(0), []);
   const animatedStyle = useMemo(
     () => [
       {transform: [{translateX}]},
@@ -34,31 +37,56 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
     ],
     [translateX, isAppDark],
   );
-  const panResponder = useRef(
-    PanResponder.create({
-      onMoveShouldSetPanResponder: (_, gestureState) =>
-        Math.abs(gestureState.dx) > 10,
-      onPanResponderMove: (_, gestureState) => {
-        if (gestureState.dx < 0) {
+  const handleDecrease = useCallback(() => {
+    if (item.count > 1) {
+      decreaseProductCount(item._id);
+    }
+  }, [decreaseProductCount, item._id, item.count]);
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onMoveShouldSetPanResponder: (_, gestureState) =>
+          Math.abs(gestureState.dx) > 10,
+
+        onPanResponderMove: (_, gestureState) => {
           translateX.setValue(gestureState.dx);
-        }
-      },
-      onPanResponderRelease: (_, gestureState) => {
-        if (gestureState.dx < SWIPE_THRESHOLD) {
-          Animated.timing(translateX, {
-            toValue: -SCREEN_WIDTH,
-            duration: 250,
-            useNativeDriver: true,
-          }).start(() => handleDelete());
-        } else {
-          Animated.spring(translateX, {
-            toValue: 0,
-            useNativeDriver: true,
-          }).start();
-        }
-      },
-    }),
-  ).current;
+        },
+        onPanResponderRelease: (_, gestureState) => {
+          if (gestureState.dx < SWIPE_THRESHOLD) {
+            Animated.timing(translateX, {
+              toValue: -SCREEN_WIDTH,
+              duration: 250,
+              useNativeDriver: true,
+            }).start(() => handleDelete());
+          } else if (gestureState.dx > 50) {
+            if (item.count > 1) {
+              Animated.timing(translateX, {
+                toValue: 100,
+                duration: 150,
+                useNativeDriver: true,
+              }).start(() => {
+                handleDecrease();
+                Animated.spring(translateX, {
+                  toValue: 0,
+                  useNativeDriver: true,
+                }).start();
+              });
+            } else {
+              Animated.spring(translateX, {
+                toValue: 0,
+                useNativeDriver: true,
+              }).start();
+            }
+          } else {
+            Animated.spring(translateX, {
+              toValue: 0,
+              useNativeDriver: true,
+            }).start();
+          }
+        },
+      }),
+    [translateX, handleDelete, handleDecrease, item.count],
+  );
 
   return (
     <View style={styles.swipeContainer}>
@@ -66,6 +94,9 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
         style={
           isAppDark ? styles.darkDeleteBackground : styles.deleteBackground
         }>
+        <View style={styles.decreaseContainer}>
+          <Text style={styles.deleteText}>Decrease</Text>
+        </View>
         <TouchableOpacity onPress={handleDelete}>
           <Text style={styles.deleteText}>Delete</Text>
         </TouchableOpacity>

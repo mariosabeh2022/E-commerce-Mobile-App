@@ -30,6 +30,14 @@ const useCartStore = create<Store>()(
             ],
           };
         }),
+      decreaseProductCount: id =>
+        set(state => ({
+          products: state.products.map(p =>
+            p._id === id && p.count && p.count > 1
+              ? {...p, count: p.count - 1}
+              : p,
+          ),
+        })),
       removeProduct: id =>
         set(state => ({
           products: state.products.filter(p => p._id !== id),
