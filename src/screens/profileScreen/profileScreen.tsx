@@ -108,11 +108,7 @@ const ProfileScreen = () => {
       formDataToSend.append('firstName', firstName);
       formDataToSend.append('lastName', lastName);
 
-      if (
-        profilePicture &&
-        typeof profilePicture === 'string' &&
-        profilePicture.startsWith('file://')
-      ) {
+      if (profilePicture) {
         const uriParts = profilePicture.split('.');
         const fileType = uriParts[uriParts.length - 1];
 
