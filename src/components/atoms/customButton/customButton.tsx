@@ -12,8 +12,11 @@ const CustomButton = ({text = 'light'}: CustomButtomProps) => {
       colors={['#00cc55', '#318555', '#223a66']}
       start={{x: 0, y: 0}}
       end={{x: 1, y: 0}}
-      style={isAppDark ? styles.darkButtonContainer : styles.buttonContainer}>
-      <Text style={styles.buttonText}>{text}</Text>
+      style={isAppDark ? styles.darkButtonContainer : styles.buttonContainer}
+      testID="button-background">
+      <Text style={styles.buttonText} testID="custom-text">
+        {text}
+      </Text>
     </LinearGradient>
   );
 };

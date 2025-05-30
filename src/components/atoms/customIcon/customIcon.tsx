@@ -6,10 +6,13 @@ const CustomIcon = ({type}: customIconProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   if (type === 'sun') {
-    return <Icon name={type} size={20} style={styles.sun} />;
+    return (
+      <Icon testID="custom-sun-icon" name={type} size={20} style={styles.sun} />
+    );
   } else {
     return (
       <Icon
+        testID="custom-icon"
         name={type}
         size={20}
         style={isAppDark ? styles.darkCustomIcon : styles.customIcon}

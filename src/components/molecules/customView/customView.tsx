@@ -3,7 +3,7 @@ import {styles} from './customView.style';
 import {customViewProps} from './customView.type';
 const CustomView = ({children}: customViewProps) => {
   return (
-    <View style={styles.field}>
+    <View testID="view" style={styles.field}>
       {children}
     </View>
   );

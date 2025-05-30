@@ -6,7 +6,11 @@ const CustomTitle = ({text}: customTitleProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
   return (
-    <Text style={isAppDark ? styles.darkTitle : styles.title}>{text}</Text>
+    <Text
+      testID="custom-title"
+      style={isAppDark ? styles.darkTitle : styles.title}>
+      {text}
+    </Text>
   );
 };
 export default CustomTitle;

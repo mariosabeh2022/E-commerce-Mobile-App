@@ -63,9 +63,12 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
   };
 
   return (
-    <View style={styles.mainContainer}>
-      <View style={styles.middleContainer}>
-        <TouchableOpacity style={iconWrapperStyle} onPress={goToCamera}>
+    <View testID="main-container" style={styles.mainContainer}>
+      <View testID="camera-container" style={styles.middleContainer}>
+        <TouchableOpacity
+          testID="camera"
+          style={iconWrapperStyle}
+          onPress={goToCamera}>
           <Icon
             name="camera"
             style={
@@ -77,8 +80,11 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
         <Text style={isAppDark ? styles.darkLabel : styles.label}>Camera</Text>
       </View>
 
-      <View style={styles.middleContainer}>
-        <TouchableOpacity style={iconWrapperStyle} onPress={handleGalleryPress}>
+      <View testID="gallery-container" style={styles.middleContainer}>
+        <TouchableOpacity
+          testID="gallery"
+          style={iconWrapperStyle}
+          onPress={handleGalleryPress}>
           <Icon
             name="image"
             style={
@@ -91,8 +97,9 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
       </View>
 
       {includeRemove && (
-        <View style={styles.middleContainer}>
+        <View testID="remove-picture-container" style={styles.middleContainer}>
           <TouchableOpacity
+            testID="remove-picture"
             style={iconWrapperStyle}
             onPress={handleRemoveProfile}>
             <Icon

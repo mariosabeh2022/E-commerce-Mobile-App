@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, {useCallback} from 'react';
 import {View, Image, TouchableOpacity, ScrollView} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from '../../../contexts/themeContext';
@@ -40,6 +40,7 @@ const CustomImageInput: React.FC<CustomImageInputProps> = ({
   return (
     <View>
       <TouchableOpacity
+        testID="touchable-icon"
         onPress={handleImagePick}
         style={isAppDark ? styles.darkIconContainer : styles.iconContainer}>
         <Icon name="add" size={30} color={isAppDark ? 'white' : 'black'} />
