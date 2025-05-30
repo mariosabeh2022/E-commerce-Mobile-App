@@ -49,7 +49,7 @@ axiosInstance.interceptors.response.use(
         await new Promise(resolve => setTimeout(resolve, 1000));
         return axiosInstance(originalRequest);
       } else {
-        ToastAndroid.show('Server Error', ToastAndroid.SHORT);
+        ToastAndroid.show('Server Timed Out', ToastAndroid.SHORT);
       }
     }
     return Promise.reject(error);

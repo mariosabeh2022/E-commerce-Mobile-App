@@ -93,9 +93,9 @@ const LoginScreen = () => {
           if (cartUserId !== fetchedUser.data.user.id) {
             clearProducts();
           }
+          setTokens(result.data.accessToken, result.data.refreshToken);
+          setCartUserId(fetchedUser.data.user.id);
         }
-        setTokens(result.data.accessToken, result.data.refreshToken);
-        setCartUserId(fetchedUser.data.user.id);
       } else if (result.code === UNAUTHORIZED) {
         setValue('email', '');
         setValue('password', '');
@@ -111,7 +111,7 @@ const LoginScreen = () => {
         setResultMessage(result.message);
       }
     } catch (err) {
-      ToastAndroid.show('Login Server Error', ToastAndroid.SHORT);
+      ToastAndroid.show('Server Error', ToastAndroid.SHORT);
     }
     setIsLoading(false);
     setSubmittable(false);
