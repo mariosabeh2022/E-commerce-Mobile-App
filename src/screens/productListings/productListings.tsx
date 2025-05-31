@@ -153,7 +153,7 @@ const ProductListingsScreen = () => {
             </CustomPressable>
           </>
         </CustomView>
-        {isFetchingAll && !responseData ? (
+        {isFetchingAll && !responseData?.pages?.length ? (
           <View style={styles.emptyListContainer}>
             <Text
               style={
@@ -193,7 +193,7 @@ const ProductListingsScreen = () => {
             }}
             onEndReachedThreshold={0.7}
             ListEmptyComponent={
-              !isFetchingAll &&  search.length >= 3 ? (
+              !isFetchingAll && search.length >= 3 ? (
                 CustomErrorMessage
               ) : (
                 <View style={styles.emptyListContainer}>
