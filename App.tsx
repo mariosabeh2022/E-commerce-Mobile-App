@@ -3,6 +3,7 @@ import {AuthProvider} from './src/contexts/authContext';
 import {ThemeProvider} from './src/contexts/themeContext';
 import RootNavigator from './src/navigation/navigator/rootNavigator';
 import notifee, {AndroidImportance} from '@notifee/react-native';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 function App(): React.JSX.Element {
   useEffect(() => {
@@ -16,11 +17,19 @@ function App(): React.JSX.Element {
 
     createChannel();
   }, []);
+
   useEffect(() => {
     const requestPermission = async () => {
       await notifee.requestPermission();
     };
     requestPermission();
+  }, []);
+
+  useEffect(() => {
+    // crashlytics().log('App mounted.');
+    // crashlytics().setUserId('12345');
+    // crashlytics().setAttribute('role', 'tester');
+    // crashlytics().crash();
   }, []);
 
   return (
