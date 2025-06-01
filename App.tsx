@@ -3,7 +3,7 @@ import {AuthProvider} from './src/contexts/authContext';
 import {ThemeProvider} from './src/contexts/themeContext';
 import RootNavigator from './src/navigation/navigator/rootNavigator';
 import notifee, {AndroidImportance} from '@notifee/react-native';
-import crashlytics from '@react-native-firebase/crashlytics';
+// import crashlytics from '@react-native-firebase/crashlytics';
 
 function App(): React.JSX.Element {
   useEffect(() => {

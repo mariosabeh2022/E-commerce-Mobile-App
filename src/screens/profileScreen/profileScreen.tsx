@@ -10,11 +10,6 @@ import {
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import {styles} from './profileScreenstyle';
-import {
-  fetchProfile,
-  refreshTokenFn,
-  updateProfile,
-} from '../../lib/axiosInstance';
 import {errorCodes} from '../../lib/errorCodes';
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import CustomButton from '../../components/atoms/customButton/customButton';
@@ -32,6 +27,9 @@ import CustomModalIcons from '../../components/atoms/customModalIcons/customModa
 import useUserStore from '../../stores/profileStore/profileStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {API_URL} from '../../config/index';
+import {fetchProfile} from '../../api/fetchProfile/fetchProfileCall';
+import { updateProfile } from '../../api/updateProfile/updateProfileCall';
+import { refreshTokenFn } from '../../api/refreshToken/refreshTokenCall';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
   const {user, setUser, updateProfileImage} = useUserStore();

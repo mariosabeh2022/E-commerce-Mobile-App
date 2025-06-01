@@ -18,11 +18,6 @@ import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes
 import ImageCarousel from '../../components/molecules/customCarousel/customCarousel';
 import {useTheme} from '../../contexts/themeContext';
 import {useQuery} from '@tanstack/react-query';
-import {
-  deleteProduct,
-  fetchProfile,
-  productDetails,
-} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import MapScreen from '../mapScreen/mapScreen';
@@ -32,6 +27,9 @@ import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
 import CustomLink from '../../components/atoms/customLink/customLink';
 import useCartStore from '../../stores/cartStore/cartStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
+import {fetchProfile} from '../../api/fetchProfile/fetchProfileCall';
+import {productDetails} from '../../api/fetchProductDetails/fetchProductDetailsCall';
+import {deleteProduct} from '../../api/deleteProduct/deleteProductCall';
 
 type DetailsScreenRouteProp = RouteProp<ProductsStackParamList, 'Details'>;
 const DetailsScreen = () => {

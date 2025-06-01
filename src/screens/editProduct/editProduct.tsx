@@ -30,7 +30,6 @@ import {Controller, useForm} from 'react-hook-form';
 import {schema} from '../../utils/productCreationFromValidation';
 import {z} from 'zod';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
-import {editProduct, productDetails} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import MapScreen from '../mapScreen/mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
@@ -43,6 +42,8 @@ import {useQuery} from '@tanstack/react-query';
 import {addFileProtocolToUris} from '../../utils/imagePrefix';
 import {createEditProductStyles} from '../../styles/createEditProduct.style';
 import {useImageStore} from '../../stores/uploadStore/uploadStore';
+import {productDetails} from '../../api/fetchProductDetails/fetchProductDetailsCall';
+import {editProduct} from '../../api/editProduct/editProductCall';
 
 type EditProductRouteProp = RouteProp<
   AuthenticatedStackParamList,

@@ -28,11 +28,13 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-import {fetchProfile, login, reVerification} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import {errorCodes} from '../../lib/errorCodes';
 import useCartStore from '../../stores/cartStore/cartStore';
 import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
+import {login} from '../../api/login/loginCall';
+import {fetchProfile} from '../../api/fetchProfile/fetchProfileCall';
+import {reVerification} from '../../api/resendOTP/resendOTPCall';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'

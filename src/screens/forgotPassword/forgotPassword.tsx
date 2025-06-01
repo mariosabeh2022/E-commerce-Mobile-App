@@ -1,4 +1,4 @@
-import React, {useCallback,  useState} from 'react';
+import React, {useCallback, useState} from 'react';
 import {
   View,
   Text,
@@ -26,10 +26,10 @@ import CustomInput from '../../components/atoms/customInput/customInput';
 import CustomContainer from '../../components/organismes/customContainer/customContainer';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-import {resetPassword} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import {errorCodes} from '../../lib/errorCodes';
-import { useKeyboardVisibility } from '../../hooks/useKeyboardVisibility';
+import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
+import {resetPassword} from '../../api/resetPassword/resetPasswordCall';
 type LoginScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
   'Verification'

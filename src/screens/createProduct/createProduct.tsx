@@ -30,7 +30,6 @@ import {Controller, useForm} from 'react-hook-form';
 import {schema} from '../../utils/productCreationFromValidation';
 import {z} from 'zod';
 import {darkBaseColor, lightBaseColor} from '../../styles/formStyles';
-import {createProduct} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import MapScreen from '../mapScreen/mapScreen';
 import {useMapStore} from '../../stores/mapCoordinates/mapStore';
@@ -41,6 +40,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
 import notifee from '@notifee/react-native';
+import {createProduct} from '../../api/createProduct/createProductCall';
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
   'Devices'

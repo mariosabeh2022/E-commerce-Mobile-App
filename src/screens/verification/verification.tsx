@@ -21,12 +21,12 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import {useTheme} from '../../contexts/themeContext';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-import {verification} from '../../lib/axiosInstance';
 import CustomInput from '../../components/atoms/customInput/customInput';
 import {RouteProp} from '@react-navigation/native';
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import {NativeStackNavigationProp} from '@react-navigation/native-stack';
 import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
+import { verification } from '../../api/verifyAccount/verifyAccountCall';
 
 type VerificationRouteProp = RouteProp<
   UnauthenticatedStackParamList,

@@ -1,6 +1,6 @@
 export enum errorCodes {
   FLARE = 521,
-  NOT_VERIFIED= 403,
+  NOT_VERIFIED = 403,
   NOT_FOUND = 404,
   UNAUTHORIZED = 401,
   EXISTS = 400,

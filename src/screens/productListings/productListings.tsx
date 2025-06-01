@@ -19,11 +19,12 @@ import CustomPressable from '../../components/molecules/customPressable/customPr
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
 import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
-import {fetchProducts, searchProducts} from '../../lib/axiosInstance';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomSkeletonItem from '../../components/organismes/customSkeletonItem/customSeketonItem';
+import {fetchProducts} from '../../api/fetchProducts/fetchProductsCall';
+import {searchProducts} from '../../api/fetchProducts/searchProductsCall';
 type ProductScreenNavigationProp = NativeStackNavigationProp<
   ProductsStackParamList,
   'Products'
@@ -81,7 +82,8 @@ const ProductListingsScreen = () => {
   );
   const {
     data: filteredData,
-    isRefetching: isRefetchingSeach,
+    isFetching: isFetchingSearch,
+    isRefetching: isRefetchingSearch,
     refetch: refetchSearch,
   } = useQuery({
     queryKey: ['search', {search}],
@@ -92,7 +94,8 @@ const ProductListingsScreen = () => {
       }),
     enabled: !!userToken && !!search,
   });
-  const showSearchResults = search.length >= 2;
+
+  const showSearchResults = search.length > 2;
   const navigation = useNavigation<ProductScreenNavigationProp>();
   const renderItem = ({item}: {item: any}) => {
     const handleDetailsNavigation = () =>
@@ -153,7 +156,7 @@ const ProductListingsScreen = () => {
             </CustomPressable>
           </>
         </CustomView>
-        {isFetchingAll && !responseData?.pages?.length ? (
+        {(isFetchingAll && !responseData?.pages?.length) || isFetchingSearch ? (
           <View style={styles.emptyListContainer}>
             <Text
               style={
@@ -185,7 +188,9 @@ const ProductListingsScreen = () => {
               return renderItem({item});
             }}
             onRefresh={showSearchResults ? refetchSearch : refetchAll}
-            refreshing={showSearchResults ? isRefetchingSeach : isRefetchingAll}
+            refreshing={
+              showSearchResults ? isRefetchingSearch : isRefetchingAll
+            }
             onEndReached={() => {
               if (!showSearchResults && hasNextPage && !isFetchingNextPage) {
                 fetchNextPage();
@@ -193,8 +198,16 @@ const ProductListingsScreen = () => {
             }}
             onEndReachedThreshold={0.7}
             ListEmptyComponent={
-              !isFetchingAll && search.length >= 3 ? (
-                CustomErrorMessage
+              showSearchResults ? (
+                !isFetchingAll && search.length >= 3 ? (
+                  CustomErrorMessage
+                ) : (
+                  <View style={styles.emptyListContainer}>
+                    {[...Array(3)].map((_, index) => (
+                      <CustomSkeletonItem key={`empty-skeleton-${index}`} />
+                    ))}
+                  </View>
+                )
               ) : (
                 <View style={styles.emptyListContainer}>
                   {[...Array(3)].map((_, index) => (

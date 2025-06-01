@@ -28,8 +28,8 @@ import CustomContainer from '../../components/organismes/customContainer/customC
 import {UnauthenticatedStackParamList} from '../../navigation/navigator/navigationTypes';
 import {useTheme} from '../../contexts/themeContext';
 import WavyHeader from '../../components/organismes/wavyHeader/wavyHeader';
-import {signup} from '../../lib/axiosInstance';
 import {useKeyboardVisibility} from '../../hooks/useKeyboardVisibility';
+import {signup} from '../../api/signup/signupCall';
 
 type SignUpScreenNavigationProp = NativeStackNavigationProp<
   UnauthenticatedStackParamList,
