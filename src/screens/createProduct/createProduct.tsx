@@ -39,8 +39,8 @@ import CustomModalIcons from '../../components/atoms/customModalIcons/customModa
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {AuthenticatedStackParamList} from '../../navigation/stacks/authenticatedStack';
-import notifee from '@notifee/react-native';
 import {createProduct} from '../../api/createProduct/createProductCall';
+import {callNotification} from '../../lib/callNotification';
 type UploadScreenNavigationProp = NativeStackNavigationProp<
   AuthenticatedTabParamList,
   'Devices'
@@ -148,19 +148,7 @@ const CreateProduct = () => {
       if (result.success === true) {
         console.log(result);
         ToastAndroid.show('Product Created Successfully!', ToastAndroid.SHORT);
-        await notifee.displayNotification({
-          title: `Check Out This New ${result.data.title}`,
-          body: `Only For "${result.data.price}"$`,
-          android: {
-            channelId: 'default',
-            pressAction: {
-              id: 'default',
-            },
-          },
-          data: {
-            _id: result.data._id,
-          },
-        });
+        callNotification(result.data);
         reset({
           title: '',
           description: '',
