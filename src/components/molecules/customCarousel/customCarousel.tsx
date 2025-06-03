@@ -51,7 +51,7 @@ const ImageCarousel = ({images}: customCarouselProps) => {
     );
   };
   const handlePictureDownload = useCallback((path: string) => {
-    return () => showConfirmation(() => downloadImage(API_URL + path));
+    return () => showConfirmation(() => downloadImage(`${API_URL}${path}`));
   }, []);
   const renderItem = useCallback(
     ({item}: ListRenderItemInfo<ImageItem>) => (
@@ -68,7 +68,7 @@ const ImageCarousel = ({images}: customCarouselProps) => {
     [handlePictureDownload],
   );
 
-  const handleMomentumScrollEnd  = useCallback((event: any) => {
+  const handleMomentumScrollEnd = useCallback((event: any) => {
     const contentOffsetX = event.nativeEvent.contentOffset.x;
     const index = Math.floor(contentOffsetX / width);
     setCurrentIndex(index);
