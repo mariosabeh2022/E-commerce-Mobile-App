@@ -146,7 +146,6 @@ const CreateProduct = () => {
       });
 
       if (result.success === true) {
-        console.log(result);
         ToastAndroid.show('Product Created Successfully!', ToastAndroid.SHORT);
         callNotification(result.data);
         reset({

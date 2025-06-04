@@ -117,6 +117,7 @@ const ProductListingsScreen = () => {
         route.params?.fromScreen === 'Details'
       ) {
         setSearch('');
+        refetchAll();
       }
     });
 

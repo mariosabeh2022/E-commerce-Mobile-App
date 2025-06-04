@@ -13,7 +13,12 @@ import {
   TouchableOpacity,
   Share,
 } from 'react-native';
-import {RouteProp, useNavigation, useRoute} from '@react-navigation/native';
+import {
+  RouteProp,
+  useFocusEffect,
+  useNavigation,
+  useRoute,
+} from '@react-navigation/native';
 import {ProductsStackParamList} from '../../navigation/navigator/navigationTypes';
 import ImageCarousel from '../../components/molecules/customCarousel/customCarousel';
 import {useTheme} from '../../contexts/themeContext';
@@ -40,7 +45,11 @@ const DetailsScreen = () => {
   const route = useRoute<DetailsScreenRouteProp>();
   const {id: itemId} = route.params;
   const userToken = useAuthStore(state => state.accessToken);
-  const {data: details, isFetching: fetchingDetails} = useQuery({
+  const {
+    data: details,
+    isFetching: fetchingDetails,
+    refetch,
+  } = useQuery({
     queryKey: ['fetchDetails'],
     queryFn: () =>
       productDetails({
@@ -178,6 +187,12 @@ const DetailsScreen = () => {
       headerRight: renderShareButton,
     });
   }, [navigation, renderShareButton]);
+
+  useFocusEffect(
+    useCallback(() => {
+      refetch();
+    }, [refetch]),
+  );
 
   const handleContact = useCallback(
     () => openGmail(details?.data?.user.email),
