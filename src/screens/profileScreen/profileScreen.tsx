@@ -46,7 +46,6 @@ const ProfileScreen = () => {
   const userToken = useAuthStore(state => state.accessToken!);
   const refreshToken = useAuthStore(state => state.refreshToken!);
   const clearToken = useAuthStore(state => state.clearToken);
-  const {SUCCESS} = errorCodes;
   //Fetch profile
   const getProfile = useCallback(async () => {
     try {
@@ -82,12 +81,7 @@ const ProfileScreen = () => {
 
   type FormData = z.infer<typeof schema>;
 
-  const {
-    control,
-    handleSubmit,
-    reset,
-    formState: {errors},
-  } = useForm<FormData>({
+  const {control, handleSubmit, reset} = useForm<FormData>({
     resolver: zodResolver(schema),
   });
   const handleEditing = () => {
@@ -100,6 +94,7 @@ const ProfileScreen = () => {
 
   const onSubmit = async (formData: FormData) => {
     setSaveLoading(true);
+    setIsEditing(true);
     const {firstName, lastName} = validateInput(formData.userName);
 
     try {
@@ -122,17 +117,7 @@ const ProfileScreen = () => {
         token: userToken,
         formData: formDataToSend,
       });
-      if (response.status !== SUCCESS) {
-        //Retry editting
-        for (let i = 0; i < 3; i++) {
-          updateProfile({
-            token: userToken,
-            formData: formDataToSend,
-          });
-          if (response.success) {
-            break;
-          }
-        }
+      if (response.success === true) {
         const updatedUser = response.data.user;
         setUser({
           ...user,
@@ -143,15 +128,14 @@ const ProfileScreen = () => {
             : user.profileImage,
         });
         ToastAndroid.show('Profile updated successfully!', ToastAndroid.SHORT);
-        setIsEditing(false);
       } else {
         throw new Error(response.message || 'Failed to update profile');
       }
     } catch (error) {
       ToastAndroid.show('Failed to update profile', ToastAndroid.SHORT);
-    } finally {
-      setSaveLoading(false);
     }
+    setSaveLoading(false);
+    setIsEditing(false);
   };
   const toggleModalVisibility = () => {
     setShowModal(prev => !prev);
@@ -245,9 +229,6 @@ const ProfileScreen = () => {
           </Pressable>
         ) : (
           <>
-            {errors.userName && (
-              <CustomErrorMessage message={errors.userName.message} />
-            )}
             <Pressable
               style={styles.buttonContainer}
               onPress={handleSubmit(onSubmit)}>

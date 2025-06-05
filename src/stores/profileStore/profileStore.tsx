@@ -1,6 +1,7 @@
 import {create} from 'zustand';
 import {UserStore} from './profileStore.type';
-import {persist} from 'zustand/middleware';
+import {createJSONStorage, persist} from 'zustand/middleware';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const useUserStore = create<UserStore>()(
   persist(
     set => ({
@@ -23,6 +24,7 @@ const useUserStore = create<UserStore>()(
     }),
     {
       name: 'profile-storage',
+      storage: createJSONStorage(() => AsyncStorage),
     },
   ),
 );

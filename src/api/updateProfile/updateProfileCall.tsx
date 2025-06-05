@@ -14,12 +14,12 @@ export const updateProfile = async ({
         'Content-Type': 'multipart/form-data',
       },
     });
-    return {success: true, data};
+    return {success: true, data: data.data};
   } catch (error: any) {
     return {
       success: false,
       status: error?.response?.status,
-      message: error?.response?.data?.message || 'Updated Username',
+      message: error?.response?.data?.message || 'Failed To Update Profile',
     };
   }
 };
