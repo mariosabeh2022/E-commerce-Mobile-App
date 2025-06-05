@@ -2,6 +2,7 @@ import Icon from 'react-native-vector-icons/FontAwesome5';
 import {customIconProps} from './customIcon.type';
 import {styles} from './customIconstyle';
 import {useTheme} from '../../../contexts/themeContext';
+import { memo } from 'react';
 const CustomIcon = ({type}: customIconProps) => {
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
@@ -20,4 +21,4 @@ const CustomIcon = ({type}: customIconProps) => {
     );
   }
 };
-export default CustomIcon;
+export default memo(CustomIcon);

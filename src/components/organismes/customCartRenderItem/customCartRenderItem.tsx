@@ -28,7 +28,13 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
     () => removeProduct(item._id),
     [removeProduct, item._id],
   );
+  const handleDecrease = useCallback(() => {
+    if (item.count > 1) {
+      decreaseProductCount(item._id);
+    }
+  }, [decreaseProductCount, item._id, item.count]);
 
+  //Setting up animation values
   const translateX = useMemo(() => new Animated.Value(0), []);
   const animatedStyle = useMemo(
     () => [
@@ -37,28 +43,28 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
     ],
     [translateX, isAppDark],
   );
-  const handleDecrease = useCallback(() => {
-    if (item.count > 1) {
-      decreaseProductCount(item._id);
-    }
-  }, [decreaseProductCount, item._id, item.count]);
+
+  //Pan responder
   const panResponder = useMemo(
     () =>
       PanResponder.create({
         onMoveShouldSetPanResponder: (_, gestureState) =>
           Math.abs(gestureState.dx) > 10,
-
+        //Updating X values
         onPanResponderMove: (_, gestureState) => {
           translateX.setValue(gestureState.dx);
         },
         onPanResponderRelease: (_, gestureState) => {
+          //Delete threshold check
           if (gestureState.dx < SWIPE_THRESHOLD) {
             Animated.timing(translateX, {
               toValue: -SCREEN_WIDTH,
               duration: 250,
               useNativeDriver: true,
             }).start(() => handleDelete());
-          } else if (gestureState.dx > 50) {
+          } //Decrease threshold check
+          else if (gestureState.dx > 50) {
+            //Valid item count to decrease
             if (item.count > 1) {
               Animated.timing(translateX, {
                 toValue: 100,
@@ -71,13 +77,15 @@ const CustomRenderItem = ({item}: customCartRenderItemProps) => {
                   useNativeDriver: true,
                 }).start();
               });
-            } else {
+            } //Reset
+            else {
               Animated.spring(translateX, {
                 toValue: 0,
                 useNativeDriver: true,
               }).start();
             }
-          } else {
+          } //Reset
+          else {
             Animated.spring(translateX, {
               toValue: 0,
               useNativeDriver: true,

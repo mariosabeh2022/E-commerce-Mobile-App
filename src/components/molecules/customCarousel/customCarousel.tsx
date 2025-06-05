@@ -50,9 +50,11 @@ const ImageCarousel = ({images}: customCarouselProps) => {
       {cancelable: true},
     );
   };
+  //Download function
   const handlePictureDownload = useCallback((path: string) => {
     return () => showConfirmation(() => downloadImage(`${API_URL}${path}`));
   }, []);
+  //Render Item
   const renderItem = useCallback(
     ({item}: ListRenderItemInfo<ImageItem>) => (
       <TouchableWithoutFeedback onLongPress={handlePictureDownload(item.uri)}>

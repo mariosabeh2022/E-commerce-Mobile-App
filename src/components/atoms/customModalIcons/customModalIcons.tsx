@@ -31,6 +31,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
   const goToCamera = useCallback(() => {
     navigation.navigate('CameraScreen', {
       onCapture: async photo => {
+        //File path fallback
         const imagePath = photo.path.startsWith('file://')
           ? photo.path
           : `file://${photo.path}`;
@@ -38,6 +39,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
           uri: imagePath,
           _id: String(Math.random() * 101 + 1000),
         };
+        //Checking if modal is for profile or product, remove is for profile picture
         if (!includeRemove) {
           setImage(imageForForm);
         } else {
@@ -53,6 +55,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
 
   const handleGalleryPress = async () => {
     if (onSelectImage) {
+      //handled by parent component when creating or updating products
       onSelectImage();
       return;
     }
@@ -95,7 +98,7 @@ const CustomIcons = ({includeRemove, onSelectImage}: innerCustomIconProp) => {
         </TouchableOpacity>
         <Text style={isAppDark ? styles.darkLabel : styles.label}>Gallery</Text>
       </View>
-
+      {/* Profile Screen Completed Modal */}
       {includeRemove && (
         <View testID="remove-picture-container" style={styles.middleContainer}>
           <TouchableOpacity

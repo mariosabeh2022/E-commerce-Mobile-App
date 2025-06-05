@@ -3,6 +3,7 @@ import {CustomButtomProps} from './customButton.type';
 import {styles} from './customButtom.style';
 import LinearGradient from 'react-native-linear-gradient';
 import {useTheme} from '../../../contexts/themeContext';
+import {memo} from 'react';
 
 const CustomButton = ({text = 'light'}: CustomButtomProps) => {
   const {theme} = useTheme();
@@ -21,4 +22,4 @@ const CustomButton = ({text = 'light'}: CustomButtomProps) => {
   );
 };
 
-export default CustomButton;
+export default memo(CustomButton);

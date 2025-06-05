@@ -3,6 +3,7 @@ import {styles} from './customInput.style';
 import {customInputProps} from './customInput.type';
 import {placeholderColors} from './customInput.style';
 import {useTheme} from '../../../contexts/themeContext';
+import { memo } from 'react';
 const CustomInput = ({
   placeholder,
   autoCapitalize = 'none',
@@ -35,4 +36,4 @@ const CustomInput = ({
     />
   );
 };
-export default CustomInput;
+export default memo(CustomInput);

@@ -1,6 +1,7 @@
 import {Pressable} from 'react-native';
 import {styles} from './customPressable.style';
 import {customPressableProps} from './customPressable.type';
+import {memo} from 'react';
 const CustomPressable = ({onPress, children}: customPressableProps) => {
   return (
     <Pressable
@@ -11,4 +12,4 @@ const CustomPressable = ({onPress, children}: customPressableProps) => {
     </Pressable>
   );
 };
-export default CustomPressable;
+export default memo(CustomPressable);
