@@ -46,6 +46,7 @@ const ProductListingsScreen = () => {
     setSortBy('price');
     setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
   }, []);
+  //Fetch all products
   const {
     data: responseData,
     fetchNextPage,
@@ -74,12 +75,15 @@ const ProductListingsScreen = () => {
     },
     enabled: !!userToken,
   });
+  //Flatlist data
   const flatData = responseData?.pages?.flatMap(page => page.data) ?? [];
+  //Filter ids
   const deduplicatedFlatData = Array.from(
     new Map(
       flatData.filter(item => item && item._id).map(item => [item._id, item]),
     ).values(),
   );
+  //Fetch searched data
   const {
     data: filteredData,
     isFetching: isFetchingSearch,
@@ -94,9 +98,10 @@ const ProductListingsScreen = () => {
       }),
     enabled: !!userToken && !!search,
   });
-
+  //Filter data condition
   const showSearchResults = search.length > 2;
   const navigation = useNavigation<ProductScreenNavigationProp>();
+  //Custom render item
   const renderItem = ({item}: {item: any}) => {
     const handleDetailsNavigation = () =>
       navigation.navigate('Details', {id: item._id.toString()});
@@ -110,6 +115,7 @@ const ProductListingsScreen = () => {
   };
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  //Trigger refetch once redirected from edit or detele
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (
@@ -122,7 +128,7 @@ const ProductListingsScreen = () => {
     });
 
     return unsubscribe;
-  }, [navigation, route.params]);
+  }, [navigation, route.params, refetchAll]);
 
   return (
     <CustomContainer>

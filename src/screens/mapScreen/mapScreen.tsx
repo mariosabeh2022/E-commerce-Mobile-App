@@ -9,6 +9,7 @@ MapLibreGL.setAccessToken('CYR7xfJUCqmrqb10LQqN');
 export default function MapScreen({coordinates}: MapScreenProps) {
   const defaultCenter = useMapStore(state => state.center);
   const setCenter = useMapStore(state => state.setCenter);
+  //Setting coordinates for beirut as fallback
   const center = coordinates ?? defaultCenter;
   const handleMapPress = useCallback(
     (e: any) => {

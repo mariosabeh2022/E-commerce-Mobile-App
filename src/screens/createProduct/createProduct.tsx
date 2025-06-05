@@ -87,7 +87,7 @@ const CreateProduct = () => {
   const navigation = useNavigation<
     UploadScreenNavigationProp & AuthenticatedStackParamList
   >();
-
+  //Upload image
   const handleSelectImage = async () => {
     const currentImagesInForm = getValues('images') || [];
 
@@ -119,7 +119,7 @@ const CreateProduct = () => {
       setValue('images', updatedImages.slice(0, 5), {shouldValidate: true});
     }
   };
-
+  //Setting map coordinates
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);

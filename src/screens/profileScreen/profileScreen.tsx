@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   ActivityIndicator,
   Pressable,
@@ -28,8 +28,8 @@ import useUserStore from '../../stores/profileStore/profileStore';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {API_URL} from '../../config/index';
 import {fetchProfile} from '../../api/fetchProfile/fetchProfileCall';
-import { updateProfile } from '../../api/updateProfile/updateProfileCall';
-import { refreshTokenFn } from '../../api/refreshToken/refreshTokenCall';
+import {updateProfile} from '../../api/updateProfile/updateProfileCall';
+import {refreshTokenFn} from '../../api/refreshToken/refreshTokenCall';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
   const {user, setUser, updateProfileImage} = useUserStore();
@@ -46,30 +46,31 @@ const ProfileScreen = () => {
   const userToken = useAuthStore(state => state.accessToken!);
   const refreshToken = useAuthStore(state => state.refreshToken!);
   const clearToken = useAuthStore(state => state.clearToken);
-  useEffect(() => {
-    const getProfile = async () => {
-      try {
-        setFetchingUserLoad(true);
-        let result = await fetchProfile({token: userToken});
-        if (result.status === FLARE || result.status === NOT_FOUND) {
-          result = await fetchProfile({token: userToken});
-        }
-        if (result.status === NOT_VERIFIED) {
-          console.log('Unauthorized user');
-        }
-        setUser(result.data.user);
-        if (result.data.user.isEmailVerified) {
-          setVerified(true);
-        }
-        updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
-      } catch (err: any) {
-        console.log(err.message || 'Failed to load profile');
+  const {SUCCESS} = errorCodes;
+  //Fetch profile
+  const getProfile = useCallback(async () => {
+    try {
+      setFetchingUserLoad(true);
+      let result = await fetchProfile({token: userToken});
+      if (result.status === FLARE || result.status === NOT_FOUND) {
+        result = await fetchProfile({token: userToken});
       }
-      setFetchingUserLoad(false);
-    };
-
+      if (result.status === NOT_VERIFIED) {
+        console.log('Unauthorized user');
+      }
+      setUser(result.data.user);
+      if (result.data.user.isEmailVerified) {
+        setVerified(true);
+      }
+      updateProfileImage(`${API_URL + result.data.user.profileImage.url}`);
+    } catch (err: any) {
+      console.log(err.message || 'Failed to load profile');
+    }
+    setFetchingUserLoad(false);
+  }, [setUser, userToken, updateProfileImage]);
+  useEffect(() => {
     getProfile();
-  }, [userToken, setUser, updateProfileImage]);
+  }, [getProfile]);
 
   const creationDate = new Date(user.createdAt);
   const year = creationDate.getFullYear();
@@ -121,8 +122,17 @@ const ProfileScreen = () => {
         token: userToken,
         formData: formDataToSend,
       });
-
-      if (response.success && response.data?.user) {
+      if (response.status !== SUCCESS) {
+        //Retry editting
+        for (let i = 0; i < 3; i++) {
+          updateProfile({
+            token: userToken,
+            formData: formDataToSend,
+          });
+          if (response.success) {
+            break;
+          }
+        }
         const updatedUser = response.data.user;
         setUser({
           ...user,

@@ -45,6 +45,7 @@ const DetailsScreen = () => {
   const route = useRoute<DetailsScreenRouteProp>();
   const {id: itemId} = route.params;
   const userToken = useAuthStore(state => state.accessToken);
+  //Fetch details
   const {
     data: details,
     isFetching: fetchingDetails,
@@ -66,6 +67,7 @@ const DetailsScreen = () => {
   );
   const {theme} = useTheme();
   const isAppDark = theme === 'dark';
+  //Fetch creator-owner
   const {data: userData, isFetching: fetchingProfile} = useQuery({
     queryKey: ['fetchProfile'],
     queryFn: () =>
@@ -90,6 +92,7 @@ const DetailsScreen = () => {
   useEffect(() => {
     fadeIn();
   }, [fadeIn]);
+
   const formatDate = (dateString?: string) => {
     if (!dateString) {
       return '';
@@ -108,6 +111,8 @@ const DetailsScreen = () => {
       ? formattedUpdate
       : 'No updates yet';
   })();
+
+  //Contact user
   const openGmail = (email: string) => {
     const gmailUrl = `googlegmail://co?to=${email}`;
     Linking.canOpenURL(gmailUrl)
@@ -122,8 +127,10 @@ const DetailsScreen = () => {
         Alert.alert('Error', 'Unable to open mail app');
       });
   };
+  //In screen functions
   const showToastMessage = () =>
     ToastAndroid.show('Delete Canceled', ToastAndroid.SHORT);
+
   const showConfirmation = (onConfirm: () => void) => {
     Alert.alert(
       'Delete Product',
@@ -159,19 +166,23 @@ const DetailsScreen = () => {
       }
     });
   };
+
   const handleEditNavigation = () => {
     navigation.navigate('Edit Product', {id: itemId});
   };
+
   const handleAddToCart = () => {
     addProduct(details.data);
     ToastAndroid.show('Added To Your Cart!', ToastAndroid.SHORT);
   };
+
   const handleShare = (id: string) => () => {
     const url = `ecommerceMobileApp://details/${id}`;
     Share.share({
       message: `Check out this product: ${url}`,
     });
   };
+
   const renderShareButton = useCallback(
     () => (
       <Pressable onPress={handleShare(itemId)}>
@@ -182,12 +193,15 @@ const DetailsScreen = () => {
     ),
     [itemId],
   );
+
+  //Loading share button
   useEffect(() => {
     navigation.setOptions({
       headerRight: renderShareButton,
     });
   }, [navigation, renderShareButton]);
 
+  //Refetch once redirected from edit screen
   useFocusEffect(
     useCallback(() => {
       refetch();

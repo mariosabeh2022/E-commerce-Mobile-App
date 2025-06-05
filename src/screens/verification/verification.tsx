@@ -60,7 +60,7 @@ const VerificationScreen = ({route, navigation}: Props) => {
       otp: '',
     },
   });
-
+  //Load email
   useEffect(() => {
     setValue('email', Email);
   }, [Email, setValue]);

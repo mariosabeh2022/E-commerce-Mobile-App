@@ -14,7 +14,6 @@ import {
 } from 'react-native';
 import {useCallback, useEffect, useState} from 'react';
 import {styles} from '../../styles/productForms';
-
 import CustomButton from '../../components/atoms/customButton/customButton';
 import {useNavigation, useRoute, RouteProp} from '@react-navigation/native';
 import {useTheme} from '../../contexts/themeContext';
@@ -75,6 +74,7 @@ const EditProduct = () => {
     () => setShowModal(prev => !prev),
     [],
   );
+  //Unified uploaded and fetched images array
   const [combinedImages, setCombinedImages] = useState<image[]>([]);
   const removeImage = useImageStore(state => state.removeImage);
   const setImage = useImageStore(state => state.setImage);
@@ -103,32 +103,35 @@ const EditProduct = () => {
       images: [],
     },
   });
-
+  //Fetch details
   const {data: details, isFetching} = useQuery({
     queryKey: ['fetchDetails', id],
     queryFn: () => productDetails({token: userToken!, id}),
     enabled: !!userToken,
   });
+  //Updates image uri accordingly
   function normalizeImages(images: image[]): {uri: string; _id: string}[] {
     return images.map(item => ({
       uri: item.url ?? item.uri,
-      _id: item._id!, // assume _id exists and is stable
+      _id: item._id!,
     }));
   }
+  //Load fetched data into form
   useEffect(() => {
     if (details?.data) {
       const {title, description, price, location, images} = details.data;
 
-      // Filter out images that have been marked for removal
+      // Filter out fetched marked images
       const formattedImages = addFileProtocolToUris(images).filter(
         img => !removedImageIds.has(img._id!),
       );
 
-      // Filter out local images that have been marked for removal
+      // Filter out uploaded marked images
       const updatedLocalImages = normalizeImages(image).filter(
         img => !removedImageIds.has(img._id),
       );
 
+      //Merging images and setting state
       const allImages = [...formattedImages, ...updatedLocalImages].slice(0, 5);
       setCombinedImages(allImages);
 
@@ -142,11 +145,13 @@ const EditProduct = () => {
     }
   }, [details, reset, image, removedImageIds]);
 
+  //Load map coordinates
   useEffect(() => {
     setValue('location.longitude', center[0]);
     setValue('location.latitude', center[1]);
   }, [center, setValue]);
 
+  //Upload images function
   const handleSelectImage = async () => {
     const currentImagesInForm = getValues('images') || [];
 
@@ -183,17 +188,16 @@ const EditProduct = () => {
     ToastAndroid.show('Image Load Error', ToastAndroid.SHORT);
 
   const handleRemoveImage = (_id: string) => () => {
-    // If the image being removed has an _id (meaning it's from the original product details),
-    // add it to the removedImageIds set.
+    // If the image being removed has an _id (meaning it's from the original product details) => add it to the removedImageIds set
     const removedImg = combinedImages.find(img => img._id === _id);
     if (removedImg && removedImg._id) {
       setRemovedImageIds(prevIds => new Set(prevIds).add(removedImg._id!));
     }
 
-    // Remove from the local image store if it's a newly added image
+    // Remove from the local image store
     removeImage(_id);
 
-    // Update local combinedImages and form state immediately for UX
+    // Update local combinedImages and form state
     const updatedImages = combinedImages.filter(img => img._id !== _id);
     setCombinedImages(updatedImages);
     setValue(
