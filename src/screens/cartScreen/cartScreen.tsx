@@ -1,5 +1,5 @@
 import React, {useCallback} from 'react';
-import {FlatList, Text, View} from 'react-native';
+import {FlatList, Pressable, Text, View} from 'react-native';
 import {styles} from './cartScreen.style';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
 import useCartStore from '../../stores/cartStore/cartStore';
@@ -40,7 +40,9 @@ const CartScreen = () => {
           {totalPrice} $
         </Text>
       </View>
-      <CustomButton text="Checkout" />
+      <Pressable>
+        <CustomButton text="Checkout" />
+      </Pressable>
     </View>
   );
 };

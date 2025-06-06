@@ -35,7 +35,7 @@ export const callNotification = (data: Data) => {
         en: `Only For "${data.price}$"`,
       },
       big_picture: `${API_URL + data.images[0].url}`,
-      include_subscription_ids: ['3d705915-9493-4b83-88be-de119088ea29'],
+      include_subscription_ids: ['4c0798e0-5245-4e08-bee1-2e545820b503'],
       url: `ecommerceMobileApp://details/${data._id}`,
     }),
   };
