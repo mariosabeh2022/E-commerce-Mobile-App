@@ -25,7 +25,8 @@ export const callNotification = (data: Data) => {
     method: 'POST',
     headers: {
       accept: 'application/json',
-      Authorization: 'Basic -',
+      Authorization:
+        'Basic -',
       'content-type': 'application/json',
     },
     body: JSON.stringify({
@@ -35,12 +36,12 @@ export const callNotification = (data: Data) => {
         en: `Only For "${data.price}$"`,
       },
       big_picture: `${API_URL + data.images[0].url}`,
-      include_subscription_ids: ['4c0798e0-5245-4e08-bee1-2e545820b503'],
+      included_segments: ['All'],
       url: `ecommerceMobileApp://details/${data._id}`,
+      android_sound:'unlock',
     }),
   };
   fetch(url, options)
     .then(res => res.json())
-    .then(json => console.log(json))
     .catch(err => console.error(err));
 };

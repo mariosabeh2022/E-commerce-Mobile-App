@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React, {useCallback, useEffect} from 'react';
 import {FlatList, Pressable, Text, View} from 'react-native';
 import {styles} from './cartScreen.style';
 import CustomTitle from '../../components/atoms/customTitle/customTitle';
@@ -7,6 +7,7 @@ import {useTheme} from '../../contexts/themeContext';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
 import CustomCartRenderItem from '../../components/organismes/customCartRenderItem/customCartRenderItem';
 import CustomButton from '../../components/atoms/customButton/customButton';
+import crashlytics from '@react-native-firebase/crashlytics';
 
 const CartScreen = () => {
   const {theme} = useTheme();
@@ -20,6 +21,27 @@ const CartScreen = () => {
   const renderItem = useCallback(({item}: {item: any}) => {
     return <CustomCartRenderItem item={item} />;
   }, []);
+
+  useEffect(() => {
+    const initCrashlytics = async () => {
+      try {
+        await crashlytics().setCrashlyticsCollectionEnabled(true);
+        crashlytics().setUserId('12345');
+        crashlytics().setAttribute('userRole', 'tester');
+        crashlytics().log('Crashlytics manually initialized');
+      } catch (error) {
+        console.log('Crashlytics init error', error);
+      }
+    };
+
+    initCrashlytics();
+  }, []);
+
+  const triggerCrash = () => {
+    crashlytics().log('Crash test initiated from TS app');
+    crashlytics().crash();
+  };
+
   return (
     <View style={isAppDark ? styles.darkContainer : styles.container}>
       <CustomTitle text="Your Items" />
@@ -40,7 +62,7 @@ const CartScreen = () => {
           {totalPrice} $
         </Text>
       </View>
-      <Pressable>
+      <Pressable onPress={triggerCrash}>
         <CustomButton text="Checkout" />
       </Pressable>
     </View>
