@@ -18,7 +18,11 @@ import CustomView from '../../components/molecules/customView/customView';
 import CustomPressable from '../../components/molecules/customPressable/customPressable';
 import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {useTheme} from '../../contexts/themeContext';
-import {useInfiniteQuery, useQuery} from '@tanstack/react-query';
+import {
+  useInfiniteQuery,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import useAuthStore from '../../stores/authStore/authStore';
 import CustomButton from '../../components/atoms/customButton/customButton';
 import CustomErrorMessage from '../../components/atoms/errorMessage/errorMessage';
@@ -37,15 +41,18 @@ const ProductListingsScreen = () => {
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState<'title' | 'price'>('title');
   const [order, setOrder] = useState<'asc' | 'desc'>('asc');
+  const queryClient = useQueryClient();
   const toggleAlphaSort = useCallback(() => {
+    queryClient.invalidateQueries({queryKey: ['products']});
     setSortBy('title');
     setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-  }, []);
+  }, [queryClient]);
 
   const togglePriceSort = useCallback(() => {
+    queryClient.invalidateQueries({queryKey: ['products']});
     setSortBy('price');
     setOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
-  }, []);
+  }, [queryClient]);
   //Fetch all products
   const {
     data: responseData,
@@ -120,7 +127,8 @@ const ProductListingsScreen = () => {
     const unsubscribe = navigation.addListener('focus', () => {
       if (
         route.params?.fromScreen === 'Edit Product' ||
-        route.params?.fromScreen === 'Details'
+        route.params?.fromScreen === 'Details' ||
+        userToken
       ) {
         setSearch('');
         refetchAll();
@@ -128,7 +136,7 @@ const ProductListingsScreen = () => {
     });
 
     return unsubscribe;
-  }, [navigation, route.params, refetchAll]);
+  }, [navigation, route.params, userToken, refetchAll]);
 
   return (
     <CustomContainer>
@@ -163,58 +171,39 @@ const ProductListingsScreen = () => {
             </CustomPressable>
           </>
         </CustomView>
-        {(isFetchingAll && !responseData?.pages?.length) || isFetchingSearch ? (
-          <View style={styles.emptyListContainer}>
-            <Text
-              style={
-                isAppDark ? styles.darkHeaderComponent : styles.headerComponent
-              }>
-              Available Items
-            </Text>
-            {[...Array(3)].map((_, index) => (
-              <CustomSkeletonItem key={`skeleton-${index}`} />
-            ))}
-          </View>
-        ) : (
-          <FlatList
-            data={
-              showSearchResults && Array.isArray(filteredData?.data)
-                ? filteredData.data
-                : deduplicatedFlatData
+        <FlatList
+          key={`${sortBy}-${order}`}
+          data={
+            showSearchResults && Array.isArray(filteredData?.data)
+              ? filteredData.data
+              : deduplicatedFlatData
+          }
+          keyExtractor={(item, index) => {
+            if (item?._id) {
+              return item._id.toString();
             }
-            keyExtractor={(item, index) => {
-              if (item?._id) {
-                return item._id.toString();
-              }
-              return `fallback-${index}`;
-            }}
-            renderItem={({item}) => {
-              if (!item || !item._id) {
-                return null;
-              }
-              return renderItem({item});
-            }}
-            onRefresh={showSearchResults ? refetchSearch : refetchAll}
-            refreshing={
-              showSearchResults ? isRefetchingSearch : isRefetchingAll
+            return `fallback-${index}`;
+          }}
+          renderItem={({item}) => {
+            if (!item || !item._id) {
+              return null;
             }
-            onEndReached={() => {
-              if (!showSearchResults && hasNextPage && !isFetchingNextPage) {
-                fetchNextPage();
-              }
-            }}
-            onEndReachedThreshold={0.7}
-            ListEmptyComponent={
-              showSearchResults ? (
-                !isFetchingAll && search.length >= 3 ? (
-                  CustomErrorMessage
-                ) : (
-                  <View style={styles.emptyListContainer}>
-                    {[...Array(3)].map((_, index) => (
-                      <CustomSkeletonItem key={`empty-skeleton-${index}`} />
-                    ))}
-                  </View>
-                )
+            return renderItem({item});
+          }}
+          onRefresh={showSearchResults ? refetchSearch : refetchAll}
+          refreshing={showSearchResults ? isRefetchingSearch : isRefetchingAll}
+          onEndReached={() => {
+            if (!showSearchResults && hasNextPage && !isFetchingNextPage) {
+              fetchNextPage();
+            }
+          }}
+          onEndReachedThreshold={0.7}
+          ListEmptyComponent={
+            showSearchResults ? (
+              !isFetchingAll && search.length >= 3 ? (
+                <View style={styles.emptyListMessageContainer}>
+                  <CustomErrorMessage message="No items match" />
+                </View>
               ) : (
                 <View style={styles.emptyListContainer}>
                   {[...Array(3)].map((_, index) => (
@@ -222,31 +211,35 @@ const ProductListingsScreen = () => {
                   ))}
                 </View>
               )
-            }
-            ListHeaderComponent={
+            ) : (
+              <View style={styles.emptyListContainer}>
+                {[...Array(3)].map((_, index) => (
+                  <CustomSkeletonItem key={`empty-skeleton-${index}`} />
+                ))}
+              </View>
+            )
+          }
+          ListHeaderComponent={
+            <Text
+              style={
+                isAppDark ? styles.darkHeaderComponent : styles.headerComponent
+              }>
+              Available Items
+            </Text>
+          }
+          ListFooterComponent={
+            !isFetchingAll && !isFetchingSearch && showSearchResults ? (
               <Text
                 style={
                   isAppDark
-                    ? styles.darkHeaderComponent
-                    : styles.headerComponent
+                    ? styles.darkFooterComponent
+                    : styles.footerComponent
                 }>
-                Available Items
+                ---------------
               </Text>
-            }
-            ListFooterComponent={
-              isFetchingAll && !responseData ? (
-                <Text
-                  style={
-                    isAppDark
-                      ? styles.darkFooterComponent
-                      : styles.footerComponent
-                  }>
-                  ---------------
-                </Text>
-              ) : null
-            }
-          />
-        )}
+            ) : null
+          }
+        />
       </>
     </CustomContainer>
   );

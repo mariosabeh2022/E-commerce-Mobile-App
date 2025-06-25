@@ -36,6 +36,10 @@ export const styles = StyleSheet.create({
     justifyContent: 'center',
     maxHeight: '30%',
   },
+  emptyListMessageContainer:{
+    margin:'10%',
+    alignItems: 'center',
+  },
   skeletonItem: {
     ...baseSkeletonComponent,
     backgroundColor: 'gray',
