@@ -42,3 +42,4 @@ const useAuthStore = create<AuthStoreProps>()(
 );
 
 export default useAuthStore;
+export const authStore = useAuthStore;

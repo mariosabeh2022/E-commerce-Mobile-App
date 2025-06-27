@@ -29,7 +29,7 @@ import CustomIcon from '../../components/atoms/customIcon/customIcon';
 import {API_URL} from '../../config/index';
 import {fetchProfile} from '../../api/fetchProfile/fetchProfileCall';
 import {updateProfile} from '../../api/updateProfile/updateProfileCall';
-import {refreshTokenFn} from '../../api/refreshToken/refreshTokenCall';
+import {RefreshControl, ScrollView} from 'react-native';
 const {FLARE, NOT_FOUND, NOT_VERIFIED} = errorCodes;
 const ProfileScreen = () => {
   const {user, setUser, updateProfileImage} = useUserStore();
@@ -43,8 +43,8 @@ const ProfileScreen = () => {
   const [fetchingUserLoad, setFetchingUserLoad] = useState(false);
   const [saveLoad, setSaveLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
   const userToken = useAuthStore(state => state.accessToken!);
-  const refreshToken = useAuthStore(state => state.refreshToken!);
   const clearToken = useAuthStore(state => state.clearToken);
   //Fetch profile
   const getProfile = useCallback(async () => {
@@ -67,10 +67,14 @@ const ProfileScreen = () => {
     }
     setFetchingUserLoad(false);
   }, [setUser, userToken, updateProfileImage]);
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await getProfile();
+    setRefreshing(false);
+  }, [getProfile]);
   useEffect(() => {
     getProfile();
   }, [getProfile]);
-
   const creationDate = new Date(user.createdAt);
   const year = creationDate.getFullYear();
   const m = creationDate.getMonth() + 1;
@@ -140,12 +144,6 @@ const ProfileScreen = () => {
   const toggleModalVisibility = () => {
     setShowModal(prev => !prev);
   };
-  const handleRefreshToken = async () => {
-    const result = await refreshTokenFn({refreshToken: refreshToken});
-    if (result) {
-      ToastAndroid.show('Token Refreshed Successfully!', ToastAndroid.SHORT);
-    }
-  };
   if (!user || fetchingUserLoad) {
     return (
       <View style={styles.spinnerContainer}>
@@ -157,118 +155,124 @@ const ProfileScreen = () => {
     );
   }
   return (
-    <View style={isAppDark ? styles.darkContainer : styles.container}>
-      <View>
-        <View style={styles.profileImage}>
-          {user.profileImage ? (
-            user.profileImage.startsWith('file://') ? (
-              <Image
-                source={{uri: user.profileImage}}
-                style={styles.profileImage}
-                resizeMode="contain"
-              />
-            ) : (
-              <Image
-                source={{uri: user.profileImage}}
-                style={styles.profileImage}
-                resizeMode="contain"
-              />
-            )
-          ) : (
-            <Icon name="user" size={100} color="gray" />
-          )}
-          <Pressable style={styles.uploadImage} onPress={toggleModalVisibility}>
-            <Icon name="edit" size={25} />
-          </Pressable>
-        </View>
-        <Text style={infos}>
-          User Name:{' '}
-          {isEditing ? (
-            <Controller
-              control={control}
-              name="userName"
-              render={({field: {value, onChange}}) => (
-                <CustomInput
-                  placeholder="User Name"
-                  value={value}
-                  onChangeText={onChange}
-                  keyboardType="default"
+    <ScrollView
+      style={isAppDark ? styles.darkContainer : styles.container}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          colors={[isAppDark ? darkBaseColor : lightBaseColor]}
+        />
+      }>
+      <View style={isAppDark ? styles.darkContainer : styles.container}>
+        <View>
+          <View style={styles.profileImage}>
+            {user.profileImage ? (
+              user.profileImage.startsWith('file://') ? (
+                <Image
+                  source={{uri: user.profileImage}}
+                  style={styles.profileImage}
+                  resizeMode="contain"
                 />
-              )}
-            />
-          ) : (
-            <Text style={data}>{user.firstName + ' ' + user.lastName}</Text>
-          )}
-        </Text>
-        <Text style={infos}>
-          Email: <Text style={data}>{user.email}</Text>
-        </Text>
-        <Text style={infos}>
-          Verification:{' '}
-          <Text style={data}>
-            {verified ? (
-              <CustomIcon type="check" />
+              ) : (
+                <Image
+                  source={{uri: user.profileImage}}
+                  style={styles.profileImage}
+                  resizeMode="contain"
+                />
+              )
             ) : (
-              <CustomIcon type="times-circle" />
+              <Icon name="user" size={100} color="gray" />
+            )}
+            <Pressable
+              style={styles.uploadImage}
+              onPress={toggleModalVisibility}>
+              <Icon name="edit" size={25} />
+            </Pressable>
+          </View>
+          <Text style={infos}>
+            User Name:{' '}
+            {isEditing ? (
+              <Controller
+                control={control}
+                name="userName"
+                render={({field: {value, onChange}}) => (
+                  <CustomInput
+                    placeholder="User Name"
+                    value={value}
+                    onChangeText={onChange}
+                    keyboardType="default"
+                  />
+                )}
+              />
+            ) : (
+              <Text style={data}>{user.firstName + ' ' + user.lastName}</Text>
             )}
           </Text>
-        </Text>
-        <Text style={infos}>
-          Account Creation: <Text style={data}>{formattedCreationDate}</Text>
-        </Text>
-      </View>
-      <View style={styles.buttonsContainer}>
-        {saveLoad ? (
-          <ActivityIndicator
-            size="large"
-            color={isAppDark ? darkBaseColor : lightBaseColor}
-          />
-        ) : !isEditing ? (
-          <Pressable style={styles.buttonContainer} onPress={handleEditing}>
-            <CustomButton text="Edit Profile" />
+          <Text style={infos}>
+            Email: <Text style={data}>{user.email}</Text>
+          </Text>
+          <Text style={infos}>
+            Verification:{' '}
+            <Text style={data}>
+              {verified ? (
+                <CustomIcon type="check" />
+              ) : (
+                <CustomIcon type="times-circle" />
+              )}
+            </Text>
+          </Text>
+          <Text style={infos}>
+            Account Creation: <Text style={data}>{formattedCreationDate}</Text>
+          </Text>
+        </View>
+        <View style={styles.buttonsContainer}>
+          {saveLoad ? (
+            <ActivityIndicator
+              size="large"
+              color={isAppDark ? darkBaseColor : lightBaseColor}
+            />
+          ) : !isEditing ? (
+            <Pressable style={styles.buttonContainer} onPress={handleEditing}>
+              <CustomButton text="Edit Profile" />
+            </Pressable>
+          ) : (
+            <>
+              <Pressable
+                style={styles.buttonContainer}
+                onPress={handleSubmit(onSubmit)}>
+                <CustomButton text="Save Profile" />
+              </Pressable>
+            </>
+          )}
+        </View>
+        <View style={styles.buttonContainer}>
+          <Pressable onPress={clearToken}>
+            <CustomErrorMessage message="Logout" />
           </Pressable>
-        ) : (
-          <>
+        </View>
+        <Modal visible={showModal} animationType="slide" transparent={true}>
+          <View style={styles.mainModalContainer}>
             <Pressable
-              style={styles.buttonContainer}
-              onPress={handleSubmit(onSubmit)}>
-              <CustomButton text="Save Profile" />
-            </Pressable>
-          </>
-        )}
-      </View>
-      <View style={styles.buttonContainer}>
-        <Pressable onPress={clearToken}>
-          <CustomErrorMessage message="Logout" />
-        </Pressable>
-      </View>
-      <Pressable style={infos} onPress={handleRefreshToken}>
-        <Text style={infos}>
-          Refresh Token: {'   '}
-          <CustomIcon type="redo" />
-        </Text>
-      </Pressable>
-      <Modal visible={showModal} animationType="slide" transparent={true}>
-        <View style={styles.mainModalContainer}>
-          <Pressable
-            style={styles.upperOverlay}
-            onPress={toggleModalVisibility}
-          />
-          <View
-            style={
-              isAppDark ? styles.darkModalContainer : styles.modalContainer
-            }>
-            <Pressable onPress={toggleModalVisibility}>
-              <CustomIcon type="times-circle" />
-            </Pressable>
-            <CustomTitle text="Profile Photo" />
-            <View>
-              <CustomModalIcons includeRemove={true} />
+              style={styles.upperOverlay}
+              onPress={toggleModalVisibility}
+            />
+            <View
+              style={
+                isAppDark ? styles.darkModalContainer : styles.modalContainer
+              }>
+              <Pressable onPress={toggleModalVisibility}>
+                <CustomIcon type="times-circle" />
+              </Pressable>
+              <CustomTitle text="Profile Photo" />
+              <View>
+                <CustomModalIcons includeRemove={true} />
+              </View>
             </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ScrollView>
   );
 };
 
